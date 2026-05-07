@@ -1,11 +1,11 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
-import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from './lib/auth-utils';
-import { verifyResetPasswordToken } from './lib/jwtHanlders';
-import { getNewAccessToken } from './services/auth/auth.service';
-import { getUserInfo } from './services/auth/getUserInfo';
-import { deleteCookie, getCookie } from './services/auth/tokenHandlers';
+import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from './lib/auth/auth-utils';
+import { verifyResetPasswordToken } from './lib/auth/jwt-handlers';
+import { getNewAccessToken } from './features/auth/services/auth.service';
+import { getUserInfo } from './features/auth/services/user-info.service';
+import { deleteCookie, getCookie } from './features/auth/services/token-handlers.service';
 
 
 
@@ -77,7 +77,7 @@ export async function proxy(request: NextRequest) {
 
     const routerOwner = getRouteOwner(pathname);
     //path = /doctor/appointments => "DOCTOR"
-    //path = /my-profile => "COMMON"
+    //path = /settings/profile => "COMMON"
     //path = /login => null
 
     const isAuth = isAuthRoute(pathname)

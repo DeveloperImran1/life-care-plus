@@ -1,6 +1,6 @@
 "use client";
 
-import { logoutUser } from "@/services/auth/logoutUser";
+import { logoutUser } from "@/features/auth/services/logout-user.service";
 import { Button } from "../ui/button";
 
 const LogoutButton = () => {
