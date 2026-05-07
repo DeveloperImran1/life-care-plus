@@ -1,0 +1,15 @@
+node_modules
+# Keep environment variables out of version control
+.env
+
+/generated/prisma
+
+.vercel
+
+render.yaml
+dist
+.medix-pro-API.postman_collection.json
+CHANGES.md
+PAYMENT_FLOW_ENHANCEMENTS.md
+PRISMA_7_MIGRATION.md
+Resources
