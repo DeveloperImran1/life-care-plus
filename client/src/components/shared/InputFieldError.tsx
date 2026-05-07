@@ -1,4 +1,4 @@
-import { getInputFieldError, IInputErrorState } from "@/lib/getInputFieldError";
+import { getInputFieldError, IInputErrorState } from "@/lib/helpers/get-input-field-error";
 import { FieldDescription } from "../ui/field";
 
 interface InputFieldErrorProps {
