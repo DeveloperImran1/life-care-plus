@@ -10,8 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logoutUser } from "@/features/auth/services/logout-user.service";
-import { UserInfo } from "@/features/auth/types/user.type";
+import { logoutUser } from "@/app/(public)/(auth)/_services/logout-user.service";
+import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
 import { Settings, User } from "lucide-react";
 import Link from "next/link";
 

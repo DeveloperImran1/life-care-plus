@@ -1,8 +1,8 @@
 import { getDefaultDashboardRoute } from "@/lib/auth/auth-utils";
-import { getUserInfo } from "@/features/auth/services/user-info.service";
-import { getCookie } from "@/features/auth/services/token-handlers.service";
+import { getUserInfo } from "@/app/(public)/(auth)/_services/user-info.service";
+import { getCookie } from "@/app/(public)/(auth)/_services/token-handlers.service";
 import Link from "next/link";
-import AISearchDialog from "@/features/ai/components/AISearchDialog";
+import AISearchDialog from "@/app/(dashboard)/admin/dashboard/doctors-management/_components/AISearchDialog";
 import MobileMenu from "./MobileMenu";
 import logo from "@/assets/logos/navlog.png";
 import NavbarAuthButtons from "./NavbarAuthButtons";

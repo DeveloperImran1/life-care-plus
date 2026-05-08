@@ -2,7 +2,7 @@
 "use server"
 
 import { serverFetch } from "@/services/http";
-import { getUserInfo } from "@/features/auth/services/user-info.service";
+import { getUserInfo } from "@/app/(public)/(auth)/_services/user-info.service";
 
 
 export async function getDashboardMetaData() {

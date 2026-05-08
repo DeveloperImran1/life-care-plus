@@ -1,4 +1,4 @@
-import LoginForm from "@/features/auth/components/LoginForm";
+import LoginForm from "@/app/(public)/(auth)/_components/LoginForm";
 
 const LoginPage = async ({
   searchParams,

@@ -1,5 +1,5 @@
 "use client";
-import { loginUser } from "@/features/auth/services/login-user.service";
+import { loginUser } from "@/app/(public)/(auth)/_services/login-user.service";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 import InputFieldError from "@/components/shared/InputFieldError";
@@ -29,7 +29,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
               name="email"
               type="email"
               placeholder="m@example.com"
-              //   required
+            //   required
             />
 
             <InputFieldError field="email" state={state} />
@@ -43,7 +43,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
               name="password"
               type="password"
               placeholder="Enter your password"
-              //   required
+            //   required
             />
             <InputFieldError field="password" state={state} />
           </Field>

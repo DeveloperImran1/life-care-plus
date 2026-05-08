@@ -1,11 +1,11 @@
 "use client";
 
-import AISearchDialog from "@/features/ai/components/AISearchDialog";
+import AISearchDialog from "@/app/(dashboard)/admin/dashboard/doctors-management/_components/AISearchDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavSection } from "@/features/dashboard/types/dashboard.type";
-import { UserInfo } from "@/features/auth/types/user.type";
+import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
 import { Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";

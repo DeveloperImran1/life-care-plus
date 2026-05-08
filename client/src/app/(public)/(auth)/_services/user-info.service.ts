@@ -2,7 +2,7 @@
 "use server"
 
 import { serverFetch } from "@/services/http";
-import { UserInfo } from "@/features/auth/types/user.type";
+import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { getCookie } from "./token-handlers.service";
 

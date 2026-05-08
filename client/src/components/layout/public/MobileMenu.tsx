@@ -1,12 +1,12 @@
 "use client";
 
-import { UserInfo } from "@/features/auth/types/user.type";
+import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
 import { LayoutDashboard, Menu } from "lucide-react";
 import Link from "next/link";
 import UserDropdown from "@/components/layout/dashboard/UserDropdown";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
-import AISearchDialog from "@/features/ai/components/AISearchDialog";
+import AISearchDialog from "@/app/(dashboard)/admin/dashboard/doctors-management/_components/AISearchDialog";
 
 interface MobileMenuProps {
   navItems: Array<{ href: string; label: string }>;

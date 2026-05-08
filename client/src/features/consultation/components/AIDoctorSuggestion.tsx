@@ -10,8 +10,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
-import { getAIDoctorSuggestion } from "@/features/ai/services/ai.service";
-import { AISuggestedDoctor } from "@/features/ai/types/ai.type";
+import { getAIDoctorSuggestion } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service/ai.service";
+import { AISuggestedDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 
 import {
   Award,
