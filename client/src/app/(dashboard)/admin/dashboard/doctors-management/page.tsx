@@ -1,7 +1,7 @@
-import TablePagination from "@/components/shared/TablePagination";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import TablePagination from "@/components/table/TablePagination";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";
-import { getDoctors } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
+import { getDoctors } from "@/app/(dashboard)/admin/dashboard/doctors-management/_services";
 import { getSpecialities } from "@/app/(dashboard)/admin/dashboard/specialities-management/_services";
 import { Suspense } from "react";
 import DoctorsManagementHeader from "./_components/DoctorsManagementHeader";

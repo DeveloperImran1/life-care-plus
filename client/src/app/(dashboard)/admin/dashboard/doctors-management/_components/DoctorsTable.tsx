@@ -1,7 +1,7 @@
 "use client";
-import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
-import ManagementTable from "@/components/shared/ManagementTable";
-import { softDeleteDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
+import DeleteConfirmationDialog from "@/components/dialog/DeleteConfirmationDialog";
+import ManagementTable from "@/components/table/ManagementTable";
+import { softDeleteDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_services";
 import { ISpecialty } from "@/types/specialty.type";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

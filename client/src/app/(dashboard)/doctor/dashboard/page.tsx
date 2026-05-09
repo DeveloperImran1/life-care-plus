@@ -1,6 +1,6 @@
-import { AppointmentPieChart } from "@/components/shared/AppointmentPieChart";
-import { DashboardSkeleton } from "@/components/shared/DashboardSkeleton";
-import { StatsCard } from "@/components/shared/StatCard";
+import { AppointmentPieChart } from "@/components/charts/AppointmentPieChart";
+import { DashboardSkeleton } from "@/components/feedback/DashboardSkeleton";
+import { StatsCard } from "@/components/cards/StatCard";
 import { getDashboardMetaData } from "@/app/(dashboard)/admin/_services/dashboard.service";
 import { IDoctorDashboardMeta } from "@/app/(dashboard)/admin/_types/meta.type";
 import { Suspense } from "react";

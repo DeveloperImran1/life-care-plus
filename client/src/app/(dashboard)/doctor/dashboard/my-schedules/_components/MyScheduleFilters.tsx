@@ -1,8 +1,8 @@
 "use client";
 
-import ClearFiltersButton from "@/components/shared/ClearFiltersButton";
-import RefreshButton from "@/components/shared/RefreshButton";
-import SelectFilter from "@/components/shared/SelectFilter";
+import ClearFiltersButton from "@/components/buttons/ClearFiltersButton";
+import RefreshButton from "@/components/buttons/RefreshButton";
+import SelectFilter from "@/components/common/SelectFilter";
 
 const MySchedulesFilters = () => {
   return (

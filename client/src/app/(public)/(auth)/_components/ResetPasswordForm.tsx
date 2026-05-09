@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import InputFieldError from "@/components/shared/InputFieldError";
+import InputFieldError from "@/components/common/InputFieldError";
 import { Button } from "@/components/ui/button";
 import {
   Field,

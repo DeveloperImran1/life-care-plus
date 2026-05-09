@@ -1,9 +1,9 @@
 "use client";
 
-import ClearFiltersButton from "@/components/shared/ClearFiltersButton";
-import RefreshButton from "@/components/shared/RefreshButton";
-import SearchFilter from "@/components/shared/SearchFilter";
-import SelectFilter from "@/components/shared/SelectFilter";
+import ClearFiltersButton from "@/components/buttons/ClearFiltersButton";
+import RefreshButton from "@/components/buttons/RefreshButton";
+import SearchFilter from "@/components/common/SearchFilter";
+import SelectFilter from "@/components/common/SelectFilter";
 
 const AppointmentsFilter = () => {
   return (

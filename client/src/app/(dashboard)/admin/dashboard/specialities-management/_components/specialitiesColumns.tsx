@@ -1,4 +1,4 @@
-import { Column } from "@/components/shared/ManagementTable";
+import { Column } from "@/components/table/ManagementTable";
 import { ISpecialty } from "@/types/specialty.type";
 import Image from "next/image";
 

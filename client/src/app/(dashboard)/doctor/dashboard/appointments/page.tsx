@@ -1,5 +1,5 @@
 import DoctorAppointmentsTable from "@/app/(dashboard)/doctor/dashboard/appointments/_components/DoctorAppointmentTable";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { getMyAppointments } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services";
 import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { Suspense } from "react";

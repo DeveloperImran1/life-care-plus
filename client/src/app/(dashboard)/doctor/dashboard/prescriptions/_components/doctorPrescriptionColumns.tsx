@@ -1,5 +1,5 @@
 "use client";
-import { Column } from "@/components/shared/ManagementTable";
+import { Column } from "@/components/table/ManagementTable";
 import { Badge } from "@/components/ui/badge";
 import { IPrescription } from "@/types/prescription.type";
 import { format } from "date-fns";

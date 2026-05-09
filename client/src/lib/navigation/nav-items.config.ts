@@ -93,7 +93,6 @@ export const getDoctorNavItems = async (): Promise<NavSection[]> => {
     ];
 }
 
-
 export const getPatientNavItems = async (): Promise<NavSection[]> => {
     // Fetch upcoming appointments count (only future appointments)
     let upcomingCount = 0;

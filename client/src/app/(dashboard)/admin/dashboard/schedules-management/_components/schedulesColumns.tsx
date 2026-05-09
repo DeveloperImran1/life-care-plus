@@ -1,7 +1,7 @@
 "use client";
 
-import { DateCell } from "@/components/shared/cell/DateCell";
-import { Column } from "@/components/shared/ManagementTable";
+import { DateCell } from "@/components/table/cells/DateCell";
+import { Column } from "@/components/table/ManagementTable";
 import { ISchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
 import { Clock } from "lucide-react";
 

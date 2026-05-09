@@ -2,9 +2,14 @@
 import { loginUser } from "@/app/(public)/(auth)/_services/login-user.service";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
-import InputFieldError from "@/components/shared/InputFieldError";
+import InputFieldError from "@/components/common/InputFieldError";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
@@ -29,7 +34,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
               name="email"
               type="email"
               placeholder="m@example.com"
-            //   required
+              //   required
             />
 
             <InputFieldError field="email" state={state} />
@@ -43,7 +48,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
               name="password"
               type="password"
               placeholder="Enter your password"
-            //   required
+              //   required
             />
             <InputFieldError field="password" state={state} />
           </Field>

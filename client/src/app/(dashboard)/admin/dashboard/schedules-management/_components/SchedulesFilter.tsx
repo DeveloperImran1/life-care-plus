@@ -1,7 +1,7 @@
 "use client";
 
-import ClearFiltersButton from "@/components/shared/ClearFiltersButton";
-import RefreshButton from "@/components/shared/RefreshButton";
+import ClearFiltersButton from "@/components/buttons/ClearFiltersButton";
+import RefreshButton from "@/components/buttons/RefreshButton";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/hooks/useDebounce";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -14,10 +14,10 @@ const SchedulesFilter = () => {
 
   // Local state for inputs with debouncing - use lazy initialization
   const [startDateInput, setStartDateInput] = useState(
-    () => searchParams.get("startDate") || ""
+    () => searchParams.get("startDate") || "",
   );
   const [endDateInput, setEndDateInput] = useState(
-    () => searchParams.get("endDate") || ""
+    () => searchParams.get("endDate") || "",
   );
 
   // Debounced values

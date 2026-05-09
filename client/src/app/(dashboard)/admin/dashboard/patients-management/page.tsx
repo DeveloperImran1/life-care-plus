@@ -1,6 +1,6 @@
-import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
-import TablePagination from "@/components/shared/TablePagination";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import ManagementPageHeader from "@/components/common/ManagementPageHeader";
+import TablePagination from "@/components/table/TablePagination";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";
 import { getPatients } from "@/app/(dashboard)/admin/dashboard/patients-management/_services";
 import { Suspense } from "react";

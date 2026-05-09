@@ -3,9 +3,14 @@
 import { registerPatient } from "@/app/(public)/(auth)/_services/register-patient.service";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
-import InputFieldError from "@/components/shared/InputFieldError";
+import InputFieldError from "@/components/common/InputFieldError";
 import { Button } from "@/components/ui/button";
-import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldDescription,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 
 const RegisterForm = () => {

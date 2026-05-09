@@ -1,5 +1,5 @@
-import TablePagination from "@/components/shared/TablePagination";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import TablePagination from "@/components/table/TablePagination";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";
 import {
   getAvailableSchedules,

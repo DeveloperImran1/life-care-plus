@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
-import { getAIDoctorSuggestion } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service/ai.service";
+import { getAIDoctorSuggestion } from "@/app/(dashboard)/admin/dashboard/doctors-management/_services/ai.service";
 import { AISuggestedDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 import {
   Award,
@@ -48,7 +48,7 @@ export default function AISearchDialog({
   const [symptoms, setSymptoms] = useState(initialSymptoms);
   const [isLoading, setIsLoading] = useState(false);
   const [suggestedDoctors, setSuggestedDoctors] = useState<AISuggestedDoctor[]>(
-    []
+    [],
   );
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [hasAutoSearched, setHasAutoSearched] = useState(false);
@@ -308,9 +308,7 @@ export default function AISearchDialog({
                                     idx % 2 === 0 ? "default" : "outline"
                                   }
                                   className={
-                                    idx % 2 === 0
-                                      ? "bg-primary text-white"
-                                      : ""
+                                    idx % 2 === 0 ? "bg-primary text-white" : ""
                                   }
                                 >
                                   <Stethoscope className="h-3 w-3 mr-1" />

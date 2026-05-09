@@ -1,5 +1,5 @@
-import LoginSuccessToast from "@/components/shared/LoginSuccessToast";
-import LogoutSuccessToast from "@/components/shared/LogoutSuccessToast";
+import LoginSuccessToast from "@/components/toasts/LoginSuccessToast";
+import LogoutSuccessToast from "@/components/toasts/LogoutSuccessToast";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Suspense } from "react";

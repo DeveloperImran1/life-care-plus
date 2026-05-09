@@ -1,8 +1,8 @@
 import AdminsFilter from "@/app/(dashboard)/admin/dashboard/admins-management/_components/AdminsFilter";
 import AdminsManagementHeader from "@/app/(dashboard)/admin/dashboard/admins-management/_components/AdminsManagementHeader";
 import AdminsTable from "@/app/(dashboard)/admin/dashboard/admins-management/_components/AdminsTable";
-import TablePagination from "@/components/shared/TablePagination";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import TablePagination from "@/components/table/TablePagination";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";
 import { Suspense } from "react";
 import { getAdmins } from "./_services";

@@ -1,4 +1,4 @@
-import InputFieldError from "@/components/shared/InputFieldError";
+import InputFieldError from "@/components/common/InputFieldError";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -19,7 +19,7 @@ import { useSpecialtySelection } from "@/hooks/use-specialty-selection";
 import {
   createDoctor,
   updateDoctor,
-} from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
+} from "@/app/(dashboard)/admin/dashboard/doctors-management/_services";
 import { ISpecialty } from "@/types/specialty.type";
 import Image from "next/image";
 import { useActionState, useEffect, useRef, useState } from "react";

@@ -1,7 +1,7 @@
 "use client";
 
-import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
-import ManagementTable from "@/components/shared/ManagementTable";
+import DeleteConfirmationDialog from "@/components/dialog/DeleteConfirmationDialog";
+import ManagementTable from "@/components/table/ManagementTable";
 import { deleteSchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_services";
 import { ISchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
 import { useRouter } from "next/navigation";

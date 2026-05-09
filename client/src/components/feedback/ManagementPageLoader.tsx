@@ -1,5 +1,5 @@
 "use client";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { useMemo } from "react";
 
 interface ManagementPageLoadingProps {

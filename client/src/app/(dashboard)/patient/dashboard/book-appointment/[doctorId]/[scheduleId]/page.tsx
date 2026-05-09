@@ -1,4 +1,4 @@
-import { getDoctorById } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
+import { getDoctorById } from "@/app/(dashboard)/admin/dashboard/doctors-management/_services";
 import { getScheduleById } from "@/app/(dashboard)/admin/dashboard/schedules-management/_services";
 import { ISchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
 import { notFound } from "next/navigation";

@@ -1,4 +1,4 @@
-import { ManagementPageLoading } from "@/components/shared/ManagementPageLoader";
+import { ManagementPageLoading } from "@/components/feedback/ManagementPageLoader";
 
 const AdminsManagementLoading = () => {
   return (

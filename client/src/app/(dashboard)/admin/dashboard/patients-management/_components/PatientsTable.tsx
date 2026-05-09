@@ -1,7 +1,7 @@
 "use client";
 
-import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
-import ManagementTable from "@/components/shared/ManagementTable";
+import DeleteConfirmationDialog from "@/components/dialog/DeleteConfirmationDialog";
+import ManagementTable from "@/components/table/ManagementTable";
 import { softDeletePatient } from "@/app/(dashboard)/admin/dashboard/patients-management/_services";
 import { IPatient } from "@/types/patient.type";
 import { useRouter } from "next/navigation";

@@ -1,6 +1,6 @@
 "use client";
 
-import LogoutButton from "@/components/shared/LogoutButton";
+import LogoutButton from "@/components/buttons/LogoutButton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

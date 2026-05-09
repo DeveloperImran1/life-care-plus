@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import AppointmentCountdown from "@/app/(dashboard)/patient/dashboard/my-appointments/_components/AppointmentCountdown";
-import { Column } from "@/components/shared/ManagementTable";
+import { Column } from "@/components/table/ManagementTable";
 import { Badge } from "@/components/ui/badge";
 import {
   AppointmentStatus,

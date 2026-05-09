@@ -1,6 +1,6 @@
 "use client";
 
-import ManagementTable from "@/components/shared/ManagementTable";
+import ManagementTable from "@/components/table/ManagementTable";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
