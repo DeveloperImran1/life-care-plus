@@ -2,14 +2,14 @@
 import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
 import ManagementTable from "@/components/shared/ManagementTable";
 import { softDeleteDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
-import { ISpecialty } from "@/features/consultation/types/specialty.type";
+import { ISpecialty } from "@/types/specialty.type";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import DoctorFormDialog from "./DoctorFormDialog";
 import { doctorsColumns } from "./doctorsColumns";
 import DoctorViewDetailDialog from "./DoctorViewDetailDialog";
+import { IDoctor } from "../_types";
 
 interface DoctorsTableProps {
   doctors: IDoctor[];

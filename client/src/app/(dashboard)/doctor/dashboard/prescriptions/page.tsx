@@ -1,7 +1,7 @@
-import DoctorPrescriptionsTable from "@/features/doctor/components/DoctorPrescription/DoctorPrescriptionTable";
-import { getMyAppointments } from "@/features/patient/services/appointment.service";
-import { IAppointment } from "@/features/patient/types/appointment.type";
-import { IPrescription } from "@/features/patient/types/prescription.type";
+import DoctorPrescriptionsTable from "@/app/(dashboard)/doctor/dashboard/prescriptions/_components/DoctorPrescriptionTable";
+import { getMyAppointments } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services";
+import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
+import { IPrescription } from "@/types/prescription.type";
 import { Suspense } from "react";
 
 async function PrescriptionsContent() {

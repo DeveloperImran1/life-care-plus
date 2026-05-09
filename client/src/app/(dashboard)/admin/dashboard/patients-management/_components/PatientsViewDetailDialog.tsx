@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { formatDateTime, getInitials } from "@/lib/helpers/formatters";
-import { IPatient } from "@/features/patient/types/patient.type";
+import { IPatient } from "@/types/patient.type";
 import {
   Activity,
   Calendar,

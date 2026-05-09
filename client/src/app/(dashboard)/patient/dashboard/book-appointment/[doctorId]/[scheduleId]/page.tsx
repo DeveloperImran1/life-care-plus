@@ -1,9 +1,9 @@
-import AppointmentConfirmation from "@/features/patient/components/PatientAppointment/AppointmentConfirmation";
 import { getDoctorById } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
 import { getScheduleById } from "@/app/(dashboard)/admin/dashboard/schedules-management/_services";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
-import { ISchedule } from "@/features/doctor/types/schedule.type";
+import { ISchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
 import { notFound } from "next/navigation";
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
+import AppointmentConfirmation from "../../../my-appointments/_components/AppointmentConfirmation";
 
 interface BookAppointmentPageProps {
   params: Promise<{

@@ -9,7 +9,6 @@ import {
 } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
 import { formatDateTime, getInitials } from "@/lib/helpers/formatters";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
 import {
   Briefcase,
   Calendar,
@@ -22,6 +21,7 @@ import {
   Stethoscope,
   User,
 } from "lucide-react";
+import { IDoctor } from "../_types";
 
 interface IDoctorViewDialogProps {
   open: boolean;

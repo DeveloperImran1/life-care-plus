@@ -3,9 +3,9 @@
 
 import { serverFetch } from "@/services/http";
 import { zodValidator } from "@/lib/utils/zod-validator";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
 import { createDoctorZodSchema, updateDoctorZodSchema } from "@/app/(dashboard)/admin/dashboard/doctors-management/_validations";
 import { revalidateTag } from "next/cache";
+import { IDoctor } from "../_types";
 
 export async function createDoctor(_prevState: any, formData: FormData) {
 

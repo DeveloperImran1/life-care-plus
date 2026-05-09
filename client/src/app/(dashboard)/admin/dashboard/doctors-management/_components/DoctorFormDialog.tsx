@@ -20,12 +20,12 @@ import {
   createDoctor,
   updateDoctor,
 } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
-import { ISpecialty } from "@/features/consultation/types/specialty.type";
+import { ISpecialty } from "@/types/specialty.type";
 import Image from "next/image";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import SpecialtyMultiSelect from "./SpecialtyMultiSelect";
+import { IDoctor } from "../_types";
 
 interface IDoctorFormDialogProps {
   open: boolean;

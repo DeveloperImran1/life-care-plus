@@ -1,5 +1,6 @@
 "use client";
 
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,8 +11,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
-import { IDoctorSchedule } from "@/features/doctor/types/schedule.type";
+import { IDoctorSchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
 import { format } from "date-fns";
 import { Calendar, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -68,7 +68,7 @@ export default function BookAppointmentDialog({
   const handleContinue = () => {
     if (selectedSchedule) {
       router.push(
-        `/patient/dashboard/book-appointment/${doctor.id}/${selectedSchedule.scheduleId}`
+        `/patient/dashboard/book-appointment/${doctor.id}/${selectedSchedule.scheduleId}`,
       );
     }
   };

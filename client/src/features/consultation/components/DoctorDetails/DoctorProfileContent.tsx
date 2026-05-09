@@ -1,7 +1,8 @@
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
+
 import {
   Briefcase,
   Calendar,

@@ -11,11 +11,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getInitials } from "@/lib/helpers/formatters";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
 import { Clock, DollarSign, Eye, MapPin, Star } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import BookAppointmentDialog from "./BookAppointmentDialog";
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 
 interface DoctorCard {
   doctor: IDoctor;

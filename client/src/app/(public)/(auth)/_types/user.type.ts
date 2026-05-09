@@ -1,7 +1,7 @@
 import { UserRole } from "@/lib/auth/auth-utils";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
-import { IPatient } from "@/features/patient/types/patient.type";
+import { IPatient } from "@/types/patient.type";
 import { IAdmin } from "@/app/(dashboard)/admin/dashboard/admins-management/_types";
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 
 export interface UserInfo {
     id: string;

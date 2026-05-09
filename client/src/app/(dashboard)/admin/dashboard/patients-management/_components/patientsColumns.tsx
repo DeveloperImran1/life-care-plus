@@ -4,7 +4,7 @@ import { DateCell } from "@/components/shared/cell/DateCell";
 import { StatusBadgeCell } from "@/components/shared/cell/StatusBadgeCell";
 import { UserInfoCell } from "@/components/shared/cell/UserInfoCell";
 import { Column } from "@/components/shared/ManagementTable";
-import { IPatient } from "@/features/patient/types/patient.type";
+import { IPatient } from "@/types/patient.type";
 
 export const patientsColumns: Column<IPatient>[] = [
   {

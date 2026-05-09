@@ -2,7 +2,7 @@
 
 import { DateCell } from "@/components/shared/cell/DateCell";
 import { Column } from "@/components/shared/ManagementTable";
-import { ISchedule } from "@/features/doctor/types/schedule.type";
+import { ISchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
 import { Clock } from "lucide-react";
 
 export const schedulesColumns: Column<ISchedule>[] = [
@@ -22,7 +22,7 @@ export const schedulesColumns: Column<ISchedule>[] = [
       const start = new Date(schedule.startDateTime);
       const end = new Date(schedule.endDateTime);
       const durationMinutes = Math.round(
-        (end.getTime() - start.getTime()) / (1000 * 60)
+        (end.getTime() - start.getTime()) / (1000 * 60),
       );
       return (
         <div className="flex items-center gap-1">

@@ -5,8 +5,8 @@ import { DateCell } from "@/components/shared/cell/DateCell";
 import { StatusBadgeCell } from "@/components/shared/cell/StatusBadgeCell";
 import { UserInfoCell } from "@/components/shared/cell/UserInfoCell";
 import { Column } from "@/components/shared/ManagementTable";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
 import { Star } from "lucide-react";
+import { IDoctor } from "../_types";
 
 export const doctorsColumns: Column<IDoctor>[] = [
   {

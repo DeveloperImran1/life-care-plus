@@ -1,4 +1,4 @@
-import { IDoctor } from "@/features/doctor/types/doctor.type";
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 import DoctorCard from "./DoctorCard";
 
 interface DoctorGridProps {

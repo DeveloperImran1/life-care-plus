@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { getReviews } from "@/features/patient/services/review.service";
+import { getReviews } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services/review.service";
 import { format } from "date-fns";
 import { Star, User } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -41,7 +41,7 @@ export default function DoctorReviews({ doctorId }: DoctorReviewsProps) {
           if (response.data.length > 0) {
             const total = response.data.reduce(
               (sum: number, review: Review) => sum + review.rating,
-              0
+              0,
             );
             setStats({
               averageRating: total / response.data.length,

@@ -1,5 +1,5 @@
-import { getMyAppointments } from "@/features/patient/services/appointment.service";
-import { IAppointment } from "@/features/patient/types/appointment.type";
+import { getMyAppointments } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services";
+import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { NavSection } from "@/features/dashboard/types/dashboard.type";
 import { getDefaultDashboardRoute, UserRole } from "../auth/auth-utils";
 
