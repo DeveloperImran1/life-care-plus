@@ -127,7 +127,7 @@ export const getPatientNavItems = async (): Promise<NavSection[]> => {
                 },
                 {
                     title: "Book Appointment",
-                    href: "/consultation",
+                    href: "/doctors",
                     icon: "ClipboardList", // ✅ String
                     roles: ["PATIENT"],
                 },

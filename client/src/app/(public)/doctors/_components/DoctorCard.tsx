@@ -111,7 +111,7 @@ export default function DoctorCard({ doctor }: DoctorCard) {
         </CardContent>
 
         <CardFooter className="pt-3 border-t flex gap-2">
-          <Link className="flex-1" href={`/consultation/doctor/${doctor.id}`}>
+          <Link className="flex-1" href={`/doctors/doctor/${doctor.id}`}>
             <Button variant="outline" className="w-full">
               <Eye className="h-4 w-4 mr-2" />
               View Details

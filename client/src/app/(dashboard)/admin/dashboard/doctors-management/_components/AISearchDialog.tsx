@@ -352,7 +352,7 @@ export default function AISearchDialog({
                             <span className="text-xs text-gray-500">fee</span>
                           </div>
                           <Link
-                            href={`/consultation/doctor/${doctor.id}`}
+                            href={`/doctors/doctor/${doctor.id}`}
                             onClick={handleDoctorClick}
                           >
                             <Button size="sm">

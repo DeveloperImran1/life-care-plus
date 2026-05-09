@@ -1,6 +1,6 @@
-import AIDoctorSuggestion from "@/app/(public)/consultation/_components/AIDoctorSuggestion";
-import DoctorGrid from "@/app/(public)/consultation/_components/DoctorGrid";
-import DoctorSearchFilters from "@/app/(public)/consultation/_components/DoctorSearchFilter";
+import AIDoctorSuggestion from "@/app/(public)/doctors/_components/AIDoctorSuggestion";
+import DoctorGrid from "@/app/(public)/doctors/_components/DoctorGrid";
+import DoctorSearchFilters from "@/app/(public)/doctors/_components/DoctorSearchFilter";
 import TablePagination from "@/components/table/TablePagination";
 import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";
@@ -11,7 +11,7 @@ import { Suspense } from "react";
 // ISR: Revalidate every 10 minutes for doctor listings
 export const revalidate = 600;
 
-const ConsultationPage = async ({
+const DoctorsPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -61,4 +61,4 @@ const ConsultationPage = async ({
   );
 };
 
-export default ConsultationPage;
+export default DoctorsPage;

@@ -251,7 +251,7 @@ export default function AIDoctorSuggestion() {
                             consultation fee
                           </span>
                         </div>
-                        <Link href={`/consultation/doctor/${doctor.id}`}>
+                        <Link href={`/doctors/doctor/${doctor.id}`}>
                           <Button size="sm">
                             <User className="h-3 w-3 mr-1" />
                             View Profile

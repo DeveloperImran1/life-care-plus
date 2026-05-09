@@ -49,9 +49,9 @@ export default function DoctorSearchFilters({
       // Reset to page 1 when filters change
       params.delete("page");
 
-      router.push(`/consultation?${params.toString()}`);
+      router.push(`/doctors?${params.toString()}`);
     },
-    [router]
+    [router],
   );
 
   // Trigger search when debounced value changes
@@ -66,7 +66,7 @@ export default function DoctorSearchFilters({
 
   const handleClearFilters = () => {
     setSearchTerm("");
-    router.push("/consultation");
+    router.push("/doctors");
   };
 
   const hasActiveFilters =

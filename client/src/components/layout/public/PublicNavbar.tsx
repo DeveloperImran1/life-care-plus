@@ -10,7 +10,7 @@ import Image from "next/image";
 
 const PublicNavbar = async () => {
   const navItems = [
-    { href: "/consultation", label: "Consultation" },
+    { href: "/doctors", label: "Doctors" },
     { href: "/health-plans", label: "Health Plans" },
     { href: "/medicine", label: "Medicine" },
     { href: "/diagnostics", label: "Diagnostics" },

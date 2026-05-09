@@ -126,7 +126,7 @@ const AppointmentsList = ({ appointments }: AppointmentsListProps) => {
             book your first consultation.
           </p>
           <Button className="mt-4" asChild>
-            <a href="/consultation">Find a Doctor</a>
+            <a href="/doctors">Find a Doctor</a>
           </Button>
         </CardContent>
       </Card>

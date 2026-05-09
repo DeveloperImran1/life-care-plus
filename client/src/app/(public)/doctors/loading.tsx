@@ -1,4 +1,4 @@
-import DoctorGridSkeleton from "@/app/(public)/consultation/_components/DoctorGridSkeleton";
+import DoctorGridSkeleton from "@/app/(public)/doctors/_components/DoctorGridSkeleton";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
