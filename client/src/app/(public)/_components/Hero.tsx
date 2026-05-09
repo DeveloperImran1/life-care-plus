@@ -2,7 +2,7 @@ import { Search, Calendar, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
-import { HeroProps } from "@/features/home/types/hero-props.type";
+import { HeroProps } from "@/app/(public)/_types/hero-props.type";
 import { LargeSparkleIcon, SparkleIcon } from "@/assets/icons/SparkleIcon";
 
 export function Hero({

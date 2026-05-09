@@ -14,7 +14,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { createPrescription } from "@/app/(dashboard)/patient/dashboard/my-prescriptions/_services";
 import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { format } from "date-fns";
-import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import AppointmentCountdown from "@/app/(dashboard)/patient/dashboard/my-appointments/_components/AppointmentCountdown";
@@ -30,7 +29,6 @@ export default function DoctorAppointmentDetailDialog({
   open,
   onClose,
 }: DoctorAppointmentDetailDialogProps) {
-  const router = useRouter();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [instructions, setInstructions] = useState("");
   const [followUpDate, setFollowUpDate] = useState("");

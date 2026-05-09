@@ -1,8 +1,8 @@
-import { Hero } from "@/features/home/components/Hero";
-import Specialities from "@/features/home/components/Specialties";
-import Steps from "@/features/home/components/Steps";
-import Testimonials from "@/features/home/components/Testimonials";
-import TopRatedDoctors from "@/features/home/components/TopRatedDoctors";
+import { Hero } from "@/app/(public)/_components/Hero";
+import Specialities from "@/app/(public)/_components/Specialties";
+import Steps from "@/app/(public)/_components/Steps";
+import Testimonials from "@/app/(public)/_components/Testimonials";
+import TopRatedDoctors from "@/app/(public)/_components/TopRatedDoctors";
 import Head from "next/head";
 
 export default function Home() {

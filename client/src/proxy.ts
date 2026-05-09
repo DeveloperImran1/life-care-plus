@@ -66,6 +66,7 @@ export async function proxy(request: NextRequest) {
             userRole = verifiedToken.role as UserRole;
 
         } catch (error) {
+            console.error("Error verifying token:", error);
             await deleteCookie("accessToken");
             await deleteCookie("refreshToken");
 

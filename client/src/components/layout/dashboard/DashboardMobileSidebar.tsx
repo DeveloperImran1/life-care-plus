@@ -6,7 +6,7 @@ import { Separator } from "@/components/ui/separator";
 import { SheetTitle } from "@/components/ui/sheet";
 import { getIconComponent } from "@/lib/helpers/icon-mapper";
 import { cn } from "@/lib/utils";
-import { NavSection } from "@/features/dashboard/types/dashboard.type";
+import { NavSection } from "@/app/(dashboard)/admin/_types/dashboard.type";
 import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
 import Image from "next/image";
 import log from "@/assets/logos/navlog.png";

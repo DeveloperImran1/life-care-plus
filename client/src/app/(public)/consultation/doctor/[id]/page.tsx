@@ -1,5 +1,5 @@
-import DoctorProfileContent from "@/features/consultation/components/DoctorDetails/DoctorProfileContent";
-import DoctorReviews from "@/features/consultation/components/DoctorDetails/DoctorReviews";
+import DoctorProfileContent from "@/app/(public)/consultation/_components/DoctorDetails/DoctorProfileContent";
+import DoctorReviews from "@/app/(public)/consultation/_components/DoctorDetails/DoctorReviews";
 import { getDoctorById } from "@/app/(dashboard)/admin/dashboard/doctors-management/_service";
 
 export const revalidate = 600;

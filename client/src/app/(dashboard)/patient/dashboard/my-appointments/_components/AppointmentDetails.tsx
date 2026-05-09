@@ -23,7 +23,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 // import ReviewDialog from "./ReviewDialog";
 import { changeAppointmentStatus } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services";
-import { initiatePayment } from "@/features/payment/services/payment.service";
+import { initiatePayment } from "@/app/(dashboard)/settings/payment/_services";
 import {
   AppointmentStatus,
   IAppointment,

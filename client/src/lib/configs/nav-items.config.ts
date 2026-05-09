@@ -1,6 +1,6 @@
 import { getMyAppointments } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services";
 import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
-import { NavSection } from "@/features/dashboard/types/dashboard.type";
+import { NavSection } from "@/app/(dashboard)/admin/_types/dashboard.type";
 import { getDefaultDashboardRoute, UserRole } from "../auth/auth-utils";
 
 export const getCommonNavItems = (role: UserRole): NavSection[] => {

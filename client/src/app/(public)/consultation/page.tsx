@@ -1,6 +1,6 @@
-import AIDoctorSuggestion from "@/features/consultation/components/AIDoctorSuggestion";
-import DoctorGrid from "@/features/consultation/components/DoctorGrid";
-import DoctorSearchFilters from "@/features/consultation/components/DoctorSearchFilter";
+import AIDoctorSuggestion from "@/app/(public)/consultation/_components/AIDoctorSuggestion";
+import DoctorGrid from "@/app/(public)/consultation/_components/DoctorGrid";
+import DoctorSearchFilters from "@/app/(public)/consultation/_components/DoctorSearchFilter";
 import TablePagination from "@/components/shared/TablePagination";
 import { TableSkeleton } from "@/components/shared/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";

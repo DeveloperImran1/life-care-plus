@@ -1,8 +1,8 @@
 import { AppointmentPieChart } from "@/components/shared/AppointmentPieChart";
 import { DashboardSkeleton } from "@/components/shared/DashboardSkeleton";
 import { StatsCard } from "@/components/shared/StatCard";
-import { getDashboardMetaData } from "@/features/dashboard/services/dashboard.service";
-import { IDoctorDashboardMeta } from "@/features/dashboard/types/meta.type";
+import { getDashboardMetaData } from "@/app/(dashboard)/admin/_services/dashboard.service";
+import { IDoctorDashboardMeta } from "@/app/(dashboard)/admin/_types/meta.type";
 import { Suspense } from "react";
 async function DoctorDashboardContent() {
   const result = await getDashboardMetaData();

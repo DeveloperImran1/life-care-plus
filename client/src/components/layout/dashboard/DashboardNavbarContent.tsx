@@ -4,7 +4,7 @@ import AISearchDialog from "@/app/(dashboard)/admin/dashboard/doctors-management
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { NavSection } from "@/features/dashboard/types/dashboard.type";
+import { NavSection } from "@/app/(dashboard)/admin/_types/dashboard.type";
 import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
 import { Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";

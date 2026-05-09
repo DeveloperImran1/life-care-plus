@@ -4,7 +4,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { initiatePayment } from "@/features/payment/services/payment.service";
+import { initiatePayment } from "@/app/(dashboard)/settings/payment/_services";
 import {
   AppointmentStatus,
   IAppointment,
