@@ -1,9 +1,9 @@
-import { Hero } from "@/app/(public)/_components/Hero";
 import Specialities from "@/app/(public)/_components/Specialties";
 import Steps from "@/app/(public)/_components/Steps";
 import Testimonials from "@/app/(public)/_components/Testimonials";
 import TopRatedDoctors from "@/app/(public)/_components/TopRatedDoctors";
 import Head from "next/head";
+import HeroSection from "./_components/HeroSection";
 
 export default function Home() {
   return (
@@ -18,7 +18,7 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Hero />
+        <HeroSection />
         <Specialities />
         <TopRatedDoctors />
         <Steps />

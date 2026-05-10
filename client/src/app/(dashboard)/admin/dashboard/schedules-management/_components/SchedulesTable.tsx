@@ -1,6 +1,5 @@
 "use client";
 
-import DeleteConfirmationDialog from "@/components/dialog/DeleteConfirmationDialog";
 import ManagementTable from "@/components/table/ManagementTable";
 import { deleteSchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_services";
 import { ISchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
@@ -8,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { schedulesColumns } from "./schedulesColumns";
+import DeleteConfirmationDialog from "@/components/dialogs/DeleteConfirmationDialog";
 
 interface SchedulesTableProps {
   schedules: ISchedule[];
