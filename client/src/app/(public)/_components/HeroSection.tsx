@@ -154,13 +154,13 @@ const HeroSection = () => {
               className="flex min-h-[104px] items-center gap-4 rounded-2xl bg-white/95 p-5 shadow-[0_16px_40px_rgba(15,23,42,0.09)] ring-1 ring-primary/10 backdrop-blur sm:min-h-32 sm:gap-5 sm:p-6 lg:min-h-28 lg:p-5 xl:min-h-32 xl:p-6"
             >
               <div
-                className={`flex size-12 shrink-0 items-center justify-center rounded-full sm:size-[64px] lg:size-[60px] xl:size-[64px] ${item.className}`}
+                className={`flex size-12 shrink-0 items-center justify-center rounded-full sm:size-16 lg:size-[60px] xl:size-16 ${item.className}`}
               >
                 <item.icon
                   className={
                     item.icon === Star
-                      ? "size-6 fill-current sm:size-[32px] lg:size-[30px] xl:size-[32px]"
-                      : "size-6 sm:size-[32px] lg:size-[30px] xl:size-[32px]"
+                      ? "size-6 fill-current sm:size-8 lg:size-[30px] xl:size-8"
+                      : "size-6 sm:size-8 lg:size-[30px] xl:size-8"
                   }
                 />
               </div>
