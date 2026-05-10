@@ -28,7 +28,7 @@ const HeroSection = () => {
             Trusted by 50K+ Patients
           </div>
 
-          <h1 className="text-[38px] font-black leading-[1.04] tracking-normal text-foreground sm:text-6xl lg:text-[56px] xl:text-[64px] 2xl:text-7xl">
+          <h1 className="text-[38px] font-bold leading-[1.04] tracking-normal text-foreground sm:text-6xl lg:text-[56px] xl:text-[64px] 2xl:text-7xl">
             <span className="block whitespace-nowrap">Your Health,</span>
             <span className="block whitespace-nowrap text-primary">
               Our Priority
@@ -52,11 +52,7 @@ const HeroSection = () => {
             ))}
           </div>
 
-          <Button
-            asChild
-            size="lg"
-            className="mt-8 h-12 rounded-xl bg-primary px-6 text-sm font-extrabold shadow-xl shadow-primary/25 hover:bg-primary/90 sm:mt-10 sm:h-14 sm:px-8 sm:text-base"
-          >
+          <Button asChild size="lg" className="mt-8">
             <Link href="/doctors">
               Explore Services
               <ArrowRight className="size-5 sm:size-6" />
@@ -74,25 +70,25 @@ const HeroSection = () => {
 
           <span
             aria-hidden="true"
-            className="absolute right-12 top-3 text-5xl font-black leading-none text-primary/35 md:right-24 md:top-14 md:text-7xl md:text-primary/60"
+            className="absolute right-12 top-3 text-5xl font-bold leading-none text-primary/35 md:right-24 md:top-14 md:text-7xl md:text-primary/60"
           >
             +
           </span>
           <span
             aria-hidden="true"
-            className="absolute bottom-20 left-12 text-5xl font-black leading-none text-primary/30 md:bottom-24 md:left-24 md:text-7xl md:text-primary/45"
+            className="absolute bottom-20 left-12 text-5xl font-bold leading-none text-primary/30 md:bottom-24 md:left-24 md:text-7xl md:text-primary/45"
           >
             +
           </span>
           <span
             aria-hidden="true"
-            className="absolute left-8 top-[42%] text-4xl font-black leading-none text-primary/25 md:hidden"
+            className="absolute left-8 top-[42%] text-4xl font-bold leading-none text-primary/25 md:hidden"
           >
             +
           </span>
           <span
             aria-hidden="true"
-            className="absolute bottom-10 right-16 text-4xl font-black leading-none text-primary/25 md:hidden"
+            className="absolute bottom-10 right-16 text-4xl font-bold leading-none text-primary/25 md:hidden"
           >
             +
           </span>
@@ -165,7 +161,7 @@ const HeroSection = () => {
                 />
               </div>
               <div>
-                <p className="text-2xl font-black leading-none text-foreground sm:text-3xl lg:text-2xl xl:text-3xl">
+                <p className="text-2xl font-bold leading-none text-foreground sm:text-3xl lg:text-2xl xl:text-3xl">
                   {item.value}
                 </p>
                 <p className="mt-2 text-sm font-medium text-muted-foreground sm:mt-3">

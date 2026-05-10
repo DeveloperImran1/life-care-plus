@@ -35,7 +35,7 @@ function PublicFooter() {
                 <Link
                   key={i}
                   href="#"
-                  className="w-9 h-9 rounded-full bg-white border border-emerald-200 flex items-center justify-center text-emerald-500 hover:bg-emerald-500 hover:text-white transition-all duration-300 shadow-sm"
+                  className="w-9 h-9 rounded-full bg-white border border-primary flex items-center justify-center text-primary hover:bg-primary hover:text-white transition-all duration-300 shadow-sm"
                 >
                   <Icon size={16} strokeWidth={2} />
                 </Link>

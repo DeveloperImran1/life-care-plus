@@ -41,7 +41,7 @@ const DoctorsPage = async ({
         </div>
 
         {/* AI Doctor Suggestion */}
-        <AIDoctorSuggestion />
+        {/* <AIDoctorSuggestion /> */}
 
         {/* Filters */}
         <DoctorSearchFilters specialties={specialties} />

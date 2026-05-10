@@ -112,12 +112,16 @@ export default function DoctorCard({ doctor }: DoctorCard) {
 
         <CardFooter className="pt-3 border-t flex gap-2">
           <Link className="flex-1" href={`/doctors/doctor/${doctor.id}`}>
-            <Button variant="outline" className="w-full">
+            <Button size="lg" variant="outline" className="w-full">
               <Eye className="h-4 w-4 mr-2" />
               View Details
             </Button>
           </Link>
-          <Button onClick={() => setShowScheduleModal(true)} className="flex-1">
+          <Button
+            size="lg"
+            onClick={() => setShowScheduleModal(true)}
+            className="flex-1"
+          >
             Book Appointment
           </Button>
         </CardFooter>

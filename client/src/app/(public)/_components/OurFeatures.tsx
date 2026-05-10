@@ -77,9 +77,7 @@ const OurFeatures = () => {
               />
             </svg>
           </div>
-          <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-4 tracking-tight">
-            Our Features
-          </h2>
+          <h2 className="text-4xl font-bold text-primary mb-4">Our Features</h2>
           <p className="text-gray-500 text-lg max-w-2xl mx-auto">
             Everything you need for a better healthcare experience
           </p>

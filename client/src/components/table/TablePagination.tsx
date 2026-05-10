@@ -51,7 +51,7 @@ const TablePagination = ({ currentPage, totalPages }: TablePaginationProps) => {
     <div className="flex items-center justify-center gap-2">
       <Button
         variant="outline"
-        size="sm"
+        size="lg"
         onClick={() => navigateToPage(currentPage - 1)}
         disabled={currentPage <= 1 || isPending}
       >
@@ -76,7 +76,7 @@ const TablePagination = ({ currentPage, totalPages }: TablePaginationProps) => {
             <Button
               key={pageNumber}
               variant={pageNumber === currentPage ? "default" : "outline"}
-              size="sm"
+              size="lg"
               onClick={() => navigateToPage(pageNumber)}
               disabled={isPending}
               className="w-10"
@@ -89,7 +89,7 @@ const TablePagination = ({ currentPage, totalPages }: TablePaginationProps) => {
 
       <Button
         variant="outline"
-        size="sm"
+        size="lg"
         onClick={() => navigateToPage(currentPage + 1)}
         disabled={currentPage === totalPages || isPending}
       >
