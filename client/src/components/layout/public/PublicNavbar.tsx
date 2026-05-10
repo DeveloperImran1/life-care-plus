@@ -44,7 +44,7 @@ const PublicNavbar = async () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-2">
-          <AISearchDialog />
+          {/* <AISearchDialog /> */}
           <NavbarAuthButtons
             initialHasToken={!!accessToken}
             initialUserInfo={userInfo}

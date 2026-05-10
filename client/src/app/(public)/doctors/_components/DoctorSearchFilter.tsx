@@ -1,5 +1,6 @@
 "use client";
 
+import AISearchDialog from "@/app/(dashboard)/admin/dashboard/doctors-management/_components/AISearchDialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -82,16 +83,18 @@ export default function DoctorSearchFilters({
             placeholder="Search doctors by name..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
+            className="pl-10 py-5"
           />
         </div>
+
+        <AISearchDialog />
 
         {/* Specialty Filter */}
         <Select
           value={searchParams.get("specialties") || "all"}
           onValueChange={(value) => updateFilters("specialties", value)}
         >
-          <SelectTrigger className="w-full md:w-[250px]">
+          <SelectTrigger className="w-full py-5 md:w-[250px]">
             <SelectValue placeholder="Select Specialty" />
           </SelectTrigger>
           <SelectContent>
@@ -109,7 +112,7 @@ export default function DoctorSearchFilters({
           value={searchParams.get("gender") || "all"}
           onValueChange={(value) => updateFilters("gender", value)}
         >
-          <SelectTrigger className="w-full md:w-[180px]">
+          <SelectTrigger className="w-full py-5 md:w-[180px]">
             <SelectValue placeholder="Gender" />
           </SelectTrigger>
           <SelectContent>
@@ -124,7 +127,7 @@ export default function DoctorSearchFilters({
           <Button
             variant="outline"
             onClick={handleClearFilters}
-            className="w-full md:w-auto"
+            className="w-full py-5 md:w-auto"
           >
             Clear Filters
           </Button>

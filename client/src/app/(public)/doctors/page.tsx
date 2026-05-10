@@ -32,16 +32,14 @@ const DoctorsPage = async ({
     <div className="container mx-auto px-4 py-8">
       <div className="space-y-6">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight">Find a Doctor</h1>
-          <p className="text-muted-foreground mt-2">
-            Search and book appointments with our qualified healthcare
-            professionals
+        <div className="mb-8 text-center">
+          <h1 className="text-4xl font-bold text-primary mb-4">
+            Book Appointments With Top Specialists
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Search, compare, and book appointments in minutes.
           </p>
         </div>
-
-        {/* AI Doctor Suggestion */}
-        {/* <AIDoctorSuggestion /> */}
 
         {/* Filters */}
         <DoctorSearchFilters specialties={specialties} />

@@ -25,6 +25,8 @@ import {
   Stethoscope,
   User,
 } from "lucide-react";
+import { BsRobot } from "react-icons/bs";
+
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
@@ -148,8 +150,10 @@ export default function AISearchDialog({
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Sparkles className="h-4 w-4" />
+        <Button variant="outline" size="lg" className="gap-2 py-1 ">
+          {/* <Sparkles /> */}
+          <BsRobot />
+
           <span className="hidden sm:inline">AI Search</span>
         </Button>
       </DialogTrigger>
@@ -157,7 +161,8 @@ export default function AISearchDialog({
         <DialogHeader>
           <div className="flex items-center gap-2">
             <div className="p-2 bg-primary rounded-lg">
-              <Sparkles className="h-5 w-5 text-primary-foreground" />
+              {/* <Sparkles className="h-5 w-5 text-primary-foreground" /> */}
+              <BsRobot className="h-5 w-5 text-primary-foreground" />
             </div>
             <div>
               <DialogTitle>AI Doctor Search</DialogTitle>
