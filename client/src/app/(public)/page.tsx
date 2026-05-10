@@ -5,6 +5,7 @@ import TopRatedDoctors from "@/app/(public)/_components/TopRatedDoctors";
 import Head from "next/head";
 import HeroSection from "./_components/HeroSection";
 import OurFeatures from "./_components/OurFeatures";
+import StepsSolution from "./_components/StepsSolution";
 
 export default function Home() {
   return (
@@ -21,10 +22,11 @@ export default function Home() {
       <main>
         <HeroSection />
         <OurFeatures />
+        <StepsSolution />
         {/* <Specialities /> */}
         {/* <TopRatedDoctors /> */}
-        <Steps />
-        <Testimonials />
+        {/* <Steps /> */}
+        {/* <Testimonials /> */}
       </main>
     </>
   );
