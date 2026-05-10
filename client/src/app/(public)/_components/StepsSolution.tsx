@@ -126,7 +126,7 @@ const StepsSolution = () => {
 
                 {/* Icon Circle */}
                 <div
-                  className={`w-[88px] h-[88px] rounded-full flex items-center justify-center mb-6 ${step.bgColor} ring-[12px] ring-white transition-transform duration-300 group-hover:scale-105`}
+                  className={`w-[88px] h-[88px] rounded-full flex items-center justify-center mb-6 ${step.bgColor} ring-12 ring-white transition-transform duration-300 group-hover:scale-105`}
                 >
                   <step.icon
                     className={`w-9 h-9 ${step.iconColor}`}
