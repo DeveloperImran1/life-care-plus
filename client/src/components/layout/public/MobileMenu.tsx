@@ -5,7 +5,12 @@ import { LayoutDashboard, Menu } from "lucide-react";
 import Link from "next/link";
 import UserDropdown from "@/components/layout/dashboard/UserDropdown";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 import AISearchDialog from "@/app/(dashboard)/admin/dashboard/doctors-management/_components/AISearchDialog";
 
 interface MobileMenuProps {
@@ -42,9 +47,9 @@ const MobileMenu = ({
               </Link>
             ))}
             <div className="border-t pt-4 flex flex-col space-y-4">
-              <div className="flex justify-center w-full">
+              {/* <div className="flex justify-center w-full">
                 <AISearchDialog />
-              </div>
+              </div> */}
               {hasAccessToken && userInfo ? (
                 <>
                   <Link
@@ -62,7 +67,9 @@ const MobileMenu = ({
                 </>
               ) : (
                 <Link href="/login" className="text-lg font-medium">
-                  <Button className="w-full">Login</Button>
+                  <Button size="lg" className="w-full">
+                    Login
+                  </Button>
                 </Link>
               )}
             </div>
