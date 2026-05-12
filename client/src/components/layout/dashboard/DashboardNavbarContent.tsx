@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { NavSection } from "@/app/(dashboard)/admin/_types/dashboard.type";
-import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
+import { UserInfo } from "@/app/(auth)/_types/user.type";
 import { Menu, Search } from "lucide-react";
 import { useEffect, useState } from "react";
 import DashboardMobileSidebar from "./DashboardMobileSidebar";

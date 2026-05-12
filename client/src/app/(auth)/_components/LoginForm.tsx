@@ -1,6 +1,6 @@
 "use client";
 
-import { loginUser } from "@/app/(public)/(auth)/_services/login-user.service";
+import { loginUser } from "@/app/(auth)/_services/login-user.service";
 import InputFieldError from "@/components/common/InputFieldError";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

@@ -1,6 +1,5 @@
 "use client";
 
-import DeleteConfirmationDialog from "@/components/dialog/DeleteConfirmationDialog";
 import ManagementTable from "@/components/table/ManagementTable";
 import { deleteDoctorOwnSchedule } from "@/app/(dashboard)/doctor/dashboard/my-schedules/_services";
 import { IDoctorSchedule } from "@/app/(dashboard)/admin/dashboard/schedules-management/_types";
@@ -8,6 +7,7 @@ import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { myScheduleColumns } from "./myScheduleColumns";
+import DeleteConfirmationDialog from "@/components/dialogs/DeleteConfirmationDialog";
 
 interface MySchedulesTableProps {
   schedules: IDoctorSchedule[];

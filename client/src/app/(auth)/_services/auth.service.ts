@@ -3,11 +3,11 @@
 import { verifyAccessToken } from "@/lib/auth/jwt-handlers";
 import { serverFetch } from "@/services/http";
 import { zodValidator } from "@/lib/utils/zod-validator";
-import { forgotPasswordSchema, resetPasswordSchema } from "@/app/(public)/(auth)/_validations/auth.validation";
+import { forgotPasswordSchema, resetPasswordSchema } from "@/app/(auth)/_validations/auth.validation";
 import { parse } from "cookie";
 import jwt from "jsonwebtoken";
 import { revalidateTag } from "next/cache";
-import { changePasswordSchema } from '@/app/(public)/(auth)/_validations/auth.validation';
+import { changePasswordSchema } from '@/app/(auth)/_validations/auth.validation';
 import { deleteCookie, getCookie, setCookie } from "./token-handlers.service";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */

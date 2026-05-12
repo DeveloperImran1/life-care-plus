@@ -1,6 +1,6 @@
 import { getDefaultDashboardRoute } from "@/lib/auth/auth-utils";
-import { getUserInfo } from "@/app/(public)/(auth)/_services/user-info.service";
-import { getCookie } from "@/app/(public)/(auth)/_services/token-handlers.service";
+import { getUserInfo } from "@/app/(auth)/_services/user-info.service";
+import { getCookie } from "@/app/(auth)/_services/token-handlers.service";
 import Link from "next/link";
 
 import MobileMenu from "./MobileMenu";

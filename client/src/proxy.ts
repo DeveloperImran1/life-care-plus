@@ -3,9 +3,9 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from './lib/auth/auth-utils';
 import { verifyResetPasswordToken } from './lib/auth/jwt-handlers';
-import { getNewAccessToken } from './app/(public)/(auth)/_services/auth.service';
-import { getUserInfo } from './app/(public)/(auth)/_services/user-info.service';
-import { deleteCookie, getCookie } from './app/(public)/(auth)/_services/token-handlers.service';
+import { getNewAccessToken } from './app/(auth)/_services/auth.service';
+import { getUserInfo } from './app/(auth)/_services/user-info.service';
+import { deleteCookie, getCookie } from './app/(auth)/_services/token-handlers.service';
 
 
 

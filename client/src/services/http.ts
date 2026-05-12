@@ -1,5 +1,5 @@
-import { getNewAccessToken } from "@/app/(public)/(auth)/_services/auth.service";
-import { getCookie } from "@/app/(public)/(auth)/_services/token-handlers.service";
+import { getNewAccessToken } from "@/app/(auth)/_services/auth.service";
+import { getCookie } from "@/app/(auth)/_services/token-handlers.service";
 
 
 const BACKEND_API_URL = process.env.NEXT_PUBLIC_BASE_API_URL || "http://localhost:5000/api/v1";

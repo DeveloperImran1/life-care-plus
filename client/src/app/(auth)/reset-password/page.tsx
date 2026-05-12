@@ -1,4 +1,4 @@
-import ResetPasswordForm from "@/app/(public)/(auth)/_components/ResetPasswordForm";
+import ResetPasswordForm from "@/app/(auth)/_components/ResetPasswordForm";
 
 const ResetPasswordPage = async ({
   searchParams,

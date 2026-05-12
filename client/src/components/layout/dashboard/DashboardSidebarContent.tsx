@@ -5,7 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { getIconComponent } from "@/lib/helpers/icon-mapper";
 import { cn } from "@/lib/utils";
 import { NavSection } from "@/app/(dashboard)/admin/_types/dashboard.type";
-import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
+import { UserInfo } from "@/app/(auth)/_types/user.type";
 import { ScrollArea } from "@radix-ui/react-scroll-area";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

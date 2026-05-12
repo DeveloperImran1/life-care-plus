@@ -3,7 +3,7 @@
 
 import { serverFetch } from "@/services/http";
 import { zodValidator } from "@/lib/utils/zod-validator";
-import { registerPatientValidationZodSchema } from "@/app/(public)/(auth)/_validations/auth.validation";
+import { registerPatientValidationZodSchema } from "@/app/(auth)/_validations/auth.validation";
 import { loginUser } from "./login-user.service";
 
 

@@ -10,7 +10,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { resetPassword } from "@/app/(public)/(auth)/_services/auth.service";
+import { resetPassword } from "@/app/(auth)/_services/auth.service";
 import { useRouter } from "next/navigation";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";

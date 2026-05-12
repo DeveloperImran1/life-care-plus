@@ -1,5 +1,5 @@
 // LoginPage.tsx
-import LoginForm from "@/app/(public)/(auth)/_components/LoginForm";
+import LoginForm from "@/app/(auth)/_components/LoginForm";
 import { LockKeyhole } from "lucide-react";
 
 const LoginPage = async ({

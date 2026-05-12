@@ -1,6 +1,6 @@
 // RegisterPage.tsx
 
-import RegisterForm from "@/app/(public)/(auth)/_components/RegisterForm";
+import RegisterForm from "@/app/(auth)/_components/RegisterForm";
 import { UserPlus } from "lucide-react";
 
 const RegisterPage = () => {

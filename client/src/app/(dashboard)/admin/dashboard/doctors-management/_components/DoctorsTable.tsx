@@ -1,5 +1,4 @@
 "use client";
-import DeleteConfirmationDialog from "@/components/dialog/DeleteConfirmationDialog";
 import ManagementTable from "@/components/table/ManagementTable";
 import { softDeleteDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_services";
 import { ISpecialty } from "@/types/specialty.type";
@@ -10,6 +9,7 @@ import DoctorFormDialog from "./DoctorFormDialog";
 import { doctorsColumns } from "./doctorsColumns";
 import DoctorViewDetailDialog from "./DoctorViewDetailDialog";
 import { IDoctor } from "../_types";
+import DeleteConfirmationDialog from "@/components/dialogs/DeleteConfirmationDialog";
 
 interface DoctorsTableProps {
   doctors: IDoctor[];

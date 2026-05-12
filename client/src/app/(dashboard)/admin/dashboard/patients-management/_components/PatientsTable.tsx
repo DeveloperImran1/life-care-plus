@@ -1,6 +1,5 @@
 "use client";
 
-import DeleteConfirmationDialog from "@/components/dialog/DeleteConfirmationDialog";
 import ManagementTable from "@/components/table/ManagementTable";
 import { softDeletePatient } from "@/app/(dashboard)/admin/dashboard/patients-management/_services";
 import { IPatient } from "@/types/patient.type";
@@ -10,6 +9,7 @@ import { toast } from "sonner";
 import PatientFormDialog from "./PatientFormDialog";
 import { patientsColumns } from "./patientsColumns";
 import PatientViewDetailDialog from "./PatientsViewDetailDialog";
+import DeleteConfirmationDialog from "@/components/dialogs/DeleteConfirmationDialog";
 
 interface PatientsTableProps {
   patients: IPatient[];

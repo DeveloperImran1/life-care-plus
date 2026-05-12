@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Field } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { changePassword } from "@/app/(public)/(auth)/_services/auth.service";
+import { changePassword } from "@/app/(auth)/_services/auth.service";
 import { CheckCircle, Eye, EyeOff, Loader2 } from "lucide-react";
 import { useActionState, useState } from "react";
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthToken } from "@/hooks/useAuthToken";
-import { UserInfo } from "@/app/(public)/(auth)/_types/user.type";
+import { UserInfo } from "@/app/(auth)/_types/user.type";
 import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import UserDropdown from "@/components/layout/dashboard/UserDropdown";

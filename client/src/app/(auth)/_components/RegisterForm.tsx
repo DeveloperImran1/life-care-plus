@@ -2,7 +2,7 @@
 
 "use client";
 
-import { registerPatient } from "@/app/(public)/(auth)/_services/register-patient.service";
+import { registerPatient } from "@/app/(auth)/_services/register-patient.service";
 import InputFieldError from "@/components/common/InputFieldError";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
