@@ -6,7 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { Eye, EyeOff, Facebook, LockKeyhole, Mail } from "lucide-react";
+import {
+  ArrowRight,
+  Eye,
+  EyeOff,
+  Facebook,
+  LockKeyhole,
+  Mail,
+} from "lucide-react";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
@@ -109,7 +116,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
       >
         {isPending ? "Logging in..." : "Login"}
 
-        <span className="ml-2">→</span>
+        <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
 
       {/* Divider */}
