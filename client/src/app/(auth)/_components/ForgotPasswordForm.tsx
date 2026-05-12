@@ -36,7 +36,7 @@ const ForgotPasswordForm = () => {
             name="email"
             type="email"
             placeholder="Enter your email"
-            className="pl-10"
+            className="h-12 rounded-lg border-input bg-background pl-11"
             defaultValue={state?.formData?.email || ""}
             required
             disabled={isPending}
@@ -49,7 +49,11 @@ const ForgotPasswordForm = () => {
         )}
       </Field>
 
-      <Button type="submit" disabled={isPending} className="w-full">
+      <Button
+        type="submit"
+        disabled={isPending}
+        className="h-12 w-full rounded-lg bg-primary font-semibold text-primary-foreground hover:bg-primary/90"
+      >
         {isPending ? (
           <>
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
