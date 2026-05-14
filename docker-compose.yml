@@ -1,33 +1,67 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:16-alpine
+    container_name: life-care-db
     restart: always
+
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=life_care_plus
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+
     ports:
-      - "5432:5432"
+      - "5433:5432"
+
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
   server:
-    build: ./server
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+
+    container_name: life-care-server
+
+    restart: always
+
     ports:
       - "5000:5000"
-    environment:
-      - DATABASE_URL=postgresql://postgres:password@db:5432/life_care_plus
+
+    env_file:
+      - ./server/.env
+
     depends_on:
       - db
 
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+
+    command: sh -c "npm run db:push && npm run dev"
+
   client:
-    build: ./client
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+
+    container_name: life-care-client
+
+    restart: always
+
     ports:
       - "3000:3000"
+
+    env_file:
+      - ./client/.env.local
+
     depends_on:
       - server
+
+    volumes:
+      - ./client:/app
+      - /app/node_modules
+
+    command: npm run dev
 
 volumes:
   postgres_data:

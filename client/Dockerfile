@@ -1,14 +1,12 @@
-FROM node:20-alpine
+FROM node:20
 
 WORKDIR /app
 
 COPY package*.json ./
+
 RUN npm install
 
 COPY . .
-
-# Next.js বিল্ড (প্রোডাকশনের জন্য হলে)
-# RUN npm run build
 
 EXPOSE 3000
 
