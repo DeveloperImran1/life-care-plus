@@ -6,58 +6,34 @@ import { AuthController } from '../auth/auth.controller';
 
 const router = express.Router();
 
+router.post('/login', authLimiter, AuthController.loginUser);
+
+router.post('/refresh-token', AuthController.refreshToken);
+
 router.post(
-    '/login',
-    authLimiter,
-    AuthController.loginUser
+  '/change-password',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  AuthController.changePassword,
 );
 
-router.post(
-    '/refresh-token',
-    AuthController.refreshToken
-)
+router.post('/forgot-password', AuthController.forgotPassword);
 
 router.post(
-    '/change-password',
-    auth(
-        UserRole.SUPER_ADMIN,
-        UserRole.ADMIN,
-        UserRole.DOCTOR,
-        UserRole.PATIENT
-    ),
-    AuthController.changePassword
+  '/reset-password',
+  (req: Request, res: Response, next: NextFunction) => {
+    //user is resetting password without token and logged in newly created admin or doctor
+    if (!req.headers.authorization && req.cookies.accessToken) {
+      console.log(req.headers.authorization, 'from reset password route guard');
+      console.log(req.cookies.accessToken, 'from reset password route guard');
+      auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT)(req, res, next);
+    } else {
+      //user is resetting password via email link with token
+      next();
+    }
+  },
+  AuthController.resetPassword,
 );
 
-router.post(
-    '/forgot-password',
-    AuthController.forgotPassword
-);
-
-router.post(
-    '/reset-password',
-    (req: Request, res: Response, next: NextFunction) => {
-
-        //user is resetting password without token and logged in newly created admin or doctor
-        if (!req.headers.authorization && req.cookies.accessToken) {
-            console.log(req.headers.authorization, "from reset password route guard");
-            console.log(req.cookies.accessToken, "from reset password route guard");
-            auth(
-                UserRole.SUPER_ADMIN,
-                UserRole.ADMIN,
-                UserRole.DOCTOR,
-                UserRole.PATIENT
-            )(req, res, next);
-        } else {
-            //user is resetting password via email link with token
-            next();
-        }
-    },
-    AuthController.resetPassword
-)
-
-router.get(
-    '/me',
-    AuthController.getMe
-)
+router.get('/me', AuthController.getMe);
 
 export const AuthRoutes = router;

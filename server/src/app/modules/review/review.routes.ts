@@ -1,4 +1,4 @@
-import express from 'express'
+import express from 'express';
 import { ReviewController } from '../review/review.controller';
 import auth from '../../middlewares/auth';
 import { UserRole } from '@prisma/client';
@@ -10,11 +10,10 @@ const router = express.Router();
 router.get('/', ReviewController.getAllFromDB);
 
 router.post(
-    '/',
-    auth(UserRole.PATIENT),
-    validateRequest(ReviewValidation.create),
-    ReviewController.insertIntoDB
+  '/',
+  auth(UserRole.PATIENT),
+  validateRequest(ReviewValidation.create),
+  ReviewController.insertIntoDB,
 );
-
 
 export const ReviewRoutes = router;
