@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import config from '../../../config';
-import { stripe } from '../../../helpers/stripe';
+import { stripe } from '../../../lib/stripe';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { PaymentService } from '../payment/payment.service';

@@ -2,7 +2,7 @@ import { AppointmentStatus, PaymentStatus, Prisma, UserRole } from '@prisma/clie
 import httpStatus from 'http-status';
 import { v4 as uuidv4 } from 'uuid';
 import { paginationHelper } from '../../../helpers/paginationHelper';
-import { stripe } from '../../../helpers/stripe';
+import { stripe } from '../../../lib/stripe';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../errors/ApiError';
 import { IAuthUser } from '../../interfaces/common';
@@ -137,37 +137,37 @@ const getMyAppointment = async (user: IAuthUser, filters: any, options: IPaginat
     include:
       user?.role === UserRole.DOCTOR
         ? {
-            patient: true,
-            schedule: true,
-            prescription: true,
-            review: true,
-            payment: true,
-            doctor: {
-              include: {
-                doctorSpecialties: {
-                  include: {
-                    specialities: true,
-                  },
+          patient: true,
+          schedule: true,
+          prescription: true,
+          review: true,
+          payment: true,
+          doctor: {
+            include: {
+              doctorSpecialties: {
+                include: {
+                  specialities: true,
                 },
               },
             },
-          }
-        : {
-            doctor: {
-              include: {
-                doctorSpecialties: {
-                  include: {
-                    specialities: true,
-                  },
-                },
-              },
-            },
-            schedule: true,
-            prescription: true,
-            review: true,
-            payment: true,
-            patient: true,
           },
+        }
+        : {
+          doctor: {
+            include: {
+              doctorSpecialties: {
+                include: {
+                  specialities: true,
+                },
+              },
+            },
+          },
+          schedule: true,
+          prescription: true,
+          review: true,
+          payment: true,
+          patient: true,
+        },
   });
 
   const total = await prisma.appointment.count({
@@ -258,8 +258,8 @@ const getAllFromDB = async (filters: any, options: IPaginationOptions) => {
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'desc',
-          },
+          createdAt: 'desc',
+        },
     include: {
       doctor: {
         include: {
