@@ -51,7 +51,7 @@ const refreshToken = async (token: string) => {
   try {
     decodedData = jwtHelpers.verifyToken(token, config.jwt.refresh_token_secret as Secret);
   } catch (err) {
-    throw new Error('You are not authorized!');
+    throw new ApiError(httpStatus.FORBIDDEN, 'Invalid or expired reset token!');
   }
 
   const userData = await prisma.user.findUniqueOrThrow({
@@ -97,7 +97,7 @@ const changePassword = async (user: any, payload: any) => {
   const isCorrectPassword: boolean = await bcrypt.compare(payload.oldPassword, userData.password);
 
   if (!isCorrectPassword) {
-    throw new Error('Password incorrect!');
+    throw new ApiError(httpStatus.FORBIDDEN, 'Password incorrect!');
   }
 
   const hashedPassword: string = await bcrypt.hash(payload.newPassword, Number(config.salt_round));

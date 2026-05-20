@@ -37,9 +37,9 @@ cron.schedule('*/5 * * * *', () => {
   }
 });
 
-app.get('/', (req: Request, res: Response) => {
+app.get('/', (_req: Request, res: Response) => {
   res.send({
-    Message: 'Ph health care server..',
+    Message: 'Life Care Plus Server is running..',
   });
 });
 

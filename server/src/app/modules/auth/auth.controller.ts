@@ -10,7 +10,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   const refreshTokenExpiresIn = config.jwt.refresh_token_expires_in as string;
 
   // convert accessTokenExpiresIn to milliseconds
-  let accessTokenMaxAge = 0;
+  let accessTokenMaxAge: number;
   const accessTokenUnit = accessTokenExpiresIn.slice(-1);
   const accessTokenValue = parseInt(accessTokenExpiresIn.slice(0, -1));
   if (accessTokenUnit === 'y') {
@@ -32,7 +32,7 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   }
 
   // convert refreshTokenExpiresIn to milliseconds
-  let refreshTokenMaxAge = 0;
+  let refreshTokenMaxAge: number;
   const refreshTokenUnit = refreshTokenExpiresIn.slice(-1);
   const refreshTokenValue = parseInt(refreshTokenExpiresIn.slice(0, -1));
   if (refreshTokenUnit === 'y') {
@@ -88,7 +88,7 @@ REFRESH_TOKEN_EXPIRES_IN=1y
   const refreshTokenExpiresIn = config.jwt.refresh_token_expires_in as string;
 
   // convert accessTokenExpiresIn to milliseconds
-  let accessTokenMaxAge = 0;
+  let accessTokenMaxAge: number;
   const accessTokenUnit = accessTokenExpiresIn.slice(-1);
   const accessTokenValue = parseInt(accessTokenExpiresIn.slice(0, -1));
   if (accessTokenUnit === 'y') {
@@ -110,7 +110,7 @@ REFRESH_TOKEN_EXPIRES_IN=1y
   }
 
   // convert refreshTokenExpiresIn to milliseconds
-  let refreshTokenMaxAge = 0;
+  let refreshTokenMaxAge: number;
   const refreshTokenUnit = refreshTokenExpiresIn.slice(-1);
   const refreshTokenValue = parseInt(refreshTokenExpiresIn.slice(0, -1));
   if (refreshTokenUnit === 'y') {
