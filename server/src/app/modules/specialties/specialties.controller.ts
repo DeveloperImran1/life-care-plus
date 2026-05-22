@@ -6,7 +6,7 @@ import { SpecialtiesService } from './specialties.service';
 import pick from '../../../shared/pick';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
-  const result = await SpecialtiesService.inserIntoDB(req);
+  const result = await SpecialtiesService.insertIntoDB(req);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

@@ -3,7 +3,7 @@ import { Request } from 'express';
 import { fileUploader } from '../../../helpers/fileUploader';
 import prisma from '../../../shared/prisma';
 
-const inserIntoDB = async (req: Request) => {
+const insertIntoDB = async (req: Request) => {
   const file = req.file;
 
   if (file) {
@@ -55,7 +55,7 @@ const deleteFromDB = async (id: string): Promise<Specialties> => {
 };
 
 export const SpecialtiesService = {
-  inserIntoDB,
+  insertIntoDB,
   getAllFromDB,
   deleteFromDB,
 };

@@ -8,6 +8,8 @@ import prisma from '../../../shared/prisma';
 import { IAuthUser } from '../../interfaces/common';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import { userSearchAbleFields } from '../user/user.constant';
+import ApiError from '../../errors/ApiError';
+import httpStatus from 'http-status';
 
 const createAdmin = async (req: Request): Promise<Admin> => {
   const file = req.file;
@@ -88,7 +90,10 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
       const invalidSpecialties = specialties.filter((id) => !existingSpecialtyIds.includes(id));
 
       if (invalidSpecialties.length > 0) {
-        throw new Error(`Invalid specialty IDs: ${invalidSpecialties.join(', ')}`);
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          `Invalid specialty IDs: ${invalidSpecialties.join(', ')}`
+        );
       }
 
       // Create doctor specialties relations
@@ -193,11 +198,11 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
     orderBy:
       options.sortBy && options.sortOrder
         ? {
-            [options.sortBy]: options.sortOrder,
-          }
+          [options.sortBy]: options.sortOrder,
+        }
         : {
-            createdAt: 'desc',
-          },
+          createdAt: 'desc',
+        },
     select: {
       id: true,
       email: true,
