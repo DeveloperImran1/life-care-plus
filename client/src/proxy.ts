@@ -3,9 +3,9 @@ import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
 import { getDefaultDashboardRoute, getRouteOwner, isAuthRoute, UserRole } from './lib/auth/auth-utils';
 import { verifyResetPasswordToken } from './lib/auth/jwt-handlers';
-import { getNewAccessToken } from './features/auth/services/auth.service';
-import { getUserInfo } from './features/auth/services/user-info.service';
-import { deleteCookie, getCookie } from './features/auth/services/token-handlers.service';
+import { getNewAccessToken } from './app/(auth)/_services/auth.service';
+import { getUserInfo } from './app/(auth)/_services/user-info.service';
+import { deleteCookie, getCookie } from './app/(auth)/_services/token-handlers.service';
 
 
 
@@ -66,6 +66,7 @@ export async function proxy(request: NextRequest) {
             userRole = verifiedToken.role as UserRole;
 
         } catch (error) {
+            console.error("Error verifying token:", error);
             await deleteCookie("accessToken");
             await deleteCookie("refreshToken");
 

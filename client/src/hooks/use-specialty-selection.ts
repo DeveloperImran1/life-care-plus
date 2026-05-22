@@ -1,5 +1,5 @@
-import { IDoctor } from "@/features/doctor/types/doctor.type";
-import { ISpecialty } from "@/features/consultation/types/specialty.type";
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
+import { ISpecialty } from "@/types/specialty.type";
 import { useEffect, useState } from "react";
 
 interface UseSpecialtySelectionProps {

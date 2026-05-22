@@ -1,7 +1,7 @@
 "use client";
 
 import { useAuthToken } from "@/hooks/useAuthToken";
-import { UserInfo } from "@/features/auth/types/user.type";
+import { UserInfo } from "@/app/(auth)/_types/user.type";
 import { LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 import UserDropdown from "@/components/layout/dashboard/UserDropdown";
@@ -42,7 +42,7 @@ export default function NavbarAuthButtons({
 
   return (
     <Link href="/login">
-      <Button>Login</Button>
+      <Button size="lg">Login</Button>
     </Link>
   );
 }

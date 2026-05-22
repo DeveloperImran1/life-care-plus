@@ -1,8 +1,8 @@
 import { getDefaultDashboardRoute } from "@/lib/auth/auth-utils";
-import { getNavItemsByRole } from "@/lib/configs/nav-items.config";
-import { getUserInfo } from "@/features/auth/services/user-info.service";
-import { NavSection } from "@/features/dashboard/types/dashboard.type";
-import { UserInfo } from "@/features/auth/types/user.type";
+import { getNavItemsByRole } from "@/lib/navigation/nav-items.config";
+import { getUserInfo } from "@/app/(auth)/_services/user-info.service";
+import { NavSection } from "@/app/(dashboard)/admin/_types/dashboard.type";
+import { UserInfo } from "@/app/(auth)/_types/user.type";
 import DashboardSidebarContent from "./DashboardSidebarContent";
 
 const DashboardSidebar = async () => {

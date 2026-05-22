@@ -1,4 +1,4 @@
-import { DashboardSkeleton } from "@/components/shared/DashboardSkeleton";
+import { DashboardSkeleton } from "@/components/feedback/DashboardSkeleton";
 
 const AdminDashboardLoading = () => {
   return <DashboardSkeleton />;

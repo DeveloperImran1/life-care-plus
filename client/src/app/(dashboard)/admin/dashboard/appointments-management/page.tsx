@@ -1,9 +1,9 @@
 import AppointmentsFilter from "@/app/(dashboard)/admin/dashboard/appointments-management/_components/AppointmentsFilter";
 
 import AppointmentsTable from "@/app/(dashboard)/admin/dashboard/appointments-management/_components/AppointmentsTable";
-import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
-import TablePagination from "@/components/shared/TablePagination";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import ManagementPageHeader from "@/components/common/ManagementPageHeader";
+import TablePagination from "@/components/table/TablePagination";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";
 import { getAppointments } from "@/app/(dashboard)/admin/dashboard/appointments-management/_services";
 import { Suspense } from "react";

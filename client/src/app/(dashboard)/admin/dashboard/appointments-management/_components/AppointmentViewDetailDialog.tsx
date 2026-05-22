@@ -15,7 +15,7 @@ import {
   AppointmentStatus,
   IAppointment,
   PaymentStatus,
-} from "@/features/patient/types/appointment.type";
+} from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { Calendar, Clock, CreditCard, User, Video, X } from "lucide-react";
 
 interface AppointmentViewDetailDialogProps {

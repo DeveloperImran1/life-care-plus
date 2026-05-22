@@ -20,7 +20,7 @@ import { changeAppointmentStatus } from "../_services/index";
 import {
   AppointmentStatus,
   IAppointment,
-} from "@/features/patient/types/appointment.type";
+} from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { Loader2 } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";

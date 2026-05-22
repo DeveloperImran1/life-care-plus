@@ -1,9 +1,9 @@
-import { AppointmentBarChart } from "@/components/shared/AppointmentBarChart";
-import { AppointmentPieChart } from "@/components/shared/AppointmentPieChart";
-import { DashboardSkeleton } from "@/components/shared/DashboardSkeleton";
-import { StatsCard } from "@/components/shared/StatCard";
-import { getDashboardMetaData } from "@/features/dashboard/services/dashboard.service";
-import { IAdminDashboardMeta } from "@/features/dashboard/types/meta.type";
+import { AppointmentBarChart } from "@/components/charts/AppointmentBarChart";
+import { AppointmentPieChart } from "@/components/charts/AppointmentPieChart";
+import { DashboardSkeleton } from "@/components/feedback/DashboardSkeleton";
+import { StatsCard } from "@/components/cards/StatCard";
+import { getDashboardMetaData } from "@/app/(dashboard)/admin/_services/dashboard.service";
+import { IAdminDashboardMeta } from "@/app/(dashboard)/admin/_types/meta.type";
 import { Suspense } from "react";
 
 async function AdminDashboardContent() {

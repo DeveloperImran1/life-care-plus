@@ -3,28 +3,13 @@ import { PatientController } from '../patient/patient.controller';
 
 const router = express.Router();
 
-router.get(
-    '/',
-    PatientController.getAllFromDB
-);
+router.get('/', PatientController.getAllFromDB);
 
-router.get(
-    '/:id',
-    PatientController.getByIdFromDB
-);
+router.get('/:id', PatientController.getByIdFromDB);
 
-router.patch(
-    '/:id',
-    PatientController.updateIntoDB
-);
+router.patch('/:id', PatientController.updateIntoDB);
 
-router.delete(
-    '/:id',
-    PatientController.deleteFromDB
-);
-router.delete(
-    '/soft/:id',
-    PatientController.softDelete
-);
+router.delete('/:id', PatientController.deleteFromDB);
+router.delete('/soft/:id', PatientController.softDelete);
 
 export const PatientRoutes = router;

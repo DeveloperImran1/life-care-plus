@@ -1,15 +1,15 @@
 "use client";
 
-import DeleteConfirmationDialog from "@/components/shared/DeleteConfirmationDialog";
-import ManagementTable from "@/components/shared/ManagementTable";
+import ManagementTable from "@/components/table/ManagementTable";
 import { softDeleteAdmin } from "../_services";
 import { IAdmin } from "../_types/index";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
-import { adminsColumns } from "./adminsColumn";
+import { adminsColumns } from "./adminsColumns";
 import AdminViewDetailDialog from "./AdminViewDetailDialog";
 import AdminFormDialog from "./AdminFormDialog";
+import DeleteConfirmationDialog from "@/components/dialogs/DeleteConfirmationDialog";
 
 interface AdminsTableProps {
   admins: IAdmin[];

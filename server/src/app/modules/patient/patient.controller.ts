@@ -22,7 +22,6 @@ const getAllFromDB = catchAsync(async (req: Request, res: Response) => {
 });
 
 const getByIdFromDB = catchAsync(async (req: Request, res: Response) => {
-
   const { id } = req.params;
   const result = await PatientService.getByIdFromDB(id);
 
@@ -56,7 +55,6 @@ const deleteFromDB = catchAsync(async (req: Request, res: Response) => {
     data: result,
   });
 });
-
 
 const softDelete = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;

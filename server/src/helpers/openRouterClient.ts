@@ -10,10 +10,10 @@ export const askOpenRouter = async (messages: any[]) => {
     },
     {
       headers: {
-        'Authorization': `Bearer ${config.openRouterApiKey}`,
+        Authorization: `Bearer ${config.openRouterApiKey}`,
         'Content-Type': 'application/json',
       },
-    }
+    },
   );
 
   return response.data.choices[0].message.content;

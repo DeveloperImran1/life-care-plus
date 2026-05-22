@@ -1,7 +1,7 @@
 "use client";
 
-import ManagementTable from "@/components/shared/ManagementTable";
-import { IAppointment } from "@/features/patient/types/appointment.type";
+import ManagementTable from "@/components/table/ManagementTable";
+import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { appointmentsColumns } from "./appointmentsColumns";

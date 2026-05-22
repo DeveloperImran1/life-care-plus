@@ -1,5 +1,5 @@
-import RefreshButton from "@/components/shared/RefreshButton";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import RefreshButton from "@/components/buttons/RefreshButton";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { getSpecialities } from "@/app/(dashboard)/admin/dashboard/specialities-management/_services";
 import { Suspense } from "react";
 import SpecialitiesManagementHeader from "./_components/SpecialitiesManagementHeader";

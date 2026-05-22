@@ -1,4 +1,4 @@
-import InputFieldError from "@/components/shared/InputFieldError";
+import InputFieldError from "@/components/common/InputFieldError";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

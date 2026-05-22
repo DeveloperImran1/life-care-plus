@@ -1,11 +1,11 @@
-import { z } from "zod";
+import { z } from 'zod';
 
 const create = z.object({
-    title: z.string({
-        error: "Title is required!"
-    })
+  title: z.string({
+    error: 'Title is required!',
+  }),
 });
 
 export const SpecialtiesValidtaion = {
-    create
-}
+  create,
+};

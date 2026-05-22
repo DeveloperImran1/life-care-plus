@@ -1,10 +1,10 @@
 "use client";
-import ClearFiltersButton from "@/components/shared/ClearFiltersButton";
-import MultiSelectFilter from "@/components/shared/MultiSelectFilter";
-import RefreshButton from "@/components/shared/RefreshButton";
-import SearchFilter from "@/components/shared/SearchFilter";
-import SelectFilter from "@/components/shared/SelectFilter";
-import { ISpecialty } from "@/features/consultation/types/specialty.type";
+import ClearFiltersButton from "@/components/buttons/ClearFiltersButton";
+import MultiSelectFilter from "@/components/common/MultiSelectFilter";
+import RefreshButton from "@/components/buttons/RefreshButton";
+import SearchFilter from "@/components/common/SearchFilter";
+import SelectFilter from "@/components/common/SelectFilter";
+import { ISpecialty } from "@/types/specialty.type";
 
 interface DoctorsFilterProps {
   specialties: ISpecialty[];

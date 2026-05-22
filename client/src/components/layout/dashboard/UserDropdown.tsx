@@ -1,6 +1,6 @@
 "use client";
 
-import LogoutButton from "@/components/shared/LogoutButton";
+import LogoutButton from "@/components/buttons/LogoutButton";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,8 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { logoutUser } from "@/features/auth/services/logout-user.service";
-import { UserInfo } from "@/features/auth/types/user.type";
+import { logoutUser } from "@/app/(auth)/_services/logout-user.service";
+import { UserInfo } from "@/app/(auth)/_types/user.type";
 import { Settings, User } from "lucide-react";
 import Link from "next/link";
 

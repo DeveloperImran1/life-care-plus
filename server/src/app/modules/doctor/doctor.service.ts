@@ -1,15 +1,12 @@
-import { Doctor, Prisma, UserStatus } from "@prisma/client";
-import { askOpenRouter } from "../../../helpers/openRouterClient";
-import { paginationHelper } from "../../../helpers/paginationHelper";
-import prisma from "../../../shared/prisma";
-import { IPaginationOptions } from "../../interfaces/pagination";
-import { doctorSearchableFields } from "../doctor/doctor.constants";
-import { IDoctorFilterRequest, IDoctorUpdate } from "../doctor/doctor.interface";
+import { Doctor, Prisma, UserStatus } from '@prisma/client';
+import { askOpenRouter } from '../../../helpers/openRouterClient';
+import { paginationHelper } from '../../../helpers/paginationHelper';
+import prisma from '../../../shared/prisma';
+import { IPaginationOptions } from '../../interfaces/pagination';
+import { doctorSearchableFields } from '../doctor/doctor.constants';
+import { IDoctorFilterRequest, IDoctorUpdate } from '../doctor/doctor.interface';
 
-const getAllFromDB = async (
-  filters: IDoctorFilterRequest,
-  options: IPaginationOptions
-) => {
+const getAllFromDB = async (filters: IDoctorFilterRequest, options: IPaginationOptions) => {
   const { limit, page, skip } = paginationHelper.calculatePagination(options);
   const { searchTerm, specialties, ...filterData } = filters;
 
@@ -20,7 +17,7 @@ const getAllFromDB = async (
       OR: doctorSearchableFields.map((field) => ({
         [field]: {
           contains: searchTerm,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       })),
     });
@@ -38,7 +35,7 @@ const getAllFromDB = async (
           specialities: {
             title: {
               in: specialtiesArray,
-              mode: "insensitive",
+              mode: 'insensitive',
             },
           },
         },
@@ -69,21 +66,21 @@ const getAllFromDB = async (
     orderBy:
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
-        : { averageRating: "desc" },
+        : { averageRating: 'desc' },
     include: {
       doctorSpecialties: {
         include: {
           specialities: {
             select: {
               title: true,
-            }
+            },
           },
         },
       },
       doctorSchedules: {
         include: {
-          schedule: true
-        }
+          schedule: true,
+        },
       },
       review: {
         select: {
@@ -123,8 +120,8 @@ const getByIdFromDB = async (id: string): Promise<Doctor | null> => {
       },
       doctorSchedules: {
         include: {
-          schedule: true
-        }
+          schedule: true,
+        },
       },
       review: true,
     },
@@ -154,32 +151,21 @@ const updateIntoDB = async (id: string, payload: IDoctorUpdate) => {
     }
 
     // Step 2: Remove specialties if provided
-    if (
-      removeSpecialties &&
-      Array.isArray(removeSpecialties) &&
-      removeSpecialties.length > 0
-    ) {
+    if (removeSpecialties && Array.isArray(removeSpecialties) && removeSpecialties.length > 0) {
       // Validate that specialties to remove exist for this doctor
-      const existingDoctorSpecialties =
-        await transactionClient.doctorSpecialties.findMany({
-          where: {
-            doctorId: doctorInfo.id,
-            specialitiesId: {
-              in: removeSpecialties,
-            },
+      const existingDoctorSpecialties = await transactionClient.doctorSpecialties.findMany({
+        where: {
+          doctorId: doctorInfo.id,
+          specialitiesId: {
+            in: removeSpecialties,
           },
-        });
+        },
+      });
 
       if (existingDoctorSpecialties.length !== removeSpecialties.length) {
-        const foundIds = existingDoctorSpecialties.map(
-          (ds) => ds.specialitiesId
-        );
-        const notFound = removeSpecialties.filter(
-          (id) => !foundIds.includes(id)
-        );
-        throw new Error(
-          `Cannot remove non-existent specialties: ${notFound.join(", ")}`
-        );
+        const foundIds = existingDoctorSpecialties.map((ds) => ds.specialitiesId);
+        const notFound = removeSpecialties.filter((id) => !foundIds.includes(id));
+        throw new Error(`Cannot remove non-existent specialties: ${notFound.join(', ')}`);
       }
 
       // Delete the specialties
@@ -208,36 +194,27 @@ const updateIntoDB = async (id: string, payload: IDoctorUpdate) => {
       });
 
       const existingSpecialtyIds = existingSpecialties.map((s) => s.id);
-      const invalidSpecialties = specialties.filter(
-        (id) => !existingSpecialtyIds.includes(id)
-      );
+      const invalidSpecialties = specialties.filter((id) => !existingSpecialtyIds.includes(id));
 
       if (invalidSpecialties.length > 0) {
-        throw new Error(
-          `Invalid specialty IDs: ${invalidSpecialties.join(", ")}`
-        );
+        throw new Error(`Invalid specialty IDs: ${invalidSpecialties.join(', ')}`);
       }
 
       // Check for duplicates - don't add specialties that already exist
-      const currentDoctorSpecialties =
-        await transactionClient.doctorSpecialties.findMany({
-          where: {
-            doctorId: doctorInfo.id,
-            specialitiesId: {
-              in: specialties,
-            },
+      const currentDoctorSpecialties = await transactionClient.doctorSpecialties.findMany({
+        where: {
+          doctorId: doctorInfo.id,
+          specialitiesId: {
+            in: specialties,
           },
-          select: {
-            specialitiesId: true,
-          },
-        });
+        },
+        select: {
+          specialitiesId: true,
+        },
+      });
 
-      const currentSpecialtyIds = currentDoctorSpecialties.map(
-        (ds) => ds.specialitiesId
-      );
-      const newSpecialties = specialties.filter(
-        (id) => !currentSpecialtyIds.includes(id)
-      );
+      const currentSpecialtyIds = currentDoctorSpecialties.map((ds) => ds.specialitiesId);
+      const newSpecialties = specialties.filter((id) => !currentSpecialtyIds.includes(id));
 
       // Only create new specialties that don't already exist
       if (newSpecialties.length > 0) {
@@ -350,22 +327,23 @@ const getAISuggestion = async (input: PatientInput) => {
       qualification: doctor.qualification,
       currentWorkingPlace: doctor.currentWorkingPlace,
       designation: doctor.designation,
-      averageRating: doctor.review && doctor.review.length > 0
-        ? doctor.review.reduce((sum: number, r: any) => sum + r.rating, 0) / doctor.review.length
-        : 0,
+      averageRating:
+        doctor.review && doctor.review.length > 0
+          ? doctor.review.reduce((sum: number, r: any) => sum + r.rating, 0) / doctor.review.length
+          : 0,
       specialties: allSpecialties, // Array of all specialties
       primarySpecialty: allSpecialties[0] || 'General', // For backward compatibility
     };
   });
 
   const systemMessage = {
-    role: "system",
+    role: 'system',
     content:
-      "You are an expert medical recommendation assistant. Analyze patient symptoms and match them to the most appropriate medical specialty, then recommend suitable doctors. Be very precise in specialty matching - for example: headaches/brain issues → Neurology, chest pain/heart issues → Cardiology, kidney issues → Nephrology, etc.",
+      'You are an expert medical recommendation assistant. Analyze patient symptoms and match them to the most appropriate medical specialty, then recommend suitable doctors. Be very precise in specialty matching - for example: headaches/brain issues → Neurology, chest pain/heart issues → Cardiology, kidney issues → Nephrology, etc.',
   };
 
   const userMessage = {
-    role: "user",
+    role: 'user',
     content: `
 Patient Symptoms: ${input.symptoms}
 
@@ -423,8 +401,8 @@ RESPOND WITH ONLY THE JSON ARRAY - NO EXPLANATIONS, NO MARKDOWN, NO EXTRA TEXT.
 
     // Clean the response to extract JSON
     const cleanedJson = response
-      .replace(/```(?:json)?\s*/g, "") // remove ``` or ```json
-      .replace(/```$/g, "") // remove ending ```
+      .replace(/```(?:json)?\s*/g, '') // remove ``` or ```json
+      .replace(/```$/g, '') // remove ending ```
       .trim();
 
     const suggestedDoctors = JSON.parse(cleanedJson);
@@ -457,10 +435,7 @@ RESPOND WITH ONLY THE JSON ARRAY - NO EXPLANATIONS, NO MARKDOWN, NO EXTRA TEXT.
   }
 };
 
-const getAllPublic = async (
-  filters: IDoctorFilterRequest,
-  options: IPaginationOptions
-) => {
+const getAllPublic = async (filters: IDoctorFilterRequest, options: IPaginationOptions) => {
   const { limit, page, skip } = paginationHelper.calculatePagination(options);
   const { searchTerm, specialties, ...filterData } = filters;
 
@@ -471,7 +446,7 @@ const getAllPublic = async (
       OR: doctorSearchableFields.map((field) => ({
         [field]: {
           contains: searchTerm,
-          mode: "insensitive",
+          mode: 'insensitive',
         },
       })),
     });
@@ -488,7 +463,7 @@ const getAllPublic = async (
           specialities: {
             title: {
               in: specialtiesArray,
-              mode: "insensitive",
+              mode: 'insensitive',
             },
           },
         },
@@ -519,7 +494,7 @@ const getAllPublic = async (
     orderBy:
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
-        : { averageRating: "desc" },
+        : { averageRating: 'desc' },
     select: {
       id: true,
       name: true,
