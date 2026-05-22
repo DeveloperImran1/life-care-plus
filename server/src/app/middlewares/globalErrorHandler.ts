@@ -9,6 +9,7 @@ import {
 import AppError from '../errors/ApiError';
 import handleZodError from '../errors/handleZodError';
 import handlePrismaValidationError from '../errors/prismaErrorParser';
+import logger from '../../lib/logger';
 
 const sanitizeError = (
   err: any, // eslint-disable-line
@@ -47,7 +48,12 @@ const globalErrorHandler = (
   res: Response,
   next: NextFunction, // eslint-disable-line
 ) => {
-  console.log(err);
+  // Log error with full details
+  logger.error('API Error Handler', err, {
+    path: req.path,
+    method: req.method,
+    ip: req.ip,
+  });
 
   let statusCode = 500;
   let message = 'Something went wrong!';

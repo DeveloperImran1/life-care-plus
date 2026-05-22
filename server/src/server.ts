@@ -2,6 +2,7 @@ import { Server } from 'http';
 import app from './app';
 import seedSuperAdmin from './helpers/seed';
 import config from './config';
+import logger from './lib/logger';
 
 async function bootstrap() {
   // This variable will hold our server instance
@@ -13,14 +14,14 @@ async function bootstrap() {
 
     // Start the server
     server = app.listen(config.port, () => {
-      console.log(`🚀 Server is running on http://localhost:${config.port}`);
+      logger.serverStart(config.port);
     });
 
     // Function to gracefully shut down the server
     const exitHandler = () => {
       if (server) {
         server.close(() => {
-          console.log('Server closed gracefully.');
+          logger.info('Server closed gracefully.');
           process.exit(1); // Exit with a failure code
         });
       } else {
@@ -30,10 +31,10 @@ async function bootstrap() {
 
     // Handle unhandled promise rejections
     process.on('unhandledRejection', (error) => {
-      console.log('Unhandled Rejection is detected, we are closing our server...');
+      logger.error('Unhandled Rejection is detected, we are closing our server', error as Error);
       if (server) {
         server.close(() => {
-          console.log(error);
+          logger.error('Server closed due to unhandled rejection', error as Error);
           process.exit(1);
         });
       } else {
@@ -41,7 +42,7 @@ async function bootstrap() {
       }
     });
   } catch (error) {
-    console.error('Error during server startup:', error);
+    logger.error('Error during server startup', error as Error);
     process.exit(1);
   }
 }

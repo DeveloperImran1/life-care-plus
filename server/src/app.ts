@@ -4,6 +4,8 @@ import express, { Application, NextFunction, Request, Response } from 'express';
 import httpStatus from 'http-status';
 import cron from 'node-cron';
 import globalErrorHandler from './app/middlewares/globalErrorHandler';
+import { requestLogger, requestTracker } from './app/middlewares/requestLogger';
+import logger from './lib/logger';
 import router from './app/routes';
 import { PaymentController } from './app/modules/payment/payment.controller';
 import { AppointmentService } from './app/modules/appointment/appointment.service';
@@ -24,16 +26,28 @@ app.use(
   }),
 );
 
+// Add request tracking middleware
+app.use(requestTracker);
+
+// Add request logging middleware (Morgan with Winston)
+app.use(requestLogger);
+
 //parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Cron job for cleaning up unpaid appointments
 cron.schedule('*/5 * * * *', () => {
+  const startTime = Date.now();
   try {
-    console.log('🔄 Running unpaid appointment cleanup at', new Date().toISOString());
+    logger.info('🔄 Running unpaid appointment cleanup');
     AppointmentService.cancelUnpaidAppointments();
+    const duration = Date.now() - startTime;
+    logger.cronJob('cancelUnpaidAppointments', true, duration);
   } catch (err) {
-    console.error('❌ Cron job error:', err);
+    const duration = Date.now() - startTime;
+    logger.cronJob('cancelUnpaidAppointments', false, duration);
+    logger.error('❌ Cron job error', err as Error);
   }
 });
 
