@@ -97,14 +97,20 @@ const globalErrorHandler = (
         };
         break;
       }
-      case 'P2003':
+      case 'P2003': {
+        const modelName = err.meta?.modelName || 'Record';
+
         statusCode = 400;
-        message = 'Invalid relation. Related data not found';
+
+        message = `${modelName} relation data not found!`;
+
         errorDetails = {
           code: err.code,
-          field: err.meta?.field_name,
+          model: modelName,
         };
+
         break;
+      }
 
       case 'P2011':
         statusCode = 400;
@@ -115,14 +121,19 @@ const globalErrorHandler = (
         };
         break;
 
-      case 'P2025':
+      case 'P2025': {
+        const modelName = err.meta?.modelName || 'Record';
+
         statusCode = 404;
-        message = 'Requested data not found';
+        message = `${modelName} not found!`;
+
         errorDetails = {
           code: err.code,
-          cause: err.meta?.cause,
+          model: modelName,
         };
+
         break;
+      }
 
       default:
         statusCode = 400;

@@ -90,7 +90,10 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
       const invalidSpecialties = specialties.filter((id) => !existingSpecialtyIds.includes(id));
 
       if (invalidSpecialties.length > 0) {
-        throw new Error(`Invalid specialty IDs: ${invalidSpecialties.join(', ')}`);
+        throw new ApiError(
+          httpStatus.BAD_REQUEST,
+          `Invalid specialty IDs: ${invalidSpecialties.join(', ')}`
+        );
       }
 
       // Create doctor specialties relations

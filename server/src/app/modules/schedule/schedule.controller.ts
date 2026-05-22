@@ -7,7 +7,7 @@ import { IAuthUser } from '../../interfaces/common';
 import { ScheduleService } from '../schedule/schedule.service';
 
 const insertIntoDB = catchAsync(async (req: Request, res: Response) => {
-  const result = await ScheduleService.inserIntoDB(req.body);
+  const result = await ScheduleService.insertIntoDB(req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
