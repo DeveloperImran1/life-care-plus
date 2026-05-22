@@ -1,7 +1,7 @@
-import DoctorAppointmentsTable from "@/features/doctor/components/DoctorAppointments/DoctorAppointmentTable";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
-import { getMyAppointments } from "@/features/patient/services/appointment.service";
-import { IAppointment } from "@/features/patient/types/appointment.type";
+import DoctorAppointmentsTable from "@/app/(dashboard)/doctor/dashboard/appointments/_components/DoctorAppointmentTable";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
+import { getMyAppointments } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services";
+import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { Suspense } from "react";
 
 async function AppointmentsContent() {

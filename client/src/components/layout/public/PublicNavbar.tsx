@@ -1,8 +1,8 @@
 import { getDefaultDashboardRoute } from "@/lib/auth/auth-utils";
-import { getUserInfo } from "@/features/auth/services/user-info.service";
-import { getCookie } from "@/features/auth/services/token-handlers.service";
+import { getUserInfo } from "@/app/(auth)/_services/user-info.service";
+import { getCookie } from "@/app/(auth)/_services/token-handlers.service";
 import Link from "next/link";
-import AISearchDialog from "@/features/ai/components/AISearchDialog";
+
 import MobileMenu from "./MobileMenu";
 import logo from "@/assets/logos/navlog.png";
 import NavbarAuthButtons from "./NavbarAuthButtons";
@@ -10,7 +10,7 @@ import Image from "next/image";
 
 const PublicNavbar = async () => {
   const navItems = [
-    { href: "/consultation", label: "Consultation" },
+    { href: "/doctors", label: "Doctors" },
     { href: "/health-plans", label: "Health Plans" },
     { href: "/medicine", label: "Medicine" },
     { href: "/diagnostics", label: "Diagnostics" },
@@ -44,7 +44,7 @@ const PublicNavbar = async () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-2">
-          <AISearchDialog />
+          {/* <AISearchDialog /> */}
           <NavbarAuthButtons
             initialHasToken={!!accessToken}
             initialUserInfo={userInfo}

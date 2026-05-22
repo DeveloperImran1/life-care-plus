@@ -1,10 +1,10 @@
 "use client";
 
-import { DateCell } from "@/components/shared/cell/DateCell";
-import { StatusBadgeCell } from "@/components/shared/cell/StatusBadgeCell";
-import { UserInfoCell } from "@/components/shared/cell/UserInfoCell";
-import { Column } from "@/components/shared/ManagementTable";
-import { IPatient } from "@/features/patient/types/patient.type";
+import { DateCell } from "@/components/table/cells/DateCell";
+import { StatusBadgeCell } from "@/components/table/cells/StatusBadgeCell";
+import { UserInfoCell } from "@/components/table/cells/UserInfoCell";
+import { Column } from "@/components/table/ManagementTable";
+import { IPatient } from "@/types/patient.type";
 
 export const patientsColumns: Column<IPatient>[] = [
   {

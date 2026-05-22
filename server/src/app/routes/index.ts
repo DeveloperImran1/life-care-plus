@@ -17,65 +17,63 @@ import { MetaRoutes } from '../modules/meta/meta.routes';
 
 const router = express.Router();
 
-
-
 router.use(apiLimiter); // Apply to all routes
 
 const moduleRoutes = [
-    {
-        path: '/user',
-        route: userRoutes
-    },
-    {
-        path: '/admin',
-        route: AdminRoutes
-    },
-    {
-        path: '/auth',
-        route: AuthRoutes
-    },
-    {
-        path: '/specialties',
-        route: SpecialtiesRoutes
-    },
-    {
-        path: '/doctor',
-        route: DoctorRoutes
-    },
-    {
-        path: '/patient',
-        route: PatientRoutes
-    },
-    {
-        path: '/schedule',
-        route: ScheduleRoutes
-    },
-    {
-        path: '/doctor-schedule',
-        route: DoctorScheduleRoutes
-    },
-    {
-        path: '/appointment',
-        route: AppointmentRoutes
-    },
-    {
-        path: '/payment',
-        route: PaymentRoutes
-    },
-    {
-        path: '/prescription',
-        route: PrescriptionRoutes
-    },
-    {
-        path: '/review',
-        route: ReviewRoutes
-    },
-    {
-        path: '/meta',
-        route: MetaRoutes
-    }
+  {
+    path: '/user',
+    route: userRoutes,
+  },
+  {
+    path: '/admin',
+    route: AdminRoutes,
+  },
+  {
+    path: '/auth',
+    route: AuthRoutes,
+  },
+  {
+    path: '/specialties',
+    route: SpecialtiesRoutes,
+  },
+  {
+    path: '/doctor',
+    route: DoctorRoutes,
+  },
+  {
+    path: '/patient',
+    route: PatientRoutes,
+  },
+  {
+    path: '/schedule',
+    route: ScheduleRoutes,
+  },
+  {
+    path: '/doctor-schedule',
+    route: DoctorScheduleRoutes,
+  },
+  {
+    path: '/appointment',
+    route: AppointmentRoutes,
+  },
+  {
+    path: '/payment',
+    route: PaymentRoutes,
+  },
+  {
+    path: '/prescription',
+    route: PrescriptionRoutes,
+  },
+  {
+    path: '/review',
+    route: ReviewRoutes,
+  },
+  {
+    path: '/meta',
+    route: MetaRoutes,
+  },
 ];
 
-moduleRoutes.forEach(route => router.use(route.path, route.route))
+moduleRoutes.forEach((route) => router.use(route.path, route.route));
 
 export default router;

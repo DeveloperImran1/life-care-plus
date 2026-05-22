@@ -1,5 +1,5 @@
-import MyProfile from "@/features/profile/components/MyProfile";
-import { getUserInfo } from "@/features/auth/services/user-info.service";
+import MyProfile from "@/app/(dashboard)/settings/profile/_components/MyProfile";
+import { getUserInfo } from "@/app/(auth)/_services/user-info.service";
 
 const MyProfilePage = async () => {
   const userInfo = await getUserInfo();

@@ -1,5 +1,5 @@
-import { Column } from "@/components/shared/ManagementTable";
-import { ISpecialty } from "@/features/consultation/types/specialty.type";
+import { Column } from "@/components/table/ManagementTable";
+import { ISpecialty } from "@/types/specialty.type";
 import Image from "next/image";
 
 export const specialitiesColumns: Column<ISpecialty>[] = [

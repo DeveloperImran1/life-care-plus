@@ -1,4 +1,4 @@
-import PaymentSuccessContent from "@/features/payment/components/PaymentSuccessContent";
+import PaymentSuccessContent from "@/app/(dashboard)/settings/payment/_components/PaymentSuccessContent";
 
 // Force dynamic rendering to ensure fresh data after payment
 export const dynamic = "force-dynamic";

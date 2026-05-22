@@ -1,6 +1,6 @@
 "use client";
 
-import ManagementPageHeader from "@/components/shared/ManagementPageHeader";
+import ManagementPageHeader from "@/components/common/ManagementPageHeader";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";

@@ -1,14 +1,14 @@
-import MySchedulesFilters from "@/features/doctor/components/MySchedules/MyScheduleFilters";
-import MySchedulesHeader from "@/features/doctor/components/MySchedules/MyScheduleHeader";
-import MySchedulesTable from "@/features/doctor/components/MySchedules/MyScheduleTable";
-import TablePagination from "@/components/shared/TablePagination";
-import { TableSkeleton } from "@/components/shared/TableSkeleton";
+import TablePagination from "@/components/table/TablePagination";
+import { TableSkeleton } from "@/components/table/TableSkeleton";
 import { queryStringFormatter } from "@/lib/helpers/formatters";
 import {
   getAvailableSchedules,
   getDoctorOwnSchedules,
-} from "@/features/doctor/services/doctor-schedule.service";
+} from "@/app/(dashboard)/doctor/dashboard/my-schedules/_services";
 import { Suspense } from "react";
+import MySchedulesHeader from "./_components/MyScheduleHeader";
+import MySchedulesFilters from "./_components/MyScheduleFilters";
+import MySchedulesTable from "./_components/MyScheduleTable";
 
 interface DoctorMySchedulesPageProps {
   searchParams: Promise<{

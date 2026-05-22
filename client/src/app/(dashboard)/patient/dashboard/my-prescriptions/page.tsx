@@ -1,6 +1,6 @@
-import PatientPrescriptionsList from "@/features/patient/components/PatientPrescription/PatientPrescriptionList";
-import { getMyPrescriptions } from "@/features/patient/services/prescription.service";
-import { IPrescription } from "@/features/patient/types/prescription.type";
+import PatientPrescriptionsList from "@/app/(dashboard)/patient/dashboard/my-prescriptions/_components/PatientPrescriptionList";
+import { getMyPrescriptions } from "@/app/(dashboard)/patient/dashboard/my-prescriptions/_services";
+import { IPrescription } from "@/types/prescription.type";
 
 export default async function MyPrescriptionsPage() {
   const response = await getMyPrescriptions();

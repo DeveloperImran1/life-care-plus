@@ -15,7 +15,8 @@ export const commonProtectedRoutes: RouteConfig = {
 }
 
 export const doctorProtectedRoutes: RouteConfig = {
-    patterns: [/^\/doctor/], // Routes starting with /doctor/* , /assitants, /appointments/*
+    //   patterns: [/^\/doctor(\/|$)/], // Routes starting with /doctor/* , /assitants, /appointments/*
+    patterns: [/^\/doctor(\/|$)/],
     exact: [], // "/assistants"
 }
 

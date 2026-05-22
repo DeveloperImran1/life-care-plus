@@ -5,9 +5,7 @@ import { SpecialtiesValidtaion } from '../specialties/specialties.validation';
 import auth from '../../middlewares/auth';
 import { UserRole } from '@prisma/client';
 
-
 const router = express.Router();
-
 
 // Task 1: Retrieve Specialties Data
 
@@ -16,21 +14,16 @@ const router = express.Router();
 - Implement an HTTP GET endpoint returning specialties in JSON format.
 - ENDPOINT: /specialties
 */
-router.get(
-    '/',
-    SpecialtiesController.getAllFromDB
-);
+router.get('/', SpecialtiesController.getAllFromDB);
 
 router.post(
-    '/',
-    fileUploader.upload.single('file'),
-    (req: Request, res: Response, next: NextFunction) => {
-        req.body = SpecialtiesValidtaion.create.parse(JSON.parse(req.body.data))
-        return SpecialtiesController.insertIntoDB(req, res, next)
-    }
+  '/',
+  fileUploader.upload.single('file'),
+  (req: Request, res: Response, next: NextFunction) => {
+    req.body = SpecialtiesValidtaion.create.parse(JSON.parse(req.body.data));
+    return SpecialtiesController.insertIntoDB(req, res, next);
+  },
 );
-
-
 
 // Task 2: Delete Specialties Data by ID
 
@@ -42,9 +35,9 @@ router.post(
 */
 
 router.delete(
-    '/:id',
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-    SpecialtiesController.deleteFromDB
+  '/:id',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+  SpecialtiesController.deleteFromDB,
 );
 
 export const SpecialtiesRoutes = router;

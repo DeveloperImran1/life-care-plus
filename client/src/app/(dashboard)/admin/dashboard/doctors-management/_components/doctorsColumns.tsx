@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { DateCell } from "@/components/shared/cell/DateCell";
-import { StatusBadgeCell } from "@/components/shared/cell/StatusBadgeCell";
-import { UserInfoCell } from "@/components/shared/cell/UserInfoCell";
-import { Column } from "@/components/shared/ManagementTable";
-import { IDoctor } from "@/features/doctor/types/doctor.type";
+import { DateCell } from "@/components/table/cells/DateCell";
+import { StatusBadgeCell } from "@/components/table/cells/StatusBadgeCell";
+import { UserInfoCell } from "@/components/table/cells/UserInfoCell";
+import { Column } from "@/components/table/ManagementTable";
 import { Star } from "lucide-react";
+import { IDoctor } from "../_types";
 
 export const doctorsColumns: Column<IDoctor>[] = [
   {

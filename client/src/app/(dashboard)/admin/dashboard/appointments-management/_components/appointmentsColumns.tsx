@@ -1,12 +1,12 @@
 "use client";
 
-import { Column } from "@/components/shared/ManagementTable";
+import { Column } from "@/components/table/ManagementTable";
 import { Badge } from "@/components/ui/badge";
 import {
   AppointmentStatus,
   IAppointment,
   PaymentStatus,
-} from "@/features/patient/types/appointment.type";
+} from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 
 export const appointmentsColumns: Column<IAppointment>[] = [
   {

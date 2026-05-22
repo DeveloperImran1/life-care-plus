@@ -1,7 +1,7 @@
-import AppointmentDetails from "@/features/patient/components/PatientAppointment/AppointmentDetails";
-import { getAppointmentById } from "@/features/patient/services/appointment.service";
-import { IAppointment } from "@/features/patient/types/appointment.type";
+import { getAppointmentById } from "@/app/(dashboard)/patient/dashboard/my-appointments/_services";
+import { IAppointment } from "@/app/(dashboard)/patient/dashboard/my-appointments/_types";
 import { notFound } from "next/navigation";
+import AppointmentDetails from "../_components/AppointmentDetails";
 
 interface AppointmentDetailPageProps {
   params: Promise<{

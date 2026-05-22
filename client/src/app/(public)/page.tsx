@@ -1,9 +1,11 @@
-import { Hero } from "@/features/home/components/Hero";
-import Specialities from "@/features/home/components/Specialties";
-import Steps from "@/features/home/components/Steps";
-import Testimonials from "@/features/home/components/Testimonials";
-import TopRatedDoctors from "@/features/home/components/TopRatedDoctors";
+import Specialities from "@/app/(public)/_components/Specialties";
+import Steps from "@/app/(public)/_components/Steps";
+import Testimonials from "@/app/(public)/_components/Testimonials";
+import TopRatedDoctors from "@/app/(public)/_components/TopRatedDoctors";
 import Head from "next/head";
+import HeroSection from "./_components/HeroSection";
+import OurFeatures from "./_components/OurFeatures";
+import StepsSolution from "./_components/StepsSolution";
 
 export default function Home() {
   return (
@@ -18,11 +20,13 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Hero />
-        <Specialities />
-        <TopRatedDoctors />
-        <Steps />
-        <Testimonials />
+        <HeroSection />
+        <OurFeatures />
+        <StepsSolution />
+        {/* <Specialities /> */}
+        {/* <TopRatedDoctors /> */}
+        {/* <Steps /> */}
+        {/* <Testimonials /> */}
       </main>
     </>
   );

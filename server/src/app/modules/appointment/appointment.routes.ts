@@ -10,51 +10,50 @@ const router = express.Router();
 
 /**
  * ENDPOINT: /appointment/
- * 
+ *
  * Get all appointment with filtering
  * Only accessable for Admin & Super Admin
  */
-router.get(
-    '/',
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-    AppointmentController.getAllFromDB
-);
+router.get('/', auth(UserRole.SUPER_ADMIN, UserRole.ADMIN), AppointmentController.getAllFromDB);
 
 router.get(
-    '/my-appointment',
-    auth(UserRole.PATIENT, UserRole.DOCTOR),
-    AppointmentController.getMyAppointment
-)
-
-router.post(
-    '/',
-    auth(UserRole.PATIENT),
-    paymentLimiter,
-    validateRequest(AppointmentValidation.createAppointment),
-    AppointmentController.createAppointment
+  '/my-appointment',
+  auth(UserRole.PATIENT, UserRole.DOCTOR),
+  AppointmentController.getMyAppointment,
 );
 
 router.post(
-    '/pay-later',
-    auth(UserRole.PATIENT),
-    validateRequest(AppointmentValidation.createAppointment),
-    AppointmentController.createAppointmentWithPayLater
+  '/',
+  auth(UserRole.PATIENT),
+  paymentLimiter,
+  validateRequest(AppointmentValidation.createAppointment),
+  AppointmentController.createAppointment,
 );
 
 router.post(
-    '/:id/initiate-payment',
-    auth(UserRole.PATIENT),
-    paymentLimiter,
-    AppointmentController.initiatePayment
+  '/pay-later',
+  auth(UserRole.PATIENT),
+  validateRequest(AppointmentValidation.createAppointment),
+  AppointmentController.createAppointmentWithPayLater,
+);
+
+router.post(
+  '/:id/initiate-payment',
+  auth(UserRole.PATIENT),
+  paymentLimiter,
+  AppointmentController.initiatePayment,
 );
 
 router.patch(
-    '/status/:id',
-    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
-    AppointmentController.changeAppointmentStatus
+  '/status/:id',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR),
+  AppointmentController.changeAppointmentStatus,
 );
 
-router.post('/pay-later', auth(UserRole.PATIENT), AppointmentController.createAppointmentWithPayLater);
-
+router.post(
+  '/pay-later',
+  auth(UserRole.PATIENT),
+  AppointmentController.createAppointmentWithPayLater,
+);
 
 export const AppointmentRoutes = router;
