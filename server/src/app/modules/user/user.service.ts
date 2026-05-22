@@ -8,6 +8,8 @@ import prisma from '../../../shared/prisma';
 import { IAuthUser } from '../../interfaces/common';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import { userSearchAbleFields } from '../user/user.constant';
+import ApiError from '../../errors/ApiError';
+import httpStatus from 'http-status';
 
 const createAdmin = async (req: Request): Promise<Admin> => {
   const file = req.file;
@@ -47,6 +49,16 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
     const uploadToCloudinary = await fileUploader.uploadToCloudinary(file);
     req.body.doctor.profilePhoto = uploadToCloudinary?.secure_url;
   }
+
+  // const existingUser = await prisma.user.findUnique({
+  //   where: {
+  //     email: req.body.doctor.email,
+  //   },
+  // });
+
+  // if (existingUser) {
+  //   throw new ApiError(httpStatus.CONFLICT, "This email already exists");
+  // }
 
   const hashedPassword: string = await bcrypt.hash(req.body.password, Number(config.salt_round));
 
@@ -193,11 +205,11 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
     orderBy:
       options.sortBy && options.sortOrder
         ? {
-            [options.sortBy]: options.sortOrder,
-          }
+          [options.sortBy]: options.sortOrder,
+        }
         : {
-            createdAt: 'desc',
-          },
+          createdAt: 'desc',
+        },
     select: {
       id: true,
       email: true,

@@ -110,8 +110,8 @@ const getAllFromDB = async (filters: any, options: IPaginationOptions) => {
       options.sortBy && options.sortOrder
         ? { [options.sortBy]: options.sortOrder }
         : {
-            createdAt: 'desc',
-          },
+          createdAt: 'desc',
+        },
     include: {
       doctor: true,
       patient: true,
