@@ -14,7 +14,7 @@ async function bootstrap() {
 
     // Start the server
     server = app.listen(config.port, () => {
-      logger.serverStart(config.port);
+      logger.serverStart(config.port as number | string);
     });
 
     // Function to gracefully shut down the server
