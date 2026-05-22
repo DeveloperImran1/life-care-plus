@@ -50,16 +50,6 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
     req.body.doctor.profilePhoto = uploadToCloudinary?.secure_url;
   }
 
-  // const existingUser = await prisma.user.findUnique({
-  //   where: {
-  //     email: req.body.doctor.email,
-  //   },
-  // });
-
-  // if (existingUser) {
-  //   throw new ApiError(httpStatus.CONFLICT, "This email already exists");
-  // }
-
   const hashedPassword: string = await bcrypt.hash(req.body.password, Number(config.salt_round));
 
   const userData = {

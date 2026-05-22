@@ -70,56 +70,69 @@ const globalErrorHandler = (
     statusCode = simplifiedError?.statusCode || 400;
     message = simplifiedError?.message || 'Validation error';
     errorDetails = simplifiedError?.errorDetails || {};
-  } else if (err?.code === 'P2002') {
-    // Handle Prisma Duplicate entity error (Fix applied here)
-    const target = (err.meta?.target as string) || 'field';
-    const field = err.meta?.target.split('_')[1];
-    message = `The ${field} is already in use. Please use a different value.`;
-    statusCode = 409; // 409 conflict better
-    errorDetails = {
-      field: target,
-      issue: 'Already exists in database',
-    };
-    errorDetails = { code: err.code, target: err.meta?.target };
-  } else if (err?.code === 'P2003') {
-    statusCode = 400;
-    message = `Foreign key constraint failed on the field: ${err.meta?.field_name}`;
-    errorDetails = {
-      code: err.code,
-      field: err.meta?.field_name,
-      model: err.meta?.modelName,
-    };
-  } else if (err?.code === 'P2011') {
-    statusCode = 400;
-    message = `Null constraint violation on the field: ${err.meta?.field_name}`;
-    errorDetails = { code: err.code, field: err.meta?.field_name };
-  } else if (err?.code === 'P2025') {
-    statusCode = 404;
-
-    // Build full meaningful message
-    const model = err.meta?.modelName || 'UnknownModel';
-    const field = err.meta?.field_name || 'UnknownField';
-    const cause = err.meta?.cause || 'No matching record found';
-
-    message = `Record not found in ${model} where ${field}: ${cause}`;
-
-    // Include full details if needed
-    errorDetails = {
-      code: err.code,
-      model,
-      field,
-      meta: err.meta,
-      stack: err.stack,
-    };
-  } else if (err instanceof PrismaClientValidationError) {
+  }
+  else if (err instanceof PrismaClientValidationError) {
     const prismaError = handlePrismaValidationError(err);
     statusCode = prismaError.statusCode;
     message = prismaError.message;
     errorDetails = prismaError.errorDetails;
   } else if (err instanceof PrismaClientKnownRequestError) {
-    statusCode = 400;
-    message = err.message;
-    errorDetails = { code: err.code, meta: err.meta };
+    switch (err.code) {
+      case 'P2002': {
+        const fields =
+          Array.isArray(err.meta?.target)
+            ? err.meta.target
+            : err.message.match(/\(`(.+?)`\)/)?.[1]?.split('`, `') || ['field'];
+
+        const modelName = err.meta?.modelName || 'Record';
+
+        const fieldName = fields.join(', ');
+
+        statusCode = 409;
+        message = `${modelName} with this ${fieldName} already exists!`;
+        errorDetails = {
+          code: err.code,
+          model: modelName,
+          fields,
+        };
+        break;
+      }
+      case 'P2003':
+        statusCode = 400;
+        message = 'Invalid relation. Related data not found';
+        errorDetails = {
+          code: err.code,
+          field: err.meta?.field_name,
+        };
+        break;
+
+      case 'P2011':
+        statusCode = 400;
+        message = 'Required field cannot be null';
+        errorDetails = {
+          code: err.code,
+          constraint: err.meta?.constraint,
+        };
+        break;
+
+      case 'P2025':
+        statusCode = 404;
+        message = 'Requested data not found';
+        errorDetails = {
+          code: err.code,
+          cause: err.meta?.cause,
+        };
+        break;
+
+      default:
+        statusCode = 400;
+        message = 'Database request error';
+        errorDetails = {
+          code: err.code,
+          meta: err.meta,
+        };
+        break;
+    }
   } else if (err instanceof PrismaClientUnknownRequestError) {
     statusCode = 500;
     message = err.message;
