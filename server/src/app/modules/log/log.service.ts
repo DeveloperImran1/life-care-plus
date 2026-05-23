@@ -2,49 +2,119 @@ import fs from 'fs/promises';
 import path from 'path';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { IPaginationOptions } from '../../interfaces/pagination';
-import { ILogFilterRequest, TLogItem } from './log.interface';
 import { logSearchableFields } from './log.constant';
 
+export type TLogLevel = "ERROR" | "WARN" | "INFO" | "DEBUG";
+
+export type ILogFilterRequest = {
+    searchTerm?: string;
+    level?: TLogLevel;
+    method?: string;
+    statusCode?: string;
+};
+
 const logsDir = path.join(process.cwd(), 'logs');
+
+// Strip ANSI codes
+const stripAnsi = (str: string) => str.replace(/\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])/g, '');
+
+const parseLogData = (data: string) => {
+    const lines = data.split('\n');
+    const logs = [];
+    let currentLog: any = null;
+    let metaBuffer: string[] = [];
+
+    for (let i = 0; i < lines.length; i++) {
+        const line = stripAnsi(lines[i]);
+        if (!line.trim()) continue;
+
+        const logStartRegex = /^\[(\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2})\]\s*(\w+):\s*(.*)$/;
+        const match = line.match(logStartRegex);
+
+        if (match) {
+            if (currentLog) {
+                if (metaBuffer.length > 0) {
+                    try {
+                        currentLog.meta = JSON.parse(metaBuffer.join('\n'));
+                    } catch (e) {
+                        currentLog.metaString = metaBuffer.join('\n');
+                    }
+                    metaBuffer = [];
+                }
+                logs.push(currentLog);
+            }
+
+            const timestamp = match[1];
+            const level = match[2];
+            const message = match[3];
+
+            currentLog = {
+                timestamp,
+                level: level.toUpperCase(),
+                message,
+            };
+        } else {
+            if (currentLog) {
+                metaBuffer.push(line);
+            }
+        }
+    }
+    
+    if (currentLog) {
+        if (metaBuffer.length > 0) {
+            try {
+                currentLog.meta = JSON.parse(metaBuffer.join('\n'));
+            } catch (e) {
+                currentLog.metaString = metaBuffer.join('\n');
+            }
+        }
+        logs.push(currentLog);
+    }
+
+    return logs.map(log => {
+        let method, route, statusCode, responseTime, ipAddress;
+        
+        const httpRegex = /^([A-Z]+)\s+(\S+)\s+(\d{3})/;
+        const httpMatch = log.message.match(httpRegex);
+        
+        if (httpMatch) {
+            method = httpMatch[1];
+            route = httpMatch[2];
+            statusCode = parseInt(httpMatch[3]);
+            
+            const timeMatch = log.message.match(/- ([\d.]+ms)/);
+            if(timeMatch) responseTime = timeMatch[1];
+            
+            const ipMatch = log.message.match(/IP: ([\d\.:]+)/);
+            if(ipMatch) ipAddress = ipMatch[1];
+        } else {
+            if (log.meta?.method) method = log.meta.method;
+            if (log.meta?.path) route = log.meta.path;
+            if (log.meta?.statusCode) statusCode = log.meta.statusCode;
+            if (log.meta?.duration) responseTime = `${log.meta.duration}ms`;
+            if (log.meta?.ip) ipAddress = log.meta.ip;
+        }
+
+        return {
+            ...log,
+            method,
+            route,
+            statusCode,
+            responseTime,
+            ipAddress,
+        };
+    }).reverse();
+};
 
 const readLogFile = async (fileName: string) => {
     try {
         const filePath = path.join(logsDir, fileName);
         const data = await fs.readFile(filePath, 'utf-8');
 
-        return data.split('\n').filter(Boolean).reverse();
+        return parseLogData(data);
     } catch {
         return [];
     }
-};
-
-const parseLogLine = (line: string): TLogItem => {
-    const level = line.toLowerCase().includes('error')
-        ? 'ERROR'
-        : line.toLowerCase().includes('warn')
-            ? 'WARN'
-            : line.toLowerCase().includes('debug')
-                ? 'DEBUG'
-                : 'INFO';
-
-    const methodMatch = line.match(/\b(GET|POST|PUT|PATCH|DELETE)\b/);
-    const statusMatch = line.match(/\b(200|201|400|401|403|404|409|429|500)\b/);
-    const timeMatch = line.match(/(\d+ms)/);
-    const routeMatch = line.match(/(\/api\/[^\s]+|\/logs\/[^\s]+)/);
-    const ipMatch = line.match(
-        /\b(?:\d{1,3}\.){3}\d{1,3}\b/
-    );
-
-    return {
-        time: line.match(/\[(.*?)\]/)?.[1] || new Date().toISOString(),
-        level,
-        method: methodMatch?.[1] || '-',
-        route: routeMatch?.[1] || '-',
-        statusCode: statusMatch?.[1] || '-',
-        responseTime: timeMatch?.[1] || '-',
-        message: line,
-        ipAddress: ipMatch?.[0] || '127.0.0.1',
-    };
 };
 
 const getLogs = async (
@@ -54,77 +124,71 @@ const getLogs = async (
     const { limit, page, skip } = paginationHelper.calculatePagination(options);
     const { searchTerm, ...filterData } = filters;
 
-    const lines = await readLogFile('combined.log');
+    let result = await readLogFile('combined.log');
 
-    let logs = lines.map(parseLogLine);
-
+    // Apply searchTerm
     if (searchTerm) {
-        logs = logs.filter((log) =>
-            logSearchableFields.some((field) =>
-                String(log[field as keyof TLogItem])
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase())
-            )
-        );
+        result = result.filter(log => {
+            return logSearchableFields.some(field => {
+                const value = log[field as keyof typeof log];
+                return value && value.toString().toLowerCase().includes(searchTerm.toLowerCase());
+            });
+        });
     }
 
+    // Apply exact filters
     if (Object.keys(filterData).length > 0) {
-        Object.entries(filterData).forEach(([key, value]) => {
-            if (value && value !== 'ALL') {
-                logs = logs.filter(
-                    (log) =>
-                        String(log[key as keyof TLogItem]).toLowerCase() ===
-                        String(value).toLowerCase()
-                );
-            }
+        result = result.filter(log => {
+            return Object.entries(filterData).every(([field, value]) => {
+                if (value === undefined || value === null || value === '') return true;
+                const logValue = log[field as keyof typeof log];
+                return logValue !== undefined && logValue !== null && logValue.toString().toLowerCase() === value.toString().toLowerCase();
+            });
         });
     }
 
-    if (options.sortBy && options.sortOrder) {
-        logs = logs.sort((a, b) => {
-            const first = String(a[options.sortBy as keyof TLogItem]);
-            const second = String(b[options.sortBy as keyof TLogItem]);
+    // Sort logs (Default by timestamp desc)
+    const sortBy = options.sortBy || 'timestamp';
+    const sortOrder = options.sortOrder || 'desc';
 
-            return options.sortOrder === 'asc'
-                ? first.localeCompare(second)
-                : second.localeCompare(first);
-        });
-    }
+    result.sort((a, b) => {
+        let valA = a[sortBy as keyof typeof a];
+        let valB = b[sortBy as keyof typeof b];
 
-    const total = logs.length;
+        if (valA === undefined) valA = '';
+        if (valB === undefined) valB = '';
+
+        if (valA < valB) return sortOrder === 'asc' ? -1 : 1;
+        if (valA > valB) return sortOrder === 'asc' ? 1 : -1;
+        return 0;
+    });
+
+    const total = result.length;
+    const paginatedData = result.slice(skip, skip + limit);
 
     return {
         meta: {
-            total,
             page,
             limit,
+            total,
         },
-        data: logs.slice(skip, skip + limit),
+        data: paginatedData,
     };
 };
 
 const getStats = async () => {
-    const lines = await readLogFile('combined.log');
-    const logs = lines.map(parseLogLine);
+    const logs = await readLogFile('combined.log');
 
-    const totalRequests = logs.length;
-    const errorCount = logs.filter((log) => log.level === 'ERROR').length;
-
-    const responseTimes = logs
-        .map((log) => Number(log.responseTime.replace('ms', '')))
-        .filter(Boolean);
-
-    const avgResponseTime = responseTimes.length
-        ? Math.round(responseTimes.reduce((a, b) => a + b, 0) / responseTimes.length)
-        : 0;
+    const totalLogs = logs.length;
+    const errorLogs = logs.filter(log => log.level === 'ERROR').length;
+    const infoLogs = logs.filter(log => log.level === 'INFO').length;
+    const warnLogs = logs.filter(log => log.level === 'WARN').length;
 
     return {
-        totalRequests,
-        errorRate: totalRequests
-            ? Number(((errorCount / totalRequests) * 100).toFixed(2))
-            : 0,
-        avgResponseTime: `${avgResponseTime}ms`,
-        serverUptime: process.uptime(),
+        totalLogs,
+        errorLogs,
+        infoLogs,
+        warnLogs,
     };
 };
 

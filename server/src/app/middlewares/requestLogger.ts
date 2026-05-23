@@ -25,7 +25,7 @@ morgan.token('response-time-ms', (req: Request, res: Response) => {
 
 // Custom morgan format for detailed request logging
 const morganFormat =
-  ':method :url :status :res[content-length] - :response-time-ms | User: :user-id';
+  ':method :url :status :res[content-length] - :response-time-ms | User: :user-id | IP: :remote-addr';
 
 // Create morgan stream to pipe output to Winston
 const stream = {

@@ -7,13 +7,3 @@ export type ILogFilterRequest = {
     statusCode?: string;
 };
 
-export type TLogItem = {
-    time: string;
-    level: string;
-    method: string;
-    route: string;
-    statusCode: string;
-    responseTime: string;
-    message: string;
-    ipAddress: string;
-};
