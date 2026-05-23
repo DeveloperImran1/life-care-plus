@@ -1,5 +1,5 @@
 {
-  "name": "medixpro-backend",
+  "name": "life-care-plus-backend",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
@@ -24,6 +24,7 @@
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",
     "@types/node": "^24.0.10",
     "@types/nodemailer": "^6.4.17",
@@ -51,12 +52,14 @@
     "express-rate-limit": "^8.2.1",
     "http-status": "^2.1.0",
     "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.1",
     "multer": "^2.0.1",
     "node-cron": "^4.2.1",
     "nodemailer": "^7.0.5",
     "pg": "^8.16.3",
     "stripe": "^19.1.0",
     "uuid": "^11.1.0",
+    "winston": "^3.19.0",
     "zod": "^4.0.14"
   }
 }

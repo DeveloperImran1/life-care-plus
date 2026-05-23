@@ -13,3 +13,7 @@ CHANGES.md
 PAYMENT_FLOW_ENHANCEMENTS.md
 PRISMA_7_MIGRATION.md
 Resources
+
+# Winston logs
+logs/
+*.log
