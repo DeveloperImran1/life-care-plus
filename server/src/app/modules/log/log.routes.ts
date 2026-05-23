@@ -1,36 +1,42 @@
-import express from "express";
-import auth from "../../middlewares/auth";
-import { UserRole } from "@prisma/client";
-import { LogController } from "./log.controller";
+import express from 'express';
+import { UserRole } from '@prisma/client';
+import auth from '../../middlewares/auth';
+import { LogController } from './log.controller';
 
 const router = express.Router();
 
 router.get(
-    "/",
+    '/',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
-    LogController.getCombinedLogs
+    LogController.getLogs
 );
 
 router.get(
-    "/errors",
+    '/stats',
+    auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
+    LogController.getStats
+);
+
+router.get(
+    '/errors',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
     LogController.getErrorLogs
 );
 
 router.get(
-    "/success",
+    '/success',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
     LogController.getSuccessLogs
 );
 
 router.get(
-    "/exceptions",
+    '/exceptions',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
     LogController.getExceptionLogs
 );
 
 router.get(
-    "/rejections",
+    '/rejections',
     auth(UserRole.SUPER_ADMIN, UserRole.ADMIN),
     LogController.getRejectionLogs
 );
