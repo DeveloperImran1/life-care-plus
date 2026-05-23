@@ -14,6 +14,7 @@ import { PaymentRoutes } from '../modules/payment/payment.routes';
 import { PrescriptionRoutes } from '../modules/prescription/prescription.routes';
 import { ReviewRoutes } from '../modules/review/review.routes';
 import { MetaRoutes } from '../modules/meta/meta.routes';
+import { LogRoutes } from '../modules/log/log.routes';
 
 const router = express.Router();
 
@@ -72,6 +73,10 @@ const moduleRoutes = [
     path: '/meta',
     route: MetaRoutes,
   },
+  {
+    path: "/logs",
+    route: LogRoutes,
+  }
 ];
 
 moduleRoutes.forEach((route) => router.use(route.path, route.route));
