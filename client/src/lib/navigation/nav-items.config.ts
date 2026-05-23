@@ -200,6 +200,17 @@ export const adminNavItems: NavSection[] = [
                 roles: ["ADMIN"],
             },
         ],
+    },
+    {
+        title: "System Management",
+        items: [
+            {
+                title: "Monitoring",
+                href: "/admin/dashboard/monitoring",
+                icon: "Activity", // ✅ String
+                roles: ["ADMIN"],
+            },
+        ],
     }
 ]
 

@@ -30,7 +30,17 @@ const morganFormat =
 // Create morgan stream to pipe output to Winston
 const stream = {
   write: (message: string) => {
-    logger.info(message.trim());
+    const trimmed = message.trim();
+    const statusMatch = trimmed.match(/ (\d{3}) /);
+    const status = statusMatch ? parseInt(statusMatch[1], 10) : 200;
+
+    if (status >= 500) {
+      logger.error(trimmed);
+    } else if (status >= 400) {
+      logger.warn(trimmed);
+    } else {
+      logger.info(trimmed);
+    }
   },
 };
 
@@ -75,22 +85,6 @@ export const requestTracker = (
   const originalSend = res.send;
   res.send = function (data: any) {
     const duration = Date.now() - (req as any)._startTime;
-    const statusCode = res.statusCode;
-
-    // Log errors and slow requests
-    if (statusCode >= 400 || duration > 5000) {
-      const level = statusCode >= 500 ? 'error' : 'warn';
-      logger[level as 'error' | 'warn'](
-        `${req.method} ${req.path} ${statusCode} - ${duration}ms`,
-        {
-          method: req.method,
-          path: req.path,
-          statusCode,
-          duration,
-          requestId: (req as any)._requestId,
-        }
-      );
-    }
 
     // Store response time header for morgan to use
     res.setHeader('X-Response-Time', duration);
