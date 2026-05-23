@@ -42,6 +42,36 @@ const sanitizeError = (
   };
 };
 
+const sanitizeSensitiveData = (data: any) => {
+  const sensitiveFields = [
+    "password",
+    "oldPassword",
+    "newPassword",
+    "confirmPassword",
+    "token",
+    "accessToken",
+    "refreshToken",
+    "authorization",
+    "apiKey",
+    "secret",
+  ];
+  if (!data || typeof data !== "object") return data;
+
+  const clone = { ...data };
+
+  Object.keys(clone).forEach((key) => {
+    if (
+      sensitiveFields.some((field) =>
+        key.toLowerCase().includes(field.toLowerCase())
+      )
+    ) {
+      clone[key] = "[REDACTED]";
+    }
+  });
+
+  return clone;
+};
+
 const globalErrorHandler = (
   err: any, // eslint-disable-line
   req: Request,
@@ -53,6 +83,10 @@ const globalErrorHandler = (
     path: req.path,
     method: req.method,
     ip: req.ip,
+    user: req.user,
+    body: sanitizeSensitiveData(req.body),
+    query: sanitizeSensitiveData(req.query),
+    params: sanitizeSensitiveData(req.params),
   });
 
   let statusCode = 500;
