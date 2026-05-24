@@ -6,13 +6,14 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
     "prisma:generate": "prisma generate --schema=./prisma/schema",
-    "prisma:migrate": "prisma migrate dev --schema=./prisma/schema",
+    "prisma:migrate": "prisma migrate deploy --schema=./prisma/schema",
+    "prisma:migrate:dev": "prisma migrate dev --schema=./prisma/schema",
     "db:push": "prisma db push --schema=./prisma/schema",
     "db:pull": "prisma db pull --schema=./prisma/schema",
     "db:studio": "prisma studio --schema=./prisma/schema",
-    "postinstall": "prisma generate --schema=./prisma/schema",
     "stripe:webhook": "stripe listen --forward-to localhost:5000/webhook",
     "build": "tsc",
+    "start": "node dist/server.js",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "format": "prettier --write \"src/**/*.ts\""

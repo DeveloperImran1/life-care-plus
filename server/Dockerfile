@@ -1,22 +1,18 @@
-FROM node:20
+# /server/Dockerfile
+FROM node:22
 
 WORKDIR /app
 
-# First copy everything
+COPY package*.json ./
+
+RUN npm ci
+
 COPY . .
 
-# Set a dummy DATABASE_URL for Prisma generation during build
-ARG DATABASE_URL="postgresql://dummy:dummy@localhost:5432/dummy"
+ARG DATABASE_URL="postgresql://postgres:123456@db:5432/life_care_plus"
 ENV DATABASE_URL=$DATABASE_URL
 
-# Install dependencies
-RUN npm install
-
-# Generate prisma client
-RUN npx prisma generate --schema=./prisma/schema
-
-# Build app
-RUN npm run build
+RUN npm run prisma:generate
 
 EXPOSE 5000
 
