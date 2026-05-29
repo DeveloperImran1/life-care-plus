@@ -9,6 +9,7 @@ import logger from './lib/logger';
 import router from './app/routes';
 import { PaymentController } from './app/modules/payment/payment.controller';
 import { AppointmentService } from './app/modules/appointment/appointment.service';
+import { redis } from './lib/redis';
 
 const app: Application = express();
 app.use(cookieParser());
@@ -54,6 +55,18 @@ cron.schedule('*/5 * * * *', () => {
 app.get('/', (_req: Request, res: Response) => {
   res.send({
     Message: 'Life Care Plus Server is running..',
+  });
+});
+
+app.get("/test-redis", async (req, res) => {
+  await redis.set("name", "Life Care Plus");
+
+  const value = await redis.get("name");
+
+  res.json({
+    success: true,
+    message: "Redis is working",
+    data: value,
   });
 });
 

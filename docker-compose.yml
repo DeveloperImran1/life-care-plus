@@ -13,6 +13,14 @@ services:
       - postgres_data:/var/lib/postgresql/data
     networks:
       - life-care-network
+  redis:
+    image: redis:7-alpine
+    container_name: life-care-redis
+    restart: always
+    ports:
+      - "6380:6379"
+    networks:
+      - life-care-network
 
   backend:
     build:
@@ -26,6 +34,7 @@ services:
       - ./server/.env
     depends_on:
       - db
+      - redis
     volumes:
       - ./server:/app
       - /app/node_modules
@@ -45,6 +54,7 @@ services:
       - ./client/.env.local
     depends_on:
       - backend
+      - redis
     volumes:
       - ./client:/app
       - /app/node_modules
