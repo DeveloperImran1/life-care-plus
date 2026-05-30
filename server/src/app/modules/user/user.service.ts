@@ -10,6 +10,8 @@ import { IPaginationOptions } from '../../interfaces/pagination';
 import { userSearchAbleFields } from '../user/user.constant';
 import ApiError from '../../errors/ApiError';
 import httpStatus from 'http-status';
+import { redisHelper } from '../../../helpers/redisHelper';
+import { doctorCacheKeys } from '../doctor/doctor.constants';
 
 const createAdmin = async (req: Request): Promise<Admin> => {
   const file = req.file;
@@ -38,6 +40,8 @@ const createAdmin = async (req: Request): Promise<Admin> => {
 
     return createdAdminData;
   });
+
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.allDoctorLists());
 
   return result;
 };
