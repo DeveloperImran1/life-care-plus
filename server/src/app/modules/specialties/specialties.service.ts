@@ -2,6 +2,9 @@ import { Specialties } from '@prisma/client';
 import { Request } from 'express';
 import { fileUploader } from '../../../helpers/fileUploader';
 import prisma from '../../../shared/prisma';
+import { paginationHelper } from '../../../helpers/paginationHelper';
+import { IPaginationOptions } from '../../interfaces/pagination';
+import { redisHelper } from '../../../helpers/redisHelper';
 
 const insertIntoDB = async (req: Request) => {
   const file = req.file;
@@ -15,34 +18,40 @@ const insertIntoDB = async (req: Request) => {
     data: req.body,
   });
 
+  // New specialty add হলে পুরানো cache invalid হবে
+  await redisHelper.deleteCacheByPattern('specialties:*');
+
   return result;
 };
 
-import { paginationHelper } from '../../../helpers/paginationHelper';
-import { IPaginationOptions } from '../../interfaces/pagination';
-
 const getAllFromDB = async (options: IPaginationOptions) => {
-  const { limit, page, skip } = paginationHelper.calculatePagination(options);
+  const { limit, page, skip, sortBy, sortOrder } =
+    paginationHelper.calculatePagination(options);
 
-  const result = await prisma.specialties.findMany({
-    skip,
-    take: limit,
-    orderBy:
-      options.sortBy && options.sortOrder
-        ? { [options.sortBy]: options.sortOrder }
-        : { createdAt: 'desc' },
+  const cacheKey = `specialties:page=${page}:limit=${limit}:sortBy=${sortBy}:sortOrder=${sortOrder}`;
+
+  const result = await redisHelper.getOrSetCache(cacheKey, async () => {
+    const data = await prisma.specialties.findMany({
+      skip,
+      take: limit,
+      orderBy: {
+        [sortBy]: sortOrder,
+      },
+    });
+
+    const total = await prisma.specialties.count();
+
+    return {
+      meta: {
+        total,
+        page,
+        limit,
+      },
+      data,
+    };
   });
 
-  const total = await prisma.specialties.count();
-
-  return {
-    meta: {
-      total,
-      page,
-      limit,
-    },
-    data: result,
-  };
+  return result;
 };
 
 const deleteFromDB = async (id: string): Promise<Specialties> => {
@@ -51,6 +60,10 @@ const deleteFromDB = async (id: string): Promise<Specialties> => {
       id,
     },
   });
+
+  // Delete হলে specialties list cache clear হবে
+  await redisHelper.deleteCacheByPattern('specialties:*');
+
   return result;
 };
 
