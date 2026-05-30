@@ -29,13 +29,10 @@ const logFormat = winston.format.combine(
   // Custom printf format for readable logs
   winston.format.printf(({ timestamp, level, message, ...meta }) => {
     // Only include metadata if it exists and is not empty
-    const metaString =
-      Object.keys(meta).length > 0
-        ? `\n${JSON.stringify(meta, null, 2)}`
-        : '';
+    const metaString = Object.keys(meta).length > 0 ? `\n${JSON.stringify(meta, null, 2)}` : '';
 
     return `[${timestamp}] ${level}: ${message}${metaString}`;
-  })
+  }),
 );
 
 // Define console format (colorized for development)
@@ -43,13 +40,10 @@ const consoleFormat = winston.format.combine(
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   winston.format.colorize({ all: true }),
   winston.format.printf(({ timestamp, level, message, ...meta }) => {
-    const metaString =
-      Object.keys(meta).length > 0
-        ? `\n${JSON.stringify(meta, null, 2)}`
-        : '';
+    const metaString = Object.keys(meta).length > 0 ? `\n${JSON.stringify(meta, null, 2)}` : '';
 
     return `[${timestamp}] ${level}: ${message}${metaString}`;
-  })
+  }),
 );
 
 // Create the Winston logger instance
@@ -117,7 +111,7 @@ if (process.env.NODE_ENV === 'development') {
       format: logFormat,
       maxsize: 5242880, // 5MB
       maxFiles: 3,
-    })
+    }),
   );
 }
 

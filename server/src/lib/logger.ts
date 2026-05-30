@@ -38,11 +38,7 @@ class Logger {
    * @param error - Error object or additional context
    * @param meta - Optional metadata object
    */
-  error(
-    message: string,
-    error?: Error | string | LogMetadata,
-    meta?: LogMetadata
-  ): void {
+  error(message: string, error?: Error | string | LogMetadata, meta?: LogMetadata): void {
     if (error instanceof Error) {
       logger.error(message, {
         error: {
@@ -82,7 +78,7 @@ class Logger {
     url: string,
     statusCode: number,
     duration: number,
-    meta?: LogMetadata
+    meta?: LogMetadata,
   ): void {
     const level = statusCode >= 400 ? 'warn' : 'info';
     logger.log(level, `${method} ${url} ${statusCode} - ${duration}ms`, meta);
@@ -93,10 +89,7 @@ class Logger {
    * @param port - Server port
    */
   serverStart(port: number | string): void {
-    logger.info(
-      `🚀 Server is running on http://localhost:${port}`,
-      { port }
-    );
+    logger.info(`🚀 Server is running on http://localhost:${port}`, { port });
   }
 
   /**
@@ -123,12 +116,7 @@ class Logger {
    * @param success - Whether action was successful
    * @param meta - Optional metadata
    */
-  auth(
-    action: string,
-    userId: string | number,
-    success: boolean,
-    meta?: LogMetadata
-  ): void {
+  auth(action: string, userId: string | number, success: boolean, meta?: LogMetadata): void {
     const level = success ? 'info' : 'warn';
     const message = `Authentication - ${action} (User: ${userId}) - ${success ? 'Success' : 'Failed'}`;
     logger.log(level, message, { action, userId, success, ...meta });
@@ -147,15 +135,15 @@ class Logger {
     statusCode: number,
     message: string,
     error?: Error | LogMetadata,
-    meta?: LogMetadata
+    meta?: LogMetadata,
   ): void {
     const errorData =
       error instanceof Error
         ? {
-          errorMessage: error.message,
-          errorStack: error.stack,
-          errorName: error.name,
-        }
+            errorMessage: error.message,
+            errorStack: error.stack,
+            errorName: error.name,
+          }
         : error || {};
 
     logger.error(`API Error - ${endpoint} (${statusCode})`, {
@@ -174,12 +162,7 @@ class Logger {
    * @param duration - Execution duration in ms
    * @param meta - Optional metadata
    */
-  cronJob(
-    jobName: string,
-    success: boolean,
-    duration: number,
-    meta?: LogMetadata
-  ): void {
+  cronJob(jobName: string, success: boolean, duration: number, meta?: LogMetadata): void {
     const level = success ? 'info' : 'error';
     const symbol = success ? '✅' : '❌';
     const message = `${symbol} Cron Job: ${jobName} (${duration}ms)`;

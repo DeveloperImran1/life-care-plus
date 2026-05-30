@@ -61,11 +61,7 @@ export const requestLogger = morgan(morganFormat, {
  * Adds start time and unique request ID to request object
  * Can be used for performance monitoring and request tracing
  */
-export const requestTracker = (
-  req: Request,
-  res: Response,
-  next: NextFunction
-): void => {
+export const requestTracker = (req: Request, res: Response, next: NextFunction): void => {
   // Store request start time for duration calculation
   (req as any)._startTime = Date.now();
 

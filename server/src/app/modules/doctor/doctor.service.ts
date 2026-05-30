@@ -10,17 +10,13 @@ import { doctorCacheKeys } from './doctor.constants';
 
 const DOCTOR_CACHE_TTL = 60 * 60; // 1 hour
 
-const getAllFromDB = async (
-  filters: IDoctorFilterRequest,
-  options: IPaginationOptions
-) => {
+const getAllFromDB = async (filters: IDoctorFilterRequest, options: IPaginationOptions) => {
   const { limit, page, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options);
   const { searchTerm, specialties, ...filterData } = filters;
 
   const cacheKey = doctorCacheKeys.adminList(filters, options);
 
-  console.log("cacheKey", cacheKey);
-
+  console.log('cacheKey', cacheKey);
 
   const result = await redisHelper.getOrSetCache(
     cacheKey,
@@ -39,9 +35,7 @@ const getAllFromDB = async (
       }
 
       if (specialties && specialties.length > 0) {
-        const specialtiesArray = Array.isArray(specialties)
-          ? specialties
-          : [specialties];
+        const specialtiesArray = Array.isArray(specialties) ? specialties : [specialties];
 
         andConditions.push({
           doctorSpecialties: {
@@ -78,10 +72,7 @@ const getAllFromDB = async (
         where: whereConditions,
         skip,
         take: limit,
-        orderBy:
-          sortBy && sortOrder
-            ? { [sortBy]: sortOrder }
-            : { averageRating: 'desc' },
+        orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { averageRating: 'desc' },
         include: {
           doctorSpecialties: {
             include: {
@@ -118,7 +109,7 @@ const getAllFromDB = async (
         data,
       };
     },
-    DOCTOR_CACHE_TTL
+    DOCTOR_CACHE_TTL,
   );
 
   return result;
@@ -152,7 +143,7 @@ const getByIdFromDB = async (id: string): Promise<Doctor | null> => {
 
       return doctor;
     },
-    DOCTOR_CACHE_TTL
+    DOCTOR_CACHE_TTL,
   );
 
   return result;
@@ -178,33 +169,22 @@ const updateIntoDB = async (id: string, payload: IDoctorUpdate) => {
       });
     }
 
-    if (
-      removeSpecialties &&
-      Array.isArray(removeSpecialties) &&
-      removeSpecialties.length > 0
-    ) {
-      const existingDoctorSpecialties =
-        await transactionClient.doctorSpecialties.findMany({
-          where: {
-            doctorId: doctorInfo.id,
-            specialitiesId: {
-              in: removeSpecialties,
-            },
+    if (removeSpecialties && Array.isArray(removeSpecialties) && removeSpecialties.length > 0) {
+      const existingDoctorSpecialties = await transactionClient.doctorSpecialties.findMany({
+        where: {
+          doctorId: doctorInfo.id,
+          specialitiesId: {
+            in: removeSpecialties,
           },
-        });
+        },
+      });
 
       if (existingDoctorSpecialties.length !== removeSpecialties.length) {
-        const foundIds = existingDoctorSpecialties.map(
-          (ds) => ds.specialitiesId
-        );
+        const foundIds = existingDoctorSpecialties.map((ds) => ds.specialitiesId);
 
-        const notFound = removeSpecialties.filter(
-          (id) => !foundIds.includes(id)
-        );
+        const notFound = removeSpecialties.filter((id) => !foundIds.includes(id));
 
-        throw new Error(
-          `Cannot remove non-existent specialties: ${notFound.join(', ')}`
-        );
+        throw new Error(`Cannot remove non-existent specialties: ${notFound.join(', ')}`);
       }
 
       await transactionClient.doctorSpecialties.deleteMany({
@@ -231,34 +211,27 @@ const updateIntoDB = async (id: string, payload: IDoctorUpdate) => {
 
       const existingSpecialtyIds = existingSpecialties.map((s) => s.id);
 
-      const invalidSpecialties = specialties.filter(
-        (id) => !existingSpecialtyIds.includes(id)
-      );
+      const invalidSpecialties = specialties.filter((id) => !existingSpecialtyIds.includes(id));
 
       if (invalidSpecialties.length > 0) {
         throw new Error(`Invalid specialty IDs: ${invalidSpecialties.join(', ')}`);
       }
 
-      const currentDoctorSpecialties =
-        await transactionClient.doctorSpecialties.findMany({
-          where: {
-            doctorId: doctorInfo.id,
-            specialitiesId: {
-              in: specialties,
-            },
+      const currentDoctorSpecialties = await transactionClient.doctorSpecialties.findMany({
+        where: {
+          doctorId: doctorInfo.id,
+          specialitiesId: {
+            in: specialties,
           },
-          select: {
-            specialitiesId: true,
-          },
-        });
+        },
+        select: {
+          specialitiesId: true,
+        },
+      });
 
-      const currentSpecialtyIds = currentDoctorSpecialties.map(
-        (ds) => ds.specialitiesId
-      );
+      const currentSpecialtyIds = currentDoctorSpecialties.map((ds) => ds.specialitiesId);
 
-      const newSpecialties = specialties.filter(
-        (id) => !currentSpecialtyIds.includes(id)
-      );
+      const newSpecialties = specialties.filter((id) => !currentSpecialtyIds.includes(id));
 
       if (newSpecialties.length > 0) {
         const doctorSpecialtiesData = newSpecialties.map((specialtyId) => ({
@@ -385,8 +358,7 @@ const getAISuggestion = async (input: PatientInput) => {
       designation: doctor.designation,
       averageRating:
         doctor.review && doctor.review.length > 0
-          ? doctor.review.reduce((sum: number, r: any) => sum + r.rating, 0) /
-          doctor.review.length
+          ? doctor.review.reduce((sum: number, r: any) => sum + r.rating, 0) / doctor.review.length
           : 0,
       specialties: allSpecialties,
       primarySpecialty: allSpecialties[0] || 'General',
@@ -478,10 +450,7 @@ RESPOND WITH ONLY THE JSON ARRAY - NO EXPLANATIONS, NO MARKDOWN, NO EXTRA TEXT.
   }
 };
 
-const getAllPublic = async (
-  filters: IDoctorFilterRequest,
-  options: IPaginationOptions
-) => {
+const getAllPublic = async (filters: IDoctorFilterRequest, options: IPaginationOptions) => {
   const { limit, page, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options);
   const { searchTerm, specialties, ...filterData } = filters;
 
@@ -504,9 +473,7 @@ const getAllPublic = async (
       }
 
       if (specialties && specialties.length > 0) {
-        const specialtiesArray = Array.isArray(specialties)
-          ? specialties
-          : [specialties];
+        const specialtiesArray = Array.isArray(specialties) ? specialties : [specialties];
 
         andConditions.push({
           doctorSpecialties: {
@@ -543,10 +510,7 @@ const getAllPublic = async (
         where: whereConditions,
         skip,
         take: limit,
-        orderBy:
-          sortBy && sortOrder
-            ? { [sortBy]: sortOrder }
-            : { averageRating: 'desc' },
+        orderBy: sortBy && sortOrder ? { [sortBy]: sortOrder } : { averageRating: 'desc' },
         select: {
           id: true,
           name: true,
@@ -597,7 +561,7 @@ const getAllPublic = async (
         data,
       };
     },
-    DOCTOR_CACHE_TTL
+    DOCTOR_CACHE_TTL,
   );
 
   return result;

@@ -96,7 +96,7 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
       if (invalidSpecialties.length > 0) {
         throw new ApiError(
           httpStatus.BAD_REQUEST,
-          `Invalid specialty IDs: ${invalidSpecialties.join(', ')}`
+          `Invalid specialty IDs: ${invalidSpecialties.join(', ')}`,
         );
       }
 
@@ -202,11 +202,11 @@ const getAllFromDB = async (params: any, options: IPaginationOptions) => {
     orderBy:
       options.sortBy && options.sortOrder
         ? {
-          [options.sortBy]: options.sortOrder,
-        }
+            [options.sortBy]: options.sortOrder,
+          }
         : {
-          createdAt: 'desc',
-        },
+            createdAt: 'desc',
+          },
     select: {
       id: true,
       email: true,

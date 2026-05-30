@@ -25,8 +25,7 @@ const insertIntoDB = async (req: Request) => {
 };
 
 const getAllFromDB = async (options: IPaginationOptions) => {
-  const { limit, page, skip, sortBy, sortOrder } =
-    paginationHelper.calculatePagination(options);
+  const { limit, page, skip, sortBy, sortOrder } = paginationHelper.calculatePagination(options);
 
   const cacheKey = `specialties:page=${page}:limit=${limit}:sortBy=${sortBy}:sortOrder=${sortOrder}`;
 

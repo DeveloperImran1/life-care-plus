@@ -44,28 +44,24 @@ const sanitizeError = (
 
 const sanitizeSensitiveData = (data: any) => {
   const sensitiveFields = [
-    "password",
-    "oldPassword",
-    "newPassword",
-    "confirmPassword",
-    "token",
-    "accessToken",
-    "refreshToken",
-    "authorization",
-    "apiKey",
-    "secret",
+    'password',
+    'oldPassword',
+    'newPassword',
+    'confirmPassword',
+    'token',
+    'accessToken',
+    'refreshToken',
+    'authorization',
+    'apiKey',
+    'secret',
   ];
-  if (!data || typeof data !== "object") return data;
+  if (!data || typeof data !== 'object') return data;
 
   const clone = { ...data };
 
   Object.keys(clone).forEach((key) => {
-    if (
-      sensitiveFields.some((field) =>
-        key.toLowerCase().includes(field.toLowerCase())
-      )
-    ) {
-      clone[key] = "[REDACTED]";
+    if (sensitiveFields.some((field) => key.toLowerCase().includes(field.toLowerCase()))) {
+      clone[key] = '[REDACTED]';
     }
   });
 
@@ -202,4 +198,3 @@ const globalErrorHandler = (
 };
 
 export default globalErrorHandler;
-

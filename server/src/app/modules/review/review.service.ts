@@ -5,6 +5,11 @@ import prisma from '../../../shared/prisma';
 import ApiError from '../../errors/ApiError';
 import { IAuthUser } from '../../interfaces/common';
 import { IPaginationOptions } from '../../interfaces/pagination';
+import { redisHelper } from '../../../helpers/redisHelper';
+import { reviewCacheKeys } from './review.contant';
+import { doctorCacheKeys } from '../doctor/doctor.constants';
+
+const REVIEW_CACHE_TTL = 45 * 60; // 45 minutes
 
 const insertIntoDB = async (user: IAuthUser, payload: any) => {
   const patientData = await prisma.patient.findUniqueOrThrow({
@@ -30,8 +35,8 @@ const insertIntoDB = async (user: IAuthUser, payload: any) => {
     throw new ApiError(httpStatus.BAD_REQUEST, 'This is not your appointment!');
   }
 
-  return await prisma.$transaction(async (tx) => {
-    const result = await tx.review.create({
+  const result = await prisma.$transaction(async (tx) => {
+    const resultObj = await tx.review.create({
       data: {
         appointmentId: appointmentData.id,
         doctorId: appointmentData.doctorId,
@@ -49,69 +54,85 @@ const insertIntoDB = async (user: IAuthUser, payload: any) => {
 
     await tx.doctor.update({
       where: {
-        id: result.doctorId,
+        id: resultObj.doctorId,
       },
       data: {
         averageRating: averageRating._avg.rating as number,
       },
     });
 
-    return result;
+    return resultObj;
   });
+
+  await redisHelper.deleteCacheByPattern(reviewCacheKeys.allLists());
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.allDoctorLists());
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.details(result.doctorId));
+
+  return result;
 };
 
 const getAllFromDB = async (filters: any, options: IPaginationOptions) => {
-  const { limit, page, skip } = paginationHelper.calculatePagination(options);
-  const { patientEmail, doctorEmail } = filters;
-  const andConditions = [];
+  const cacheKey = reviewCacheKeys.list(filters, options);
 
-  if (patientEmail) {
-    andConditions.push({
-      patient: {
-        email: patientEmail,
-      },
-    });
-  }
+  const result = await redisHelper.getOrSetCache(
+    cacheKey,
+    async () => {
+      const { limit, page, skip } = paginationHelper.calculatePagination(options);
+      const { patientEmail, doctorEmail } = filters;
+      const andConditions = [];
 
-  if (doctorEmail) {
-    andConditions.push({
-      doctor: {
-        email: doctorEmail,
-      },
-    });
-  }
+      if (patientEmail) {
+        andConditions.push({
+          patient: {
+            email: patientEmail,
+          },
+        });
+      }
 
-  const whereConditions: Prisma.ReviewWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
+      if (doctorEmail) {
+        andConditions.push({
+          doctor: {
+            email: doctorEmail,
+          },
+        });
+      }
 
-  const result = await prisma.review.findMany({
-    where: whereConditions,
-    skip,
-    take: limit,
-    orderBy:
-      options.sortBy && options.sortOrder
-        ? { [options.sortBy]: options.sortOrder }
-        : {
-          createdAt: 'desc',
+      const whereConditions: Prisma.ReviewWhereInput =
+        andConditions.length > 0 ? { AND: andConditions } : {};
+
+      const resultData = await prisma.review.findMany({
+        where: whereConditions,
+        skip,
+        take: limit,
+        orderBy:
+          options.sortBy && options.sortOrder
+            ? { [options.sortBy]: options.sortOrder }
+            : {
+                createdAt: 'desc',
+              },
+        include: {
+          doctor: true,
+          patient: true,
+          appointment: true,
         },
-    include: {
-      doctor: true,
-      patient: true,
-      appointment: true,
-    },
-  });
-  const total = await prisma.review.count({
-    where: whereConditions,
-  });
+      });
+      const total = await prisma.review.count({
+        where: whereConditions,
+      });
 
-  return {
-    meta: {
-      total,
-      page,
-      limit,
+      return {
+        meta: {
+          total,
+          page,
+          limit,
+        },
+        data: resultData,
+      };
     },
-    data: result,
-  };
+    REVIEW_CACHE_TTL,
+  );
+
+  return result;
 };
 
 export const ReviewService = {

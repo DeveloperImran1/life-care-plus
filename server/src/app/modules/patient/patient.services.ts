@@ -2,103 +2,126 @@ import { Patient, Prisma, UserStatus } from '@prisma/client';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
 import { IPaginationOptions } from '../../interfaces/pagination';
-import { patientSearchableFields } from '../patient/patient.constants';
+import { patientSearchableFields, patientCacheKeys } from '../patient/patient.constants';
 import { IPatientFilterRequest, IPatientUpdate } from '../patient/patient.interface';
+import { redisHelper } from '../../../helpers/redisHelper';
+
+const PATIENT_CACHE_TTL = 30 * 60; // 30 minutes
 
 const getAllFromDB = async (
   filters: IPatientFilterRequest,
   options: IPaginationOptions,
   includeHealthData: boolean = false, // NEW PARAMETER
 ) => {
-  const { limit, page, skip } = paginationHelper.calculatePagination(options);
-  const { searchTerm, ...filterData } = filters;
+  const cacheKey = patientCacheKeys.allList(filters, options, includeHealthData);
 
-  const andConditions = [];
+  const result = await redisHelper.getOrSetCache(
+    cacheKey,
+    async () => {
+      const { limit, page, skip } = paginationHelper.calculatePagination(options);
+      const { searchTerm, ...filterData } = filters;
 
-  if (searchTerm) {
-    andConditions.push({
-      OR: patientSearchableFields.map((field) => ({
-        [field]: {
-          contains: searchTerm,
-          mode: 'insensitive',
-        },
-      })),
-    });
-  }
+      const andConditions = [];
 
-  if (Object.keys(filterData).length > 0) {
-    andConditions.push({
-      AND: Object.keys(filterData).map((key) => {
-        return {
-          [key]: {
-            equals: (filterData as any)[key],
-          },
-        };
-      }),
-    });
-  }
-
-  andConditions.push({
-    isDeleted: false,
-  });
-
-  const whereConditions: Prisma.PatientWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
-
-  // Conditional include based on parameter
-  const includeClause = includeHealthData
-    ? {
-        medicalReport: true,
-        patientHealthData: true,
+      if (searchTerm) {
+        andConditions.push({
+          OR: patientSearchableFields.map((field) => ({
+            [field]: {
+              contains: searchTerm,
+              mode: 'insensitive',
+            },
+          })),
+        });
       }
-    : {
-        medicalReport: {
-          select: {
-            id: true,
-            reportName: true,
-            createdAt: true,
-          },
-        },
-      };
 
-  const result = await prisma.patient.findMany({
-    where: whereConditions,
-    skip,
-    take: limit,
-    orderBy:
-      options.sortBy && options.sortOrder
-        ? { [options.sortBy]: options.sortOrder }
+      if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+          AND: Object.keys(filterData).map((key) => {
+            return {
+              [key]: {
+                equals: (filterData as any)[key],
+              },
+            };
+          }),
+        });
+      }
+
+      andConditions.push({
+        isDeleted: false,
+      });
+
+      const whereConditions: Prisma.PatientWhereInput =
+        andConditions.length > 0 ? { AND: andConditions } : {};
+
+      // Conditional include based on parameter
+      const includeClause = includeHealthData
+        ? {
+            medicalReport: true,
+            patientHealthData: true,
+          }
         : {
-            createdAt: 'desc',
-          },
-    include: includeClause,
-  });
+            medicalReport: {
+              select: {
+                id: true,
+                reportName: true,
+                createdAt: true,
+              },
+            },
+          };
 
-  const total = await prisma.patient.count({
-    where: whereConditions,
-  });
+      const resultData = await prisma.patient.findMany({
+        where: whereConditions,
+        skip,
+        take: limit,
+        orderBy:
+          options.sortBy && options.sortOrder
+            ? { [options.sortBy]: options.sortOrder }
+            : {
+                createdAt: 'desc',
+              },
+        include: includeClause,
+      });
 
-  return {
-    meta: {
-      total,
-      page,
-      limit,
+      const total = await prisma.patient.count({
+        where: whereConditions,
+      });
+
+      return {
+        meta: {
+          total,
+          page,
+          limit,
+        },
+        data: resultData,
+      };
     },
-    data: result,
-  };
+    PATIENT_CACHE_TTL,
+  );
+
+  return result;
 };
 
 const getByIdFromDB = async (id: string): Promise<Patient | null> => {
-  const result = await prisma.patient.findUnique({
-    where: {
-      id,
-      isDeleted: false,
+  const cacheKey = patientCacheKeys.details(id);
+
+  const result = await redisHelper.getOrSetCache(
+    cacheKey,
+    async () => {
+      const resultData = await prisma.patient.findUnique({
+        where: {
+          id,
+          isDeleted: false,
+        },
+        include: {
+          medicalReport: true,
+          patientHealthData: true,
+        },
+      });
+      return resultData;
     },
-    include: {
-      medicalReport: true,
-      patientHealthData: true,
-    },
-  });
+    PATIENT_CACHE_TTL,
+  );
+
   return result;
 };
 
@@ -155,6 +178,10 @@ const updateIntoDB = async (
       medicalReport: true,
     },
   });
+
+  await redisHelper.deleteCacheByPattern(patientCacheKeys.allLists());
+  await redisHelper.deleteCacheByPattern(patientCacheKeys.details(id));
+
   return responseData;
 };
 
@@ -189,11 +216,14 @@ const deleteFromDB = async (id: string): Promise<Patient | null> => {
     return deletedPatient;
   });
 
+  await redisHelper.deleteCacheByPattern(patientCacheKeys.allLists());
+  await redisHelper.deleteCacheByPattern(patientCacheKeys.details(id));
+
   return result;
 };
 
 const softDelete = async (id: string): Promise<Patient | null> => {
-  return await prisma.$transaction(async (transactionClient) => {
+  const result = await prisma.$transaction(async (transactionClient) => {
     const deletedPatient = await transactionClient.patient.update({
       where: { id },
       data: {
@@ -212,6 +242,11 @@ const softDelete = async (id: string): Promise<Patient | null> => {
 
     return deletedPatient;
   });
+
+  await redisHelper.deleteCacheByPattern(patientCacheKeys.allLists());
+  await redisHelper.deleteCacheByPattern(patientCacheKeys.details(id));
+
+  return result;
 };
 
 export const PatientService = {

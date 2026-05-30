@@ -16,8 +16,6 @@ export const doctorFilterableFields: string[] = [
   'specialties',
 ];
 
-
-
 export const doctorCacheKeys = {
   adminList: (filters: unknown, options: unknown): string =>
     `doctors:admin:${stringify({ filters, options })}`,

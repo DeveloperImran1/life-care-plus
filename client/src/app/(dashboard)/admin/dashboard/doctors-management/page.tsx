@@ -18,7 +18,7 @@ const AdminDoctorsManagementPage = async ({
   const specialitiesResult = await getSpecialities();
   const doctorsResult = await getDoctors(queryString);
   const totalPages = Math.ceil(
-    (doctorsResult?.meta?.total || 1) / (doctorsResult?.meta?.limit || 1),
+    (doctorsResult?.meta?.total || 1) / (doctorsResult?.meta?.limit || 10),
   );
   return (
     <div className="space-y-6">

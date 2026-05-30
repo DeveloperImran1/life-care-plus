@@ -5,6 +5,10 @@ import prisma from '../../../shared/prisma';
 import { IAuthUser } from '../../interfaces/common';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import { IFilterRequest, ISchedule } from '../schedule/schedule.interface';
+import { redisHelper } from '../../../helpers/redisHelper';
+import { scheduleCacheKeys } from './schedule.constants';
+
+const SCHEDULE_CACHE_TTL = 24 * 60 * 60; // 24 hours
 
 const convertDateTime = async (date: Date) => {
   const offset = date.getTimezoneOffset() * 60000;
@@ -71,6 +75,8 @@ const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
+  await redisHelper.deleteCacheByPattern(scheduleCacheKeys.allLists());
+
   return schedules;
 };
 
@@ -79,114 +85,124 @@ const getAllFromDB = async (
   options: IPaginationOptions,
   user: IAuthUser,
 ) => {
-  const { limit, page, skip } = paginationHelper.calculatePagination(options);
-  const { startDate, endDate, ...filterData } = filters;
+  const cacheKey = scheduleCacheKeys.list(user?.email, filters, options);
 
-  const andConditions = [];
+  const result = await redisHelper.getOrSetCache(
+    cacheKey,
+    async () => {
+      const { limit, page, skip } = paginationHelper.calculatePagination(options);
+      const { startDate, endDate, ...filterData } = filters;
 
-  if (startDate && endDate) {
-    // Both dates provided - find schedules within the date range
-    const startOfDay = new Date(startDate as string);
-    startOfDay.setUTCHours(0, 0, 0, 0);
+      const andConditions = [];
 
-    const endOfDay = new Date(endDate as string);
-    endOfDay.setUTCHours(23, 59, 59, 999);
+      if (startDate && endDate) {
+        // Both dates provided - find schedules within the date range
+        const startOfDay = new Date(startDate as string);
+        startOfDay.setUTCHours(0, 0, 0, 0);
 
-    andConditions.push({
-      startDateTime: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
-    });
-  } else if (startDate) {
-    // Only start date - find schedules on that specific day
-    const startOfDay = new Date(startDate as string);
-    startOfDay.setUTCHours(0, 0, 0, 0);
+        const endOfDay = new Date(endDate as string);
+        endOfDay.setUTCHours(23, 59, 59, 999);
 
-    const endOfDay = new Date(startDate as string);
-    endOfDay.setUTCHours(23, 59, 59, 999);
-
-    andConditions.push({
-      startDateTime: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
-    });
-  } else if (endDate) {
-    // Only end date - find schedules on that specific day
-    const startOfDay = new Date(endDate as string);
-    startOfDay.setUTCHours(0, 0, 0, 0);
-
-    const endOfDay = new Date(endDate as string);
-    endOfDay.setUTCHours(23, 59, 59, 999);
-
-    andConditions.push({
-      startDateTime: {
-        gte: startOfDay,
-        lte: endOfDay,
-      },
-    });
-  }
-
-  if (Object.keys(filterData).length > 0) {
-    andConditions.push({
-      AND: Object.keys(filterData).map((key) => {
-        return {
-          [key]: {
-            equals: (filterData as any)[key],
+        andConditions.push({
+          startDateTime: {
+            gte: startOfDay,
+            lte: endOfDay,
           },
-        };
-      }),
-    });
-  }
+        });
+      } else if (startDate) {
+        // Only start date - find schedules on that specific day
+        const startOfDay = new Date(startDate as string);
+        startOfDay.setUTCHours(0, 0, 0, 0);
 
-  const whereConditions: Prisma.ScheduleWhereInput =
-    andConditions.length > 0 ? { AND: andConditions } : {};
+        const endOfDay = new Date(startDate as string);
+        endOfDay.setUTCHours(23, 59, 59, 999);
 
-  const doctorSchedules = await prisma.doctorSchedules.findMany({
-    where: {
-      doctor: {
-        email: user?.email,
-      },
-    },
-  });
+        andConditions.push({
+          startDateTime: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        });
+      } else if (endDate) {
+        // Only end date - find schedules on that specific day
+        const startOfDay = new Date(endDate as string);
+        startOfDay.setUTCHours(0, 0, 0, 0);
 
-  const doctorScheduleIds = doctorSchedules.map((schedule) => schedule.scheduleId);
+        const endOfDay = new Date(endDate as string);
+        endOfDay.setUTCHours(23, 59, 59, 999);
 
-  const result = await prisma.schedule.findMany({
-    where: {
-      ...whereConditions,
-      id: {
-        notIn: doctorScheduleIds,
-      },
-    },
-    skip,
-    take: limit,
-    orderBy:
-      options.sortBy && options.sortOrder
-        ? { [options.sortBy]: options.sortOrder }
-        : {
-          createdAt: 'desc',
+        andConditions.push({
+          startDateTime: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        });
+      }
+
+      if (Object.keys(filterData).length > 0) {
+        andConditions.push({
+          AND: Object.keys(filterData).map((key) => {
+            return {
+              [key]: {
+                equals: (filterData as any)[key],
+              },
+            };
+          }),
+        });
+      }
+
+      const whereConditions: Prisma.ScheduleWhereInput =
+        andConditions.length > 0 ? { AND: andConditions } : {};
+
+      const doctorSchedules = await prisma.doctorSchedules.findMany({
+        where: {
+          doctor: {
+            email: user?.email,
+          },
         },
-  });
+      });
 
-  const total = await prisma.schedule.count({
-    where: {
-      ...whereConditions,
-      id: {
-        notIn: doctorScheduleIds,
-      },
-    },
-  });
+      const doctorScheduleIds = doctorSchedules.map((schedule) => schedule.scheduleId);
 
-  return {
-    meta: {
-      total,
-      page,
-      limit,
+      const resultData = await prisma.schedule.findMany({
+        where: {
+          ...whereConditions,
+          id: {
+            notIn: doctorScheduleIds,
+          },
+        },
+        skip,
+        take: limit,
+        orderBy:
+          options.sortBy && options.sortOrder
+            ? { [options.sortBy]: options.sortOrder }
+            : {
+                createdAt: 'desc',
+              },
+      });
+
+      const total = await prisma.schedule.count({
+        where: {
+          ...whereConditions,
+          id: {
+            notIn: doctorScheduleIds,
+          },
+        },
+      });
+
+      return {
+        meta: {
+          total,
+          page,
+          limit,
+        },
+        data: resultData,
+      };
     },
-    data: result,
-  };
+    SCHEDULE_CACHE_TTL,
+  );
+
+  return result;
 };
 
 const getByIdFromDB = async (id: string): Promise<Schedule | null> => {
@@ -205,6 +221,9 @@ const deleteFromDB = async (id: string): Promise<Schedule> => {
       id,
     },
   });
+
+  await redisHelper.deleteCacheByPattern(scheduleCacheKeys.allLists());
+
   return result;
 };
 

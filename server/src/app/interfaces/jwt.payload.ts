@@ -1,7 +1,7 @@
-import { UserRole } from "@prisma/client";
+import { UserRole } from '@prisma/client';
 
 export type TJwtPayload = {
-    userId: string;
-    email: string;
-    role: UserRole;
-}
+  userId: string;
+  email: string;
+  role: UserRole;
+};

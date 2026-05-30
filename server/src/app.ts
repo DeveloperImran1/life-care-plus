@@ -58,14 +58,14 @@ app.get('/', (_req: Request, res: Response) => {
   });
 });
 
-app.get("/test-redis", async (req, res) => {
-  await redis.set("name", "Life Care Plus");
+app.get('/test-redis', async (req, res) => {
+  await redis.set('name', 'Life Care Plus');
 
-  const value = await redis.get("name");
+  const value = await redis.get('name');
 
   res.json({
     success: true,
-    message: "Redis is working",
+    message: 'Redis is working',
     data: value,
   });
 });

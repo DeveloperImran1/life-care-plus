@@ -1,15 +1,10 @@
 export const logSearchableFields = [
-    'message',
-    'route',
-    'method',
-    'level',
-    'statusCode',
-    'ipAddress',
+  'message',
+  'route',
+  'method',
+  'level',
+  'statusCode',
+  'ipAddress',
 ];
 
-export const logFilterableFields = [
-    'searchTerm',
-    'level',
-    'method',
-    'statusCode',
-];
+export const logFilterableFields = ['searchTerm', 'level', 'method', 'statusCode'];
