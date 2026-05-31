@@ -1,4 +1,4 @@
-import { UserStatus } from '@prisma/client';
+import { NotificationType, UserStatus } from '@prisma/client';
 import * as bcrypt from 'bcryptjs';
 import httpStatus from 'http-status';
 import { Secret } from 'jsonwebtoken';
@@ -7,7 +7,7 @@ import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../errors/ApiError';
 import emailSender from '../auth/emailSender';
-import { NotificationService, NotificationType } from '../notification/notification.service';
+import { NotificationService, } from '../notification/notification.service';
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({

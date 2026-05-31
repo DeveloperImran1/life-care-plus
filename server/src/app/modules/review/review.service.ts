@@ -1,4 +1,4 @@
-import { PaymentStatus, Prisma } from '@prisma/client';
+import { NotificationType, PaymentStatus, Prisma } from '@prisma/client';
 import httpStatus from 'http-status';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
@@ -8,7 +8,7 @@ import { IPaginationOptions } from '../../interfaces/pagination';
 import { redisHelper } from '../../../helpers/redisHelper';
 import { reviewCacheKeys } from './review.contant';
 import { doctorCacheKeys } from '../doctor/doctor.constants';
-import { NotificationService, NotificationType } from '../notification/notification.service';
+import { NotificationService } from '../notification/notification.service';
 
 const REVIEW_CACHE_TTL = 45 * 60; // 45 minutes
 
@@ -127,8 +127,8 @@ const getAllFromDB = async (filters: any, options: IPaginationOptions) => {
           options.sortBy && options.sortOrder
             ? { [options.sortBy]: options.sortOrder }
             : {
-                createdAt: 'desc',
-              },
+              createdAt: 'desc',
+            },
         include: {
           doctor: true,
           patient: true,

@@ -7,6 +7,7 @@ import { jwtHelpers } from '../helpers/jwtHelpers';
 import { Secret } from 'jsonwebtoken';
 import logger from '../lib/logger';
 import prisma from '../shared/prisma';
+import { UserRole } from '@prisma/client';
 
 // Extend Socket.io Socket to include user info
 declare module 'socket.io' {
@@ -14,7 +15,7 @@ declare module 'socket.io' {
     user?: {
       userId: string;
       email: string;
-      role: string;
+      role: UserRole;
     };
   }
 }

@@ -1,4 +1,4 @@
-import { AppointmentStatus, Prescription, Prisma } from '@prisma/client';
+import { AppointmentStatus, NotificationType, Prescription, Prisma } from '@prisma/client';
 import httpStatus from 'http-status';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import prisma from '../../../shared/prisma';
@@ -7,7 +7,7 @@ import { IAuthUser } from '../../interfaces/common';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import { redisHelper } from '../../../helpers/redisHelper';
 import { prescriptionCacheKeys } from './prescription.constants';
-import { NotificationService, NotificationType } from '../notification/notification.service';
+import { NotificationService } from '../notification/notification.service';
 
 const PRESCRIPTION_CACHE_TTL = 60 * 60; // 1 hour
 

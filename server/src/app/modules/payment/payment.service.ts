@@ -1,7 +1,7 @@
-import { PaymentStatus } from '@prisma/client';
+import { NotificationType, PaymentStatus } from '@prisma/client';
 import Stripe from 'stripe';
 import prisma from '../../../shared/prisma';
-import { NotificationService, NotificationType } from '../notification/notification.service';
+import { NotificationService } from '../notification/notification.service';
 
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
   // Check if event has already been processed (idempotency)

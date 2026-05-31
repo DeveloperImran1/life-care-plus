@@ -1,20 +1,9 @@
-import { Prisma } from '@prisma/client';
+import { NotificationType, Prisma } from '@prisma/client';
 import { SocketIOServer } from '../../../socket/socket.server';
 import prisma from '../../../shared/prisma';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import logger from '../../../lib/logger';
-
-export enum NotificationType {
-  APPOINTMENT_CREATED = 'APPOINTMENT_CREATED',
-  APPOINTMENT_UPDATED = 'APPOINTMENT_UPDATED',
-  APPOINTMENT_CANCELED = 'APPOINTMENT_CANCELED',
-  PAYMENT_COMPLETED = 'PAYMENT_COMPLETED',
-  PRESCRIPTION_CREATED = 'PRESCRIPTION_CREATED',
-  REVIEW_CREATED = 'REVIEW_CREATED',
-  SCHEDULE_UPDATED = 'SCHEDULE_UPDATED',
-  SYSTEM_ANNOUNCEMENT = 'SYSTEM_ANNOUNCEMENT',
-}
 
 interface NotificationPayload {
   type: NotificationType;
