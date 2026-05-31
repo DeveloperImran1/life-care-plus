@@ -10,6 +10,7 @@ import { IPaginationOptions } from '../../interfaces/pagination';
 import { redisHelper } from '../../../helpers/redisHelper';
 import { appointmentCacheKeys } from './appointment.constant';
 import { doctorScheduleCacheKeys } from '../doctorSchedule/doctorSchedule.constants';
+import { NotificationService, NotificationType } from '../notification/notification.service';
 
 const APPOINTMENT_CACHE_TTL = 30 * 60; // 30 minutes
 
@@ -93,13 +94,31 @@ const createAppointment = async (user: IAuthUser, payload: any) => {
       cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/patient/dashboard/my-appointments`,
     });
 
-    return { paymentUrl: session.url };
+    return { paymentUrl: session.url, appointmentData };
   });
 
   await redisHelper.deleteCacheByPattern(appointmentCacheKeys.allLists());
   await redisHelper.deleteCacheByPattern(doctorScheduleCacheKeys.allLists());
 
-  return result;
+  // Emit real-time notification for new appointment
+  await NotificationService.emitNotification(result.appointmentData.doctorId, {
+    type: NotificationType.APPOINTMENT_CREATED,
+    title: 'New Appointment Booked',
+    message: `A new appointment has been booked with you`,
+    priority: 'HIGH',
+    actionUrl: '/doctor/dashboard/my-appointments',
+    data: { appointmentId: result.appointmentData.id },
+  });
+
+  await NotificationService.emitToRole('ADMIN', {
+    type: NotificationType.APPOINTMENT_CREATED,
+    title: 'New Appointment',
+    message: `A new appointment has been created`,
+    priority: 'MEDIUM',
+    actionUrl: '/admin/dashboard/appointments-management',
+  });
+
+  return { paymentUrl: result.paymentUrl };
 };
 
 const getMyAppointment = async (user: IAuthUser, filters: any, options: IPaginationOptions) => {
@@ -235,6 +254,37 @@ const updateAppointmentStatus = async (
 
   await redisHelper.deleteCacheByPattern(appointmentCacheKeys.allLists());
   await redisHelper.deleteCacheByPattern(doctorScheduleCacheKeys.allLists());
+
+  // Emit notification for status change
+  const notificationType =
+    status === AppointmentStatus.CANCELED
+      ? NotificationType.APPOINTMENT_CANCELED
+      : NotificationType.APPOINTMENT_UPDATED;
+
+  const statusMessage =
+    status === AppointmentStatus.CANCELED
+      ? 'Your appointment has been canceled'
+      : `Your appointment status has been updated to ${status}`;
+
+  await NotificationService.emitNotification(
+    [appointmentData.patientId, appointmentData.doctorId],
+    {
+      type: notificationType,
+      title: status === AppointmentStatus.CANCELED ? 'Appointment Canceled' : 'Appointment Updated',
+      message: statusMessage,
+      priority: 'HIGH',
+      actionUrl: '/dashboard/my-appointments',
+      data: { appointmentId, status },
+    },
+  );
+
+  await NotificationService.emitToRole('ADMIN', {
+    type: notificationType,
+    title: status === AppointmentStatus.CANCELED ? 'Appointment Canceled' : 'Appointment Updated',
+    message: `An appointment status changed to ${status}`,
+    priority: 'MEDIUM',
+    actionUrl: '/admin/dashboard/appointments-management',
+  });
 
   return result;
 };
@@ -446,6 +496,24 @@ const createAppointmentWithPayLater = async (user: IAuthUser, payload: any) => {
 
   await redisHelper.deleteCacheByPattern(appointmentCacheKeys.allLists());
   await redisHelper.deleteCacheByPattern(doctorScheduleCacheKeys.allLists());
+
+  // Emit notification for pay-later appointment
+  await NotificationService.emitNotification(result.doctorId, {
+    type: NotificationType.APPOINTMENT_CREATED,
+    title: 'New Appointment Booked',
+    message: `${result.patient?.name || 'A patient'} booked an appointment with you`,
+    priority: 'HIGH',
+    actionUrl: '/doctor/dashboard/my-appointments',
+    data: { appointmentId: result.id },
+  });
+
+  await NotificationService.emitToRole('ADMIN', {
+    type: NotificationType.APPOINTMENT_CREATED,
+    title: 'New Appointment',
+    message: `${result.patient?.name || 'A patient'} booked with Dr. ${result.doctor?.name || 'a doctor'}`,
+    priority: 'MEDIUM',
+    actionUrl: '/admin/dashboard/appointments-management',
+  });
 
   return result;
 };

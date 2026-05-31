@@ -7,6 +7,7 @@ import { IPaginationOptions } from '../../interfaces/pagination';
 import { IFilterRequest, ISchedule } from '../schedule/schedule.interface';
 import { redisHelper } from '../../../helpers/redisHelper';
 import { scheduleCacheKeys } from './schedule.constants';
+import { doctorCacheKeys } from '../doctor/doctor.constants';
 
 const SCHEDULE_CACHE_TTL = 24 * 60 * 60; // 24 hours
 
@@ -76,7 +77,7 @@ const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
   }
 
   await redisHelper.deleteCacheByPattern(scheduleCacheKeys.allLists());
-
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.allDoctorLists());
   return schedules;
 };
 
@@ -177,8 +178,8 @@ const getAllFromDB = async (
           options.sortBy && options.sortOrder
             ? { [options.sortBy]: options.sortOrder }
             : {
-                createdAt: 'desc',
-              },
+              createdAt: 'desc',
+            },
       });
 
       const total = await prisma.schedule.count({

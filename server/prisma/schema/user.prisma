@@ -10,6 +10,7 @@ model User {
   admin              Admin?
   doctor             Doctor?
   patient            Patient?
+  notifications      Notification[]
 
   @@map("users")
 }

@@ -7,6 +7,7 @@ import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../errors/ApiError';
 import emailSender from '../auth/emailSender';
+import { NotificationService, NotificationType } from '../notification/notification.service';
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
@@ -110,6 +111,15 @@ const changePassword = async (user: any, payload: any) => {
       password: hashedPassword,
       needPasswordChange: false,
     },
+  });
+
+  // Emit notification for password change
+  await NotificationService.emitNotification(userData.id, {
+    type: NotificationType.SYSTEM_ANNOUNCEMENT,
+    title: 'Password Changed',
+    message: 'Your password has been changed successfully.',
+    priority: 'HIGH',
+    actionUrl: '/dashboard/settings',
   });
 
   return {

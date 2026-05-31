@@ -30,6 +30,7 @@ services:
     restart: always
     ports:
       - "5000:5000"
+      - "5555:5555"
     env_file:
       - ./server/.env
     depends_on:

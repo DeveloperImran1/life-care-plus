@@ -8,6 +8,7 @@ import { IPaginationOptions } from '../../interfaces/pagination';
 import { redisHelper } from '../../../helpers/redisHelper';
 import { reviewCacheKeys } from './review.contant';
 import { doctorCacheKeys } from '../doctor/doctor.constants';
+import { NotificationService, NotificationType } from '../notification/notification.service';
 
 const REVIEW_CACHE_TTL = 45 * 60; // 45 minutes
 
@@ -67,6 +68,24 @@ const insertIntoDB = async (user: IAuthUser, payload: any) => {
   await redisHelper.deleteCacheByPattern(reviewCacheKeys.allLists());
   await redisHelper.deleteCacheByPattern(doctorCacheKeys.allDoctorLists());
   await redisHelper.deleteCacheByPattern(doctorCacheKeys.details(result.doctorId));
+
+  // Emit notification to doctor about new review
+  await NotificationService.emitNotification(result.doctorId, {
+    type: NotificationType.REVIEW_CREATED,
+    title: 'New Review Received',
+    message: `You received a new ${result.rating}-star review`,
+    priority: 'LOW',
+    actionUrl: '/doctor/dashboard/my-appointments',
+    data: { reviewId: result.id, rating: result.rating },
+  });
+
+  await NotificationService.emitToRole('ADMIN', {
+    type: NotificationType.REVIEW_CREATED,
+    title: 'New Review Submitted',
+    message: `A ${result.rating}-star review was submitted`,
+    priority: 'LOW',
+    actionUrl: '/admin/dashboard/reviews',
+  });
 
   return result;
 };

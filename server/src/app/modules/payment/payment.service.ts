@@ -1,6 +1,7 @@
 import { PaymentStatus } from '@prisma/client';
 import Stripe from 'stripe';
 import prisma from '../../../shared/prisma';
+import { NotificationService, NotificationType } from '../notification/notification.service';
 
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
   // Check if event has already been processed (idempotency)
@@ -64,6 +65,27 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
       });
 
       console.log(`✅ Payment ${session.payment_status} for appointment ${appointmentId}`);
+
+      // Emit real-time notification for payment completion
+      if (session.payment_status === 'paid' && appointment) {
+        await NotificationService.emitNotification(appointment.patientId, {
+          type: NotificationType.PAYMENT_COMPLETED,
+          title: 'Payment Successful',
+          message: 'Your appointment payment has been completed successfully',
+          priority: 'HIGH',
+          actionUrl: '/patient/dashboard/my-appointments',
+          data: { appointmentId },
+        });
+
+        await NotificationService.emitToRole('ADMIN', {
+          type: NotificationType.PAYMENT_COMPLETED,
+          title: 'Payment Received',
+          message: `Payment completed for appointment ${appointmentId}`,
+          priority: 'MEDIUM',
+          actionUrl: '/admin/dashboard/appointments-management',
+        });
+      }
+
       break;
     }
 

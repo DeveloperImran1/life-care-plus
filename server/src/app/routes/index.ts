@@ -15,6 +15,7 @@ import { PrescriptionRoutes } from '../modules/prescription/prescription.routes'
 import { ReviewRoutes } from '../modules/review/review.routes';
 import { MetaRoutes } from '../modules/meta/meta.routes';
 import { LogRoutes } from '../modules/log/log.routes';
+import { NotificationRoutes } from '../modules/notification/notification.routes';
 
 const router = express.Router();
 
@@ -76,6 +77,10 @@ const moduleRoutes = [
   {
     path: '/logs',
     route: LogRoutes,
+  },
+  {
+    path: '/notification',
+    route: NotificationRoutes,
   },
 ];
 

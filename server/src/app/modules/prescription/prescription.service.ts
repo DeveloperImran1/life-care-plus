@@ -7,6 +7,7 @@ import { IAuthUser } from '../../interfaces/common';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import { redisHelper } from '../../../helpers/redisHelper';
 import { prescriptionCacheKeys } from './prescription.constants';
+import { NotificationService, NotificationType } from '../notification/notification.service';
 
 const PRESCRIPTION_CACHE_TTL = 60 * 60; // 1 hour
 
@@ -40,6 +41,16 @@ const insertIntoDB = async (user: IAuthUser, payload: Partial<Prescription>) => 
   });
 
   await redisHelper.deleteCacheByPattern(prescriptionCacheKeys.allLists());
+
+  // Emit notification to patient about new prescription
+  await NotificationService.emitNotification(result.patientId, {
+    type: NotificationType.PRESCRIPTION_CREATED,
+    title: 'New Prescription',
+    message: `${appointmentData.doctor.name} has issued a new prescription for you`,
+    priority: 'MEDIUM',
+    actionUrl: '/patient/dashboard/prescriptions',
+    data: { prescriptionId: result.id },
+  });
 
   return result;
 };
@@ -131,8 +142,8 @@ const getAllFromDB = async (filters: any, options: IPaginationOptions) => {
           options.sortBy && options.sortOrder
             ? { [options.sortBy]: options.sortOrder }
             : {
-                createdAt: 'desc',
-              },
+              createdAt: 'desc',
+            },
         include: {
           doctor: true,
           patient: true,

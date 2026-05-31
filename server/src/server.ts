@@ -3,6 +3,7 @@ import app from './app';
 import seedSuperAdmin from './helpers/seed';
 import config from './config';
 import logger from './lib/logger';
+import { initializeSocket } from './socket/socket.server';
 
 async function bootstrap() {
   // This variable will hold our server instance
@@ -16,6 +17,13 @@ async function bootstrap() {
     server = app.listen(config.port, () => {
       logger.serverStart(config.port as number | string);
     });
+
+    // Initialize Socket.io
+    const io = initializeSocket(server);
+
+    // Make io available globally for emitting events from services
+    (global as any).io = io;
+    logger.info('✅ Socket.io initialized');
 
     // Function to gracefully shut down the server
     const exitHandler = () => {
@@ -48,3 +56,4 @@ async function bootstrap() {
 }
 
 bootstrap();
+
