@@ -6,7 +6,7 @@ import config from '../../../config';
 import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../errors/ApiError';
-import emailSender from '../auth/emailSender';
+import { addEmailJob } from '../../jobs/email.queue';
 import { NotificationService, } from '../notification/notification.service';
 
 const loginUser = async (payload: { email: string; password: string }) => {
@@ -144,9 +144,9 @@ const forgotPassword = async (payload: { email: string }) => {
   const resetPassLink =
     config.reset_pass_link + `?email=${encodeURIComponent(userData.email)}&token=${resetPassToken}`;
 
-  await emailSender(
-    userData.email,
-    `
+  await addEmailJob({
+    email: userData.email,
+    html: `
         <!DOCTYPE html>
         <html lang="en">
         <head>
@@ -221,7 +221,8 @@ const forgotPassword = async (payload: { email: string }) => {
         </body>
         </html>
         `,
-  );
+  });
+
 };
 
 const resetPassword = async (
