@@ -46,7 +46,7 @@ const PublicNavbar = async () => {
 
         <div className="hidden md:flex items-center space-x-2">
 
-          < NotificationDropdown />
+          {userInfo && <NotificationDropdown />}
           {/* <AISearchDialog /> */}
           <NavbarAuthButtons
             initialHasToken={!!accessToken}
