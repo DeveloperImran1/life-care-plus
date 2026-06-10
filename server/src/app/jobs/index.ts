@@ -1,7 +1,8 @@
 import logger from '../../lib/logger';
 import { emailWorker } from './email.worker';
+import { notificationWorker } from './notification.worker';
 
-const workers = [emailWorker];
+const workers = [emailWorker, notificationWorker];
 
 /**
  * Initializes all background workers and queues.

@@ -7,6 +7,7 @@ import MobileMenu from "./MobileMenu";
 import logo from "@/assets/logos/navlog.png";
 import NavbarAuthButtons from "./NavbarAuthButtons";
 import Image from "next/image";
+import NotificationDropdown from "../dashboard/NotificationDropdown";
 
 const PublicNavbar = async () => {
   const navItems = [
@@ -44,6 +45,8 @@ const PublicNavbar = async () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-2">
+
+          < NotificationDropdown />
           {/* <AISearchDialog /> */}
           <NavbarAuthButtons
             initialHasToken={!!accessToken}

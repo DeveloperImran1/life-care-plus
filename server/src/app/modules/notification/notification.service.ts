@@ -4,8 +4,9 @@ import prisma from '../../../shared/prisma';
 import { paginationHelper } from '../../../helpers/paginationHelper';
 import { IPaginationOptions } from '../../interfaces/pagination';
 import logger from '../../../lib/logger';
+import { addRoleNotificationJob } from '../../jobs/notification.queue';
 
-interface NotificationPayload {
+export interface NotificationPayload {
   type: NotificationType;
   title: string;
   message: string;
@@ -54,41 +55,15 @@ const emitNotification = async (userId: string | string[], payload: Notification
 
 /**
  * Emit notification to all users of a specific role and save to DB
+ * This now delegates the heavy lifting to BullMQ background job
  */
 const emitToRole = async (role: 'ADMIN' | 'SUPER_ADMIN' | 'DOCTOR' | 'PATIENT', payload: NotificationPayload) => {
-  const io: SocketIOServer = (global as any).io;
 
-  // Emit to connected clients via role room
-  if (io) {
-    io.to(`role:${role.toLowerCase()}`).emit('notification', {
-      ...payload,
-      timestamp: new Date().toISOString(),
-    });
-  }
-
-  // Save to all users of that role in DB
-  try {
-    const users = await prisma.user.findMany({
-      where: { role: role as any },
-      select: { id: true },
-    });
-
-    if (users.length > 0) {
-      await prisma.notification.createMany({
-        data: users.map((user) => ({
-          userId: user.id,
-          type: payload.type,
-          title: payload.title,
-          message: payload.message,
-          data: payload.data || {},
-          priority: payload.priority || 'MEDIUM',
-          actionUrl: payload.actionUrl,
-        })),
-      });
-    }
-  } catch (error) {
-    logger.error('Failed to save role notifications to database', error as Error);
-  }
+  // Push the job to BullMQ
+  await addRoleNotificationJob({
+    role,
+    payload,
+  });
 };
 
 /**
