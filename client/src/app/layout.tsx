@@ -32,7 +32,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         {children}
-        <Toaster position="bottom-right" richColors />
+        <Toaster position="top-right" richColors />
         <Suspense fallback={null}>
           <LoginSuccessToast />
           <LogoutSuccessToast />

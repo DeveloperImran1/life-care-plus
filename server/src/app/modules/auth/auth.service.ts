@@ -7,7 +7,7 @@ import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../errors/ApiError';
 import { addEmailJob } from '../../jobs/email.queue';
-import { NotificationService, } from '../notification/notification.service';
+import { NotificationService } from '../notification/notification.service';
 
 const loginUser = async (payload: { email: string; password: string }) => {
   const userData = await prisma.user.findUniqueOrThrow({
@@ -16,6 +16,8 @@ const loginUser = async (payload: { email: string; password: string }) => {
       status: UserStatus.ACTIVE,
     },
   });
+
+  console.log('userData', userData);
 
   const isCorrectPassword: boolean = await bcrypt.compare(payload.password, userData.password);
 
@@ -222,7 +224,6 @@ const forgotPassword = async (payload: { email: string }) => {
         </html>
         `,
   });
-
 };
 
 const resetPassword = async (

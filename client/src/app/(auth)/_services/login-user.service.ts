@@ -92,11 +92,12 @@ export const loginUser = async (_currentState: any, formData: any): Promise<any>
         }
 
         if (redirectTo && result.data.needPasswordChange) {
-            const requestedPath = redirectTo.toString();
+            const requestedPath = redirectTo.toString() || getDefaultDashboardRoute(userRole);
             if (isValidRedirectForRole(requestedPath, userRole)) {
                 redirect(`/reset-password?redirect=${requestedPath}`);
             } else {
-                redirect("/reset-password");
+                const defaultPath = getDefaultDashboardRoute(userRole);
+                redirect(`/reset-password?redirect=${defaultPath}`);
             }
         }
 

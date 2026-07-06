@@ -1,10 +1,10 @@
 import { Server } from 'http';
 import app from './app';
-import seedSuperAdmin from './helpers/seed';
+import { closeJobs, initializeJobs } from './app/jobs';
 import config from './config';
+import seedSuperAdmin from './helpers/seed';
 import logger from './lib/logger';
 import { initializeSocket } from './socket/socket.server';
-import { initializeJobs, closeJobs } from './app/jobs';
 
 async function bootstrap() {
   // This variable will hold our server instance
@@ -73,5 +73,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-
-

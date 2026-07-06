@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only ./src/server.ts",
+    "dev": "ts-node-dev --respawn --poll --transpile-only ./src/server.ts",
     "prisma:generate": "prisma generate --schema=./prisma/schema",
     "prisma:migrate": "prisma migrate deploy --schema=./prisma/schema",
     "prisma:migrate:dev": "prisma migrate dev --schema=./prisma/schema",
@@ -27,7 +27,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/morgan": "^1.9.10",
     "@types/multer": "^2.0.0",
-    "@types/node": "^24.0.10",
+    "@types/node": "^24.13.2",
     "@types/nodemailer": "^6.4.17",
     "@types/pg": "^8.15.6",
     "eslint": "^10.4.0",
