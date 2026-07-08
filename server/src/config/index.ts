@@ -28,4 +28,14 @@ export default {
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
   },
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
+
+  facebookAppId: process.env.FACEBOOK_APP_ID,
+  facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
+  facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
+
+  expressSessionSecret: process.env.EXPRESS_SESSION_SECRET,
+  frontendUrl: process.env.FRONTEND_URL,
 };

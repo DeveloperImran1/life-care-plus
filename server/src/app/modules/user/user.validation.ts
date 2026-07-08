@@ -65,7 +65,11 @@ const createDoctor = z.object({
 });
 
 const createPatient = z.object({
-  password: z.string(),
+  password: z
+    .string({
+      error: 'Password is required',
+    })
+    .optional(),
   patient: z.object({
     email: z.email(),
     name: z.string({

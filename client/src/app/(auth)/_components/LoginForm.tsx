@@ -14,11 +14,11 @@ import {
   LockKeyhole,
   Mail,
 } from "lucide-react";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
   const [showPassword, setShowPassword] = useState(false);
-
 
   useEffect(() => {
     if (state && !state.success && state.message) {
@@ -130,8 +130,16 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
       </div>
 
       {/* Social Login */}
+
       <div className="grid grid-cols-2 gap-4">
-        <Button type="button" variant="outline" className="h-11 rounded-lg">
+        <Button
+          onClick={() => {
+            window.location.href = `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/google?redirect=${redirect || "/"}`;
+          }}
+          type="button"
+          variant="outline"
+          className="h-11 rounded-lg"
+        >
           <span className="mr-2 text-lg font-bold text-primary">G</span>
           Google
         </Button>

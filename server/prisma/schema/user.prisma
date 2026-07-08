@@ -1,12 +1,13 @@
 model User {
-  id                 String     @id @default(uuid())
-  email              String     @unique
-  password           String
+  id                 String         @id @default(uuid())
+  email              String         @unique
+  password           String?
   role               UserRole
-  needPasswordChange Boolean    @default(true)
-  status             UserStatus @default(ACTIVE)
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  needPasswordChange Boolean        @default(true)
+  status             UserStatus     @default(ACTIVE)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  authAccounts       AuthAccount[]
   admin              Admin?
   doctor             Doctor?
   patient            Patient?
@@ -77,4 +78,17 @@ model Patient {
   review            Review[]
 
   @@map("patients")
+}
+
+model AuthAccount {
+  id         String       @id @default(uuid())
+  userId     String
+  provider   AuthProvider
+  providerId String
+  user       User         @relation(fields: [userId], references: [id])
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@unique([provider, providerId]) // একই প্রোভাইডার ও আইডির ডাবল এন্ট্রি যেন না হয়
+  @@map("auth_accounts")
 }

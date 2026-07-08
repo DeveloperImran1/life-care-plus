@@ -10,8 +10,22 @@ import router from './app/routes';
 import { PaymentController } from './app/modules/payment/payment.controller';
 import { AppointmentService } from './app/modules/appointment/appointment.service';
 import { redis } from './lib/redis';
+import expressSession from 'express-session';
+import passport from 'passport';
+import envVars from './config';
+import './config/passport';
 
 const app: Application = express();
+app.use(
+  expressSession({
+    secret: envVars.expressSessionSecret as string,
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(cookieParser());
 
 app.post(

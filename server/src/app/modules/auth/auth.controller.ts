@@ -6,6 +6,9 @@ import sendResponse from '../../../shared/sendResponse';
 import { AuthServices } from '../auth/auth.service';
 import getTokenMaxAge from '../../../helpers/getTokenMaxAge';
 import { cookieSet } from '../../../helpers/cookieSet';
+import AppError from '../../errors/ApiError';
+import { jwtHelpers } from '../../../helpers/jwtHelpers';
+import { Secret } from 'jsonwebtoken';
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const accessTokenExpiresIn = config.jwt.expires_in as string;
@@ -156,6 +159,58 @@ const getMe = catchAsync(async (req: Request & { user?: any }, res: Response) =>
   });
 });
 
+const socialLoginCallback = catchAsync(async (req: Request, res: Response) => {
+  // Passport লগিন সাকসেস হলে ইউজারের ডাটা req.user এর মধ্যে রেখে দেয়
+  const user = req.user as any;
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  // লজিক ১: টোকেন তৈরি করুন (আপনার আগের লজিক অনুযায়ী
+  console.log('auth controller theke google user', user);
+
+  // accessToken এবং refreshToken জেনারেট করার ফাংশন কল করুন
+  const accessToken = jwtHelpers.generateToken(
+    {
+      email: user.email,
+      role: user.role,
+    },
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string,
+  );
+
+  const refreshToken = jwtHelpers.generateToken(
+    {
+      email: user.email,
+      role: user.role,
+    },
+    config.jwt.refresh_token_secret as Secret,
+    config.jwt.refresh_token_expires_in as string,
+  );
+
+  // লজিক ২: রিফ্রেশ টোকেন কুকিতে সেট করুন
+  const accessTokenExpiresIn = config.jwt.expires_in as string;
+  const refreshTokenExpiresIn = config.jwt.refresh_token_expires_in as string;
+
+  // convert accessTokenExpiresIn to milliseconds
+  const accessTokenMaxAge: number = getTokenMaxAge(accessTokenExpiresIn);
+
+  // convert refreshTokenExpiresIn to milliseconds
+  const refreshTokenMaxAge: number = getTokenMaxAge(refreshTokenExpiresIn);
+  cookieSet(res, 'accessToken', accessToken, accessTokenMaxAge);
+  cookieSet(res, 'refreshToken', refreshToken, refreshTokenMaxAge);
+
+  // লজিক ৩: ফ্রন্ট-এন্ডে রিডাইরেক্ট করা
+  let redirectTo = req.query.state ? (req.query.state as string) : '';
+  if (redirectTo.startsWith('/')) {
+    redirectTo = redirectTo.slice(1);
+  }
+
+  // URL এর সাথে Access Token পাঠিয়ে দিতে পারেন, যাতে ফ্রন্ট-এন্ড সেটা লোকাল স্টোরেজ বা কুকিতে সেভ করতে পারে
+  res.redirect(`${config.frontendUrl}/${redirectTo}?token=${accessToken}`);
+});
+
 export const AuthController = {
   loginUser,
   refreshToken,
@@ -163,4 +218,5 @@ export const AuthController = {
   forgotPassword,
   resetPassword,
   getMe,
+  socialLoginCallback,
 };
