@@ -139,7 +139,11 @@ function PublicFooter() {
       >
         <div className="container mx-auto px-4 relative z-10 flex flex-col items-center justify-center">
           <p className="text-white text-[13px] font-medium tracking-wide">
-            &copy; {new Date().getFullYear()} LifeCare+. All Rights Reserved.
+            &copy; {new Date().getFullYear()}{" "}
+            <Link className="bold" href="/">
+              LifeCare+.
+            </Link>{" "}
+            All Rights Reserved.
           </p>
         </div>
 

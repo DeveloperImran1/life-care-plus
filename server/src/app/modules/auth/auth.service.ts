@@ -275,7 +275,15 @@ const resetPassword = async (
   // hash password
   const password = await bcrypt.hash(payload.password, Number(config.salt_round));
 
-  // update into database
+  // ১. প্রথমে চেক করুন ইউজারের Credentials আছে কি না
+  const dbUser = await prisma.user.findUnique({
+    where: { email: userEmail },
+    include: { authAccounts: true },
+  });
+
+  const hasCredentials = dbUser?.authAccounts?.some((auth) => auth.provider === 'CREDENTIALS');
+
+  // ৩. ডাটাবেজে আপডেট করুন
   await prisma.user.update({
     where: {
       email: userEmail,
@@ -283,6 +291,18 @@ const resetPassword = async (
     data: {
       password,
       needPasswordChange: false,
+
+      // জাদুকরী লজিক: যদি Credentials না থাকে, শুধু তখনই Create হবে!
+      ...(hasCredentials
+        ? {}
+        : {
+            authAccounts: {
+              create: {
+                provider: 'CREDENTIALS',
+                providerId: userEmail, // অথবা ইউজারের আইডি
+              },
+            },
+          }),
     },
   });
 };
@@ -304,6 +324,13 @@ const getMe = async (user: any) => {
       status: true,
       createdAt: true,
       updatedAt: true,
+      authAccounts: {
+        select: {
+          id: true,
+          provider: true,
+          providerId: true,
+        },
+      },
       admin: {
         select: {
           id: true,

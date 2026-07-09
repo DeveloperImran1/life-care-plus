@@ -168,7 +168,7 @@ const socialLoginCallback = catchAsync(async (req: Request, res: Response) => {
   }
 
   // লজিক ১: টোকেন তৈরি করুন (আপনার আগের লজিক অনুযায়ী
-  console.log('auth controller theke google user', user);
+  console.log('auth controller theke social login user', user);
 
   // accessToken এবং refreshToken জেনারেট করার ফাংশন কল করুন
   const accessToken = jwtHelpers.generateToken(

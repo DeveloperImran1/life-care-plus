@@ -2,6 +2,7 @@ import passport from 'passport';
 import { Strategy as GoogleStrategy, Profile, VerifyCallback } from 'passport-google-oauth20';
 import config from './index'; //
 import prisma from '../shared/prisma';
+import { Strategy as FacebookStrategy, Profile as FacebookProfile } from 'passport-facebook';
 
 passport.use(
   new GoogleStrategy(
@@ -62,6 +63,74 @@ passport.use(
         }
 
         // সব ঠিক থাকলে ইউজার ডাটা রিটার্ন করে দিবো
+        return done(null, user);
+      } catch (error) {
+        return done(error as Error, false);
+      }
+    },
+  ),
+);
+
+passport.use(
+  new FacebookStrategy(
+    {
+      clientID: config.facebookAppId as string,
+      clientSecret: config.facebookAppSecret as string,
+      callbackURL: config.facebookCallbackUrl as string,
+      // ফেসবুক ডিফল্টভাবে ইমেইল বা ছবি দেয় না, তাই আলাদাভাবে চাইতে হয়
+      profileFields: ['id', 'emails', 'name', 'picture.type(large)'],
+    },
+    async (accessToken: string, refreshToken: string, profile: FacebookProfile, done: any) => {
+      try {
+        const email = profile?.emails?.[0]?.value;
+        if (!email) {
+          // অনেক সময় ইউজার শুধু ফোন নাম্বার দিয়ে ফেসবুক খোলে, তখন ইমেইল থাকে না।
+          return done(new Error('Email not found from Facebook account'), false);
+        }
+
+        // লজিক ১: ডাটাবেজে চেক করুন এই ইমেইলের ইউজার আছে কিনা
+        let user = await prisma.user.findUnique({
+          where: { email },
+          include: { authAccounts: true },
+        });
+
+        // লজিক ২: ইউজার না থাকলে নতুন ইউজার এবং Patient প্রোফাইল বানাবো
+        if (!user) {
+          user = await prisma.user.create({
+            data: {
+              email,
+              role: 'PATIENT',
+              patient: {
+                create: {
+                  name:
+                    profile?.displayName ||
+                    `${profile.name?.givenName} ${profile.name?.familyName}`,
+                  profilePhoto: profile?.photos?.[0]?.value,
+                },
+              },
+              authAccounts: {
+                create: {
+                  provider: 'FACEBOOK',
+                  providerId: profile.id,
+                },
+              },
+            },
+          });
+        }
+        // লজিক ৩: ইউজার থাকলে চেক করবো তার AuthAccount এ ফেসবুক অ্যাড করা আছে কিনা
+        else {
+          const hasFacebookAuth = user.authAccounts.find((auth) => auth.provider === 'FACEBOOK');
+          if (!hasFacebookAuth) {
+            await prisma.authAccount.create({
+              data: {
+                userId: user.id,
+                provider: 'FACEBOOK',
+                providerId: profile.id,
+              },
+            });
+          }
+        }
+
         return done(null, user);
       } catch (error) {
         return done(error as Error, false);

@@ -30,12 +30,16 @@ const createAdmin = async (req: Request): Promise<Admin> => {
   };
 
   const result = await prisma.$transaction(async (transactionClient) => {
-    await transactionClient.user.create({
+    const newUser = await transactionClient.user.create({
       data: userData,
     });
 
     const createdAdminData = await transactionClient.admin.create({
       data: req.body.admin,
+    });
+
+    const createdAuthAccountData = await transactionClient.authAccount.create({
+      data: { userId: newUser.id, provider: 'CREDENTIALS', providerId: newUser.id },
     });
 
     return createdAdminData;
@@ -67,13 +71,17 @@ const createDoctor = async (req: Request): Promise<Doctor> => {
 
   const result = await prisma.$transaction(async (transactionClient) => {
     // Step 1: Create user
-    await transactionClient.user.create({
+    const newUser = await transactionClient.user.create({
       data: userData,
     });
 
     // Step 2: Create doctor
     const createdDoctorData = await transactionClient.doctor.create({
       data: doctorData,
+    });
+
+    const createdAuthAccountData = await transactionClient.authAccount.create({
+      data: { userId: newUser.id, provider: 'CREDENTIALS', providerId: newUser.id },
     });
 
     // Step 3: Create doctor specialties if provided
@@ -148,7 +156,7 @@ const createPatient = async (req: Request): Promise<Patient> => {
   };
 
   const result = await prisma.$transaction(async (transactionClient) => {
-    await transactionClient.user.create({
+    const newUser = await transactionClient.user.create({
       data: {
         ...userData,
         needPasswordChange: false,
@@ -157,6 +165,9 @@ const createPatient = async (req: Request): Promise<Patient> => {
 
     const createdPatientData = await transactionClient.patient.create({
       data: req.body.patient,
+    });
+    const createdAuthAccountData = await transactionClient.authAccount.create({
+      data: { userId: newUser.id, provider: 'CREDENTIALS', providerId: newUser.id },
     });
 
     return createdPatientData;

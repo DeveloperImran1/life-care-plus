@@ -18,13 +18,13 @@ const SocialLoginHandler = () => {
       // setToLocalStorage("accessToken", token);
 
       // ২. সাকসেস টোস্ট দেখানো
-      toast.success("Successfully logged in with Google!");
+      toast.success("Successfully logged in!");
 
       // ৩. URL থেকে টোকেনটা মুছে দিয়ে ফ্রেশ URL তৈরি করা
       router.replace(pathname);
     } else if (error) {
       // ১. এরর টোস্ট দেখানো
-      toast.error("Google login failed! Please try again.");
+      toast.error("Login failed! Please try again.");
 
       // ২. URL থেকে এরর প্যারামিটার মুছে ফ্রেশ URL তৈরি করা
       router.replace(pathname);
