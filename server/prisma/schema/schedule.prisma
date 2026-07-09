@@ -7,6 +7,10 @@ model Schedule {
   doctorSchedules DoctorSchedules[]
   appointment     Appointment?
 
+  @@index([startDateTime])
+  @@index([endDateTime])
+  @@index([startDateTime, endDateTime]) // নির্দিষ্ট তারিখের শিডিউল ফিল্টার করতে
+
   @@map("schedules")
 }
 
@@ -26,5 +30,10 @@ model DoctorSchedules {
   updatedAt DateTime @updatedAt
 
   @@id([doctorId, scheduleId])
+
+  @@index([doctorId, isBooked])   // কোন ডাক্তারের শিডিউল ফাঁকা আছে তা খুঁজতে
+  @@index([scheduleId, isBooked])
+  @@index([createdAt])
+
   @@map("doctor_schedules")
 }

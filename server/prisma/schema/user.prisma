@@ -13,6 +13,10 @@ model User {
   patient            Patient?
   notifications      Notification[]
 
+  // INDEXING
+  @@index([email, status])      // লগিন করার সময় ডাটাবেস দ্রুত ইমেইল খুঁজে পাবে
+  @@index([role, status])       // শুধু পেশেন্ট বা ডাক্তারদের ফিল্টার করার জন্য
+  @@index([createdAt])          // নতুন ইউজারদের আগে দেখানোর (sort) জন্য
   @@map("users")
 }
 
@@ -55,6 +59,20 @@ model Doctor {
   appointment         Appointment[]
   prescription        Prescription[]
   review              Review[]
+
+
+  // Indexing
+  @@index([name])                       // নাম দিয়ে দ্রুত সার্চ করার জন্য
+
+  // ✅ COMPOSITE INDEXES (একাধিক ফিল্ড একসাথে খুঁজলে এটা কাজ করবে)
+  @@index([isDeleted, averageRating, appointmentFee]) 
+  @@index([gender, isDeleted])          
+
+  // ✅ FULL TEXT SEARCH INDEX (যেকোনো শব্দের অংশ দিয়ে সার্চ করার জন্য)
+  // [নোট: type: Gin শুধু PostgreSQL সাপোর্ট করে, তাই এটি অনেক ফাস্ট!]
+  @@index([name, qualification, designation])
+
+
 
   @@map("doctors")
 }

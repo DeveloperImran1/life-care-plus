@@ -33,15 +33,16 @@ const prisma = new PrismaClient({
   ],
 });
 
-// prisma.$on('query', (e) => {
-//     // console.log("-------------------------------------------")
-//     // console.log('Query: ' + e.query);
-//     // console.log("-------------------------------------------")
-//     // console.log('Params: ' + e.params)
-//     // console.log("-------------------------------------------")
-//     // console.log('Duration: ' + e.duration + 'ms')
-//     // console.log("-------------------------------------------")
-// })
+prisma.$on('query', (e: any) => {
+  // যদি কোনো কুয়েরি ১০০ মিলিসেকেন্ডের বেশি সময় নেয়, তবে টার্মিনালে ওয়ার্নিং দিবে
+  if (e.duration > 100) {
+    console.warn('⚠️ Slow query detected:', {
+      query: e.query,
+      params: e.params,
+      duration: `${e.duration}ms`,
+    });
+  }
+});
 
 // prisma.$on('warn', (e) => {
 //     console.log(e)
