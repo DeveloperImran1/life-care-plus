@@ -43,24 +43,26 @@ services:
     networks:
       - life-care-network
 
-  frontend:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
-    container_name: life-care-frontend
-    restart: always
-    ports:
-      - "3000:3000"
-    env_file:
-      - ./client/.env.local
-    depends_on:
-      - backend
-      - redis
-    volumes:
-      - ./client:/app
-      - /app/node_modules
-    networks:
-      - life-care-network
+  # frontend:
+  #   build:
+  #     context: ./client
+  #     dockerfile: Dockerfile
+  #   container_name: life-care-frontend
+  #   restart: always
+  #   ports:
+  #     - "3000:3000"
+  #   env_file:
+  #     - ./client/.env.local
+  #   environment:
+  #     - WATCHPACK_POLLING=true
+  #   depends_on:
+  #     - backend
+  #     - redis
+  #   volumes:
+  #     - ./client:/app
+  #     - /app/node_modules
+  #   networks:
+  #     - life-care-network
 
 volumes:
   postgres_data:

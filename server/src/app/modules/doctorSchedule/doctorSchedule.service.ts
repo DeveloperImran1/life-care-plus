@@ -82,6 +82,13 @@ const getMySchedule = async (filters: any, options: IPaginationOptions, user: IA
     });
   }
 
+  // Security Fix: Ensure the doctor can ONLY see their own schedules
+  andConditions.push({
+    doctor: {
+      email: user?.email,
+    },
+  });
+
   const whereConditions: Prisma.DoctorSchedulesWhereInput =
     andConditions.length > 0 ? { AND: andConditions } : {};
 

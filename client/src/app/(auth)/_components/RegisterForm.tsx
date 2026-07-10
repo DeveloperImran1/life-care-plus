@@ -18,6 +18,7 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import SocialLoginButton from "./SocialLoginButton";
 
 const RegisterForm = () => {
   const [state, formAction, isPending] = useActionState(registerPatient, null);
@@ -187,6 +188,9 @@ const RegisterForm = () => {
 
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
+
+      {/* Social login section */}
+      <SocialLoginButton></SocialLoginButton>
 
       <p className="pt-2 text-center text-sm text-muted-foreground">
         Already have an account?{" "}

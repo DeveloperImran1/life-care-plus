@@ -1,7 +1,8 @@
 import { Server } from 'http';
 import app from './app';
-import seedSuperAdmin from './helpers/seed';
+import { closeJobs, initializeJobs } from './app/jobs';
 import config from './config';
+import seedSuperAdmin from './helpers/seed';
 import logger from './lib/logger';
 import { initializeSocket } from './socket/socket.server';
 
@@ -25,21 +26,37 @@ async function bootstrap() {
     (global as any).io = io;
     logger.info('✅ Socket.io initialized');
 
+    // Initialize Background Jobs
+    await initializeJobs();
+
     // Function to gracefully shut down the server
-    const exitHandler = () => {
+    const exitHandler = async () => {
+      await closeJobs();
       if (server) {
         server.close(() => {
           logger.info('Server closed gracefully.');
-          process.exit(1); // Exit with a failure code
+          process.exit(0);
         });
       } else {
-        process.exit(1);
+        process.exit(0);
       }
     };
 
+    // Handle signals for graceful shutdown
+    process.on('SIGTERM', () => {
+      logger.info('SIGTERM received');
+      exitHandler();
+    });
+
+    process.on('SIGINT', () => {
+      logger.info('SIGINT received');
+      exitHandler();
+    });
+
     // Handle unhandled promise rejections
-    process.on('unhandledRejection', (error) => {
+    process.on('unhandledRejection', async (error) => {
       logger.error('Unhandled Rejection is detected, we are closing our server', error as Error);
+      await closeJobs();
       if (server) {
         server.close(() => {
           logger.error('Server closed due to unhandled rejection', error as Error);
@@ -56,4 +73,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-

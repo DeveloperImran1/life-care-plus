@@ -19,6 +19,16 @@ model Appointment {
   prescription    Prescription?
   review          Review?
 
+  @@index([patientId, status])    // একজন রোগীর নির্দিষ্ট স্ট্যাটাসের অ্যাপয়েন্টমেন্ট খুঁজতে
+  @@index([doctorId, status])     // একজন ডাক্তারের নির্দিষ্ট স্ট্যাটাসের অ্যাপয়েন্টমেন্ট খুঁজতে
+  @@index([status, paymentStatus]) // পেমেন্ট বা স্ট্যাটাস দিয়ে ফিল্টার করতে
+  @@index([createdAt])
+  @@index([scheduleId])
+  @@index([patientId, createdAt])
+  @@index([doctorId, createdAt])
+  @@index([status, createdAt])
+  @@index([paymentStatus, createdAt])
+
   @@map("appointments")
 }
 
@@ -74,5 +84,11 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  @@index([doctorId, rating]) // কোন ডাক্তারের রেটিং কত তা দ্রুত বের করতে
+  @@index([patientId])
+  @@index([rating])
+  @@index([createdAt])
+  @@index([doctorId, createdAt])
+  
   @@map("reviews")
 }

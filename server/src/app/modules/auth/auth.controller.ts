@@ -4,68 +4,27 @@ import config from '../../../config';
 import catchAsync from '../../../shared/catchAsync';
 import sendResponse from '../../../shared/sendResponse';
 import { AuthServices } from '../auth/auth.service';
+import getTokenMaxAge from '../../../helpers/getTokenMaxAge';
+import { cookieSet } from '../../../helpers/cookieSet';
+import AppError from '../../errors/ApiError';
+import { jwtHelpers } from '../../../helpers/jwtHelpers';
+import { Secret } from 'jsonwebtoken';
 
 const loginUser = catchAsync(async (req: Request, res: Response) => {
   const accessTokenExpiresIn = config.jwt.expires_in as string;
   const refreshTokenExpiresIn = config.jwt.refresh_token_expires_in as string;
 
   // convert accessTokenExpiresIn to milliseconds
-  let accessTokenMaxAge: number;
-  const accessTokenUnit = accessTokenExpiresIn.slice(-1);
-  const accessTokenValue = parseInt(accessTokenExpiresIn.slice(0, -1));
-  if (accessTokenUnit === 'y') {
-    accessTokenMaxAge = accessTokenValue * 365 * 24 * 60 * 60 * 1000;
-  } else if (accessTokenUnit === 'M') {
-    accessTokenMaxAge = accessTokenValue * 30 * 24 * 60 * 60 * 1000;
-  } else if (accessTokenUnit === 'w') {
-    accessTokenMaxAge = accessTokenValue * 7 * 24 * 60 * 60 * 1000;
-  } else if (accessTokenUnit === 'd') {
-    accessTokenMaxAge = accessTokenValue * 24 * 60 * 60 * 1000;
-  } else if (accessTokenUnit === 'h') {
-    accessTokenMaxAge = accessTokenValue * 60 * 60 * 1000;
-  } else if (accessTokenUnit === 'm') {
-    accessTokenMaxAge = accessTokenValue * 60 * 1000;
-  } else if (accessTokenUnit === 's') {
-    accessTokenMaxAge = accessTokenValue * 1000;
-  } else {
-    accessTokenMaxAge = 1000 * 60 * 60; // default 1 hour
-  }
+  const accessTokenMaxAge: number = getTokenMaxAge(accessTokenExpiresIn);
 
   // convert refreshTokenExpiresIn to milliseconds
-  let refreshTokenMaxAge: number;
-  const refreshTokenUnit = refreshTokenExpiresIn.slice(-1);
-  const refreshTokenValue = parseInt(refreshTokenExpiresIn.slice(0, -1));
-  if (refreshTokenUnit === 'y') {
-    refreshTokenMaxAge = refreshTokenValue * 365 * 24 * 60 * 60 * 1000;
-  } else if (refreshTokenUnit === 'M') {
-    refreshTokenMaxAge = refreshTokenValue * 30 * 24 * 60 * 60 * 1000;
-  } else if (refreshTokenUnit === 'w') {
-    refreshTokenMaxAge = refreshTokenValue * 7 * 24 * 60 * 60 * 1000;
-  } else if (refreshTokenUnit === 'd') {
-    refreshTokenMaxAge = refreshTokenValue * 24 * 60 * 60 * 1000;
-  } else if (refreshTokenUnit === 'h') {
-    refreshTokenMaxAge = refreshTokenValue * 60 * 60 * 1000;
-  } else if (refreshTokenUnit === 'm') {
-    refreshTokenMaxAge = refreshTokenValue * 60 * 1000;
-  } else if (refreshTokenUnit === 's') {
-    refreshTokenMaxAge = refreshTokenValue * 1000;
-  } else {
-    refreshTokenMaxAge = 1000 * 60 * 60 * 24 * 30; // default 30 days
-  }
+  const refreshTokenMaxAge: number = getTokenMaxAge(refreshTokenExpiresIn);
+
   const result = await AuthServices.loginUser(req.body);
   const { refreshToken, accessToken } = result;
-  res.cookie('accessToken', accessToken, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: accessTokenMaxAge,
-  });
-  res.cookie('refreshToken', refreshToken, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: refreshTokenMaxAge,
-  });
+
+  cookieSet(res, 'accessToken', accessToken, accessTokenMaxAge);
+  cookieSet(res, 'refreshToken', refreshToken, refreshTokenMaxAge);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -132,19 +91,9 @@ REFRESH_TOKEN_EXPIRES_IN=1y
   }
 
   const result = await AuthServices.refreshToken(refreshToken);
-  res.cookie('accessToken', result.accessToken, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: accessTokenMaxAge,
-  });
 
-  res.cookie('refreshToken', result.refreshToken, {
-    secure: true,
-    httpOnly: true,
-    sameSite: 'none',
-    maxAge: refreshTokenMaxAge,
-  });
+  cookieSet(res, 'accessToken', result.accessToken, accessTokenMaxAge);
+  cookieSet(res, 'refreshToken', result.refreshToken, refreshTokenMaxAge);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
@@ -210,6 +159,58 @@ const getMe = catchAsync(async (req: Request & { user?: any }, res: Response) =>
   });
 });
 
+const socialLoginCallback = catchAsync(async (req: Request, res: Response) => {
+  // Passport লগিন সাকসেস হলে ইউজারের ডাটা req.user এর মধ্যে রেখে দেয়
+  const user = req.user as any;
+
+  if (!user) {
+    throw new AppError(httpStatus.NOT_FOUND, 'User not found');
+  }
+
+  // লজিক ১: টোকেন তৈরি করুন (আপনার আগের লজিক অনুযায়ী
+  console.log('auth controller theke social login user', user);
+
+  // accessToken এবং refreshToken জেনারেট করার ফাংশন কল করুন
+  const accessToken = jwtHelpers.generateToken(
+    {
+      email: user.email,
+      role: user.role,
+    },
+    config.jwt.jwt_secret as Secret,
+    config.jwt.expires_in as string,
+  );
+
+  const refreshToken = jwtHelpers.generateToken(
+    {
+      email: user.email,
+      role: user.role,
+    },
+    config.jwt.refresh_token_secret as Secret,
+    config.jwt.refresh_token_expires_in as string,
+  );
+
+  // লজিক ২: রিফ্রেশ টোকেন কুকিতে সেট করুন
+  const accessTokenExpiresIn = config.jwt.expires_in as string;
+  const refreshTokenExpiresIn = config.jwt.refresh_token_expires_in as string;
+
+  // convert accessTokenExpiresIn to milliseconds
+  const accessTokenMaxAge: number = getTokenMaxAge(accessTokenExpiresIn);
+
+  // convert refreshTokenExpiresIn to milliseconds
+  const refreshTokenMaxAge: number = getTokenMaxAge(refreshTokenExpiresIn);
+  cookieSet(res, 'accessToken', accessToken, accessTokenMaxAge);
+  cookieSet(res, 'refreshToken', refreshToken, refreshTokenMaxAge);
+
+  // লজিক ৩: ফ্রন্ট-এন্ডে রিডাইরেক্ট করা
+  let redirectTo = req.query.state ? (req.query.state as string) : '';
+  if (redirectTo.startsWith('/')) {
+    redirectTo = redirectTo.slice(1);
+  }
+
+  // URL এর সাথে Access Token পাঠিয়ে দিতে পারেন, যাতে ফ্রন্ট-এন্ড সেটা লোকাল স্টোরেজ বা কুকিতে সেভ করতে পারে
+  res.redirect(`${config.frontendUrl}/${redirectTo}?token=${accessToken}`);
+});
+
 export const AuthController = {
   loginUser,
   refreshToken,
@@ -217,4 +218,5 @@ export const AuthController = {
   forgotPassword,
   resetPassword,
   getMe,
+  socialLoginCallback,
 };

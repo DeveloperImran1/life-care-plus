@@ -13,7 +13,10 @@ const AdminAdminsManagementPage = async ({
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) => {
   const searchParamsObj = await searchParams;
+  console.log("search params obj", searchParamsObj);
   const queryString = queryStringFormatter(searchParamsObj);
+  console.log("queryString", queryString);
+
   const adminsResult = await getAdmins(queryString);
 
   const totalPages = Math.ceil(
