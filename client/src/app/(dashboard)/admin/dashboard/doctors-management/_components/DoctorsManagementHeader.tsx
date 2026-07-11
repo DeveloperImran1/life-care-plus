@@ -1,11 +1,19 @@
 "use client";
+import dynamic from "next/dynamic";
 
 import ManagementPageHeader from "@/components/common/ManagementPageHeader";
 import { ISpecialty } from "@/types/specialty.type";
 import { Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
-import DoctorFormDialog from "./DoctorFormDialog";
+
+// Normal import
+// import DoctorFormDialog from "./DoctorFormDialog";
+
+// Dynamic Import system
+const DoctorFormDialog = dynamic(() => import("./DoctorFormDialog"), {
+  ssr: false, // ডায়ালগগুলো মূলত ক্লায়েন্ট সাইডে কাজ করে, তাই SSR অফ রাখাই ভালো।
+});
 
 interface DoctorsManagementHeaderProps {
   specialities?: ISpecialty[];

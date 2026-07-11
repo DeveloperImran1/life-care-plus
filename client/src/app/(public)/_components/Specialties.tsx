@@ -1,46 +1,51 @@
-import { HeartPulse, Brain, Bone, Baby } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
+import { HeartPulse, Brain, Bone, Baby } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { Card, CardContent } from "@/components/ui/card";
 
 const specialists = [
   {
-    name: 'Cardiology',
+    name: "Cardiology",
     icon: HeartPulse,
-    bgColor: 'bg-red-100',
-    iconColor: 'text-red-500',
+    bgColor: "bg-red-100",
+    iconColor: "text-red-500",
   },
   {
-    name: 'Neurology',
+    name: "Neurology",
     icon: Brain,
-    bgColor: 'bg-cyan-100',
-    iconColor: 'text-cyan-600',
+    bgColor: "bg-cyan-100",
+    iconColor: "text-cyan-600",
   },
   {
-    name: 'Orthopedic',
+    name: "Orthopedic",
     icon: Bone,
-    bgColor: 'bg-pink-100',
-    iconColor: 'text-pink-500',
+    bgColor: "bg-pink-100",
+    iconColor: "text-pink-500",
   },
   {
-    name: 'Pediatric',
+    name: "Pediatric",
     icon: Baby,
-    bgColor: 'bg-green-100',
-    iconColor: 'text-green-500',
-  }
+    bgColor: "bg-green-100",
+    iconColor: "text-green-500",
+  },
 ];
 
 const Specialities = () => {
   return (
-    <section className="py-24 mt-24 md:mt-20">
+    <section className="py-24 ">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8">
           <div>
-            <h2 className="text-3xl font-bold text-foreground">Our Specialist</h2>
+            <h2 className="text-3xl font-bold text-foreground">
+              Our Specialist
+            </h2>
             <p className="text-muted-foreground max-w-md mt-2">
               Access to medical experts across all major specialities.
             </p>
           </div>
-          <a href="#" className="text-primary font-semibold hover:underline mt-4 sm:mt-0">
+          <a
+            href="#"
+            className="text-primary font-semibold hover:underline mt-4 sm:mt-0"
+          >
             View All
           </a>
         </div>
@@ -50,13 +55,13 @@ const Specialities = () => {
             <Card
               key={specialist.name}
               className={cn(
-                'text-center transition-all duration-300 cursor-pointer hover:shadow-lg hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground',
+                "text-center transition-all duration-300 cursor-pointer hover:shadow-lg hover:-translate-y-1 hover:bg-primary hover:text-primary-foreground",
               )}
             >
               <CardContent className="p-6">
-                 <div
+                <div
                   className={cn(
-                    'w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4',
+                    "w-16 h-16 rounded-full mx-auto flex items-center justify-center mb-4",
                     specialist.bgColor,
                   )}
                 >
@@ -65,9 +70,7 @@ const Specialities = () => {
                     size={32}
                   />
                 </div>
-                <h3 className="text-lg font-semibold">
-                  {specialist.name}
-                </h3>
+                <h3 className="text-lg font-semibold">{specialist.name}</h3>
               </CardContent>
             </Card>
           ))}
