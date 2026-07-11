@@ -20,9 +20,6 @@ interface UserDropdownProps {
 }
 
 const UserDropdown = ({ userInfo }: UserDropdownProps) => {
-  const handleLogout = async () => {
-    await logoutUser();
-  };
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -56,10 +53,7 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="cursor-pointer text-red-600"
-        >
+        <DropdownMenuItem className="cursor-pointer text-red-600">
           <LogoutButton />
         </DropdownMenuItem>
       </DropdownMenuContent>

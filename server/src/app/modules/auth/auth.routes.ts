@@ -69,4 +69,6 @@ router.get(
   AuthController.socialLoginCallback, // গুগলের যেই কন্ট্রোলার ব্যবহার করেছি, এখানেও হুবহু সেটাই কাজ করবে!
 );
 
+router.post('/logout', AuthController.logout);
+
 export const AuthRoutes = router;

@@ -12,6 +12,8 @@ model User {
   doctor             Doctor?
   patient            Patient?
   notifications      Notification[]
+  tokenBlacklist     TokenBlacklist[]
+  activeSessions     ActiveSession[]
 
   // INDEXING
   @@index([email, status])      // লগিন করার সময় ডাটাবেস দ্রুত ইমেইল খুঁজে পাবে
@@ -109,4 +111,52 @@ model AuthAccount {
 
   @@unique([provider, providerId]) // একই প্রোভাইডার ও আইডির ডাবল এন্ট্রি যেন না হয়
   @@map("auth_accounts")
+}
+
+
+// ==========================================
+// 🛡️ SECURITY MODELS (Account Lockout & Sessions)
+// ==========================================
+
+model LoginAttempt {
+  id         String   @id @default(uuid())
+  email      String
+  ipAddress  String
+  userAgent  String
+  success    Boolean
+  attemptAt  DateTime @default(now())
+
+  @@index([email, attemptAt])
+  @@map("login_attempts")
+}
+
+model TokenBlacklist {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  reason    String?  // 'logout', 'password_changed', 'admin_revoked'
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("token_blacklist")
+}
+
+model ActiveSession {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  refreshToken String   @unique
+  deviceInfo   String
+  ipAddress    String
+  lastActivity DateTime @default(now())
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([refreshToken])
+  @@map("active_sessions")
 }
