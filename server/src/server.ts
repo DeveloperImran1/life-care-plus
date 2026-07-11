@@ -5,6 +5,7 @@ import config from './config';
 import seedSuperAdmin from './helpers/seed';
 import logger from './lib/logger';
 import { initializeSocket } from './socket/socket.server';
+import * as Sentry from '@sentry/node';
 
 async function bootstrap() {
   // This variable will hold our server instance
@@ -52,10 +53,17 @@ async function bootstrap() {
       logger.info('SIGINT received');
       exitHandler();
     });
+    // Handle uncaught exceptions
+    process.on('uncaughtException', (error) => {
+      logger.error('Uncaught Exception detected, shutting down...', error as Error);
+      Sentry.captureException(error);
+      process.exit(1);
+    });
 
     // Handle unhandled promise rejections
     process.on('unhandledRejection', async (error) => {
       logger.error('Unhandled Rejection is detected, we are closing our server', error as Error);
+      Sentry.captureException(error);
       await closeJobs();
       if (server) {
         server.close(() => {

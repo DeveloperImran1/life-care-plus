@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import winston from 'winston';
+import DailyRotateFile from 'winston-daily-rotate-file';
 
 // Create logs directory if it doesn't exist
 const logsDir = path.join(process.cwd(), 'logs');
@@ -18,8 +19,32 @@ const customColors = {
 
 winston.addColors(customColors);
 
+// Security filter to hide passwords and sensitive tokens
+const redactFormat = winston.format((info) => {
+  const sensitiveKeys = ['password', 'token', 'accessToken', 'refreshToken'];
+
+  const redact = (obj: any) => {
+    Object.keys(obj).forEach((key) => {
+      if (sensitiveKeys.includes(key)) {
+        obj[key] = '***REDACTED***';
+      } else if (typeof obj[key] === 'object' && obj[key] !== null) {
+        redact(obj[key]);
+      }
+    });
+  };
+
+  if (info.meta) {
+    // deep clone to avoid mutating original object
+    const clonedMeta = JSON.parse(JSON.stringify(info.meta));
+    redact(clonedMeta);
+    info.meta = clonedMeta;
+  }
+  return info;
+});
+
 // Define log format with timestamps and colors
 const logFormat = winston.format.combine(
+  redactFormat(),
   // Add timestamps in ISO format
   winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
   // Add colorization for console output
@@ -61,43 +86,52 @@ const logger = winston.createLogger({
     }),
 
     // Error log file - stores all errors and warnings
-    new winston.transports.File({
-      filename: path.join(logsDir, 'error.log'),
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'error-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
       level: 'error',
       format: logFormat,
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
+      maxSize: '5m',
+      maxFiles: '14d',
     }),
 
     // Success log file - stores info level logs
-    new winston.transports.File({
-      filename: path.join(logsDir, 'success.log'),
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'success-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
       level: 'info',
       format: logFormat,
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
+      maxSize: '5m',
+      maxFiles: '14d',
     }),
 
     // Combined log file - stores all logs
-    new winston.transports.File({
-      filename: path.join(logsDir, 'combined.log'),
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'combined-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
       format: logFormat,
-      maxsize: 5242880, // 5MB
-      maxFiles: 5,
+      maxSize: '5m',
+      maxFiles: '14d',
     }),
   ],
   // Handle uncaught exceptions
   exceptionHandlers: [
-    new winston.transports.File({
-      filename: path.join(logsDir, 'exceptions.log'),
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'exceptions-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
       format: logFormat,
+      maxSize: '5m',
+      maxFiles: '14d',
     }),
   ],
   // Handle unhandled promise rejections
   rejectionHandlers: [
-    new winston.transports.File({
-      filename: path.join(logsDir, 'rejections.log'),
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'rejections-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
       format: logFormat,
+      maxSize: '5m',
+      maxFiles: '14d',
     }),
   ],
 });
@@ -105,12 +139,13 @@ const logger = winston.createLogger({
 // Add debug file transport only in development
 if (process.env.NODE_ENV === 'development') {
   logger.add(
-    new winston.transports.File({
-      filename: path.join(logsDir, 'debug.log'),
+    new DailyRotateFile({
+      filename: path.join(logsDir, 'debug-%DATE%.log'),
+      datePattern: 'YYYY-MM-DD',
       level: 'debug',
       format: logFormat,
-      maxsize: 5242880, // 5MB
-      maxFiles: 3,
+      maxSize: '5m',
+      maxFiles: '3d',
     }),
   );
 }

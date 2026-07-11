@@ -14,8 +14,16 @@ import expressSession from 'express-session';
 import passport from 'passport';
 import envVars from './config';
 import './config/passport';
+import * as Sentry from '@sentry/node';
 
 const app: Application = express();
+
+// Initialize Sentry
+Sentry.init({
+  dsn: envVars.sentryDsn,
+  tracesSampleRate: 1.0,
+});
+
 app.use(
   expressSession({
     secret: envVars.expressSessionSecret as string,
@@ -85,6 +93,9 @@ app.get('/test-redis', async (req, res) => {
 });
 
 app.use('/api/v1', router);
+
+// Sentry Error Handler (অবশ্যই গ্লোবাল এরর হ্যান্ডলারের আগে বসাতে হবে)
+Sentry.setupExpressErrorHandler(app);
 
 app.use(globalErrorHandler);
 

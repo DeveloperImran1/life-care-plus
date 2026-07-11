@@ -10,6 +10,7 @@ import AppError from '../errors/ApiError';
 import handleZodError from '../errors/handleZodError';
 import handlePrismaValidationError from '../errors/prismaErrorParser';
 import logger from '../../lib/logger';
+import * as Sentry from '@sentry/node';
 
 const sanitizeError = (
   err: any, // eslint-disable-line
@@ -189,7 +190,10 @@ const globalErrorHandler = (
   }
 
   const sanitizedError = sanitizeError(err, message, errorDetails);
-
+  // যদি এররটি খুব ক্রিটিক্যাল (500) হয়, তবে তা Sentry-তে পাঠিয়ে দিন
+  if (statusCode === 500) {
+    Sentry.captureException(err);
+  }
   res.status(statusCode).json({
     success: false,
     message: sanitizedError.message,

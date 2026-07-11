@@ -9,7 +9,7 @@ declare global {
     }
     interface User {
       email: string;
-      role: string;
+      role: import('@prisma/client').UserRole;
     }
     interface ProcessEnv {
       JWT_ACCESS_SECRET: string;
