@@ -26,6 +26,7 @@ import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import SpecialtyMultiSelect from "./SpecialtyMultiSelect";
 import { IDoctor } from "../_types";
+import { PhoneInputField } from "@/components/ui/phone-input";
 
 interface IDoctorFormDialogProps {
   open: boolean;
@@ -200,11 +201,9 @@ const DoctorFormDialog = ({
 
             <Field>
               <FieldLabel htmlFor="contactNumber">Contact Number</FieldLabel>
-              <Input
-                id="contactNumber"
+              <PhoneInputField
                 name="contactNumber"
-                placeholder="+1234567890"
-                // defaultValue={doctor?.contactNumber}
+                placeholder="+88017XXXXXXXX"
                 defaultValue={
                   state?.formData?.contactNumber ||
                   (isEdit ? doctor?.contactNumber : "")

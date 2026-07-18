@@ -10,6 +10,7 @@ import { UserInfo } from "@/app/(auth)/_types/user.type";
 import { Camera, Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { PhoneInputField } from "@/components/ui/phone-input";
 
 interface MyProfileProps {
   userInfo: UserInfo;
@@ -182,11 +183,9 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
 
                 <div className="space-y-2">
                   <Label htmlFor="contactNumber">Contact Number</Label>
-                  <Input
-                    id="contactNumber"
+                  <PhoneInputField
                     name="contactNumber"
                     defaultValue={profileData?.contactNumber || ""}
-                    required
                     disabled={isPending}
                   />
                 </div>

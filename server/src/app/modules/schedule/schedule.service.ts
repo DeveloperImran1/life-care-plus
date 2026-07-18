@@ -19,6 +19,7 @@ const convertDateTime = async (date: Date) => {
 const insertIntoDB = async (payload: ISchedule): Promise<Schedule[]> => {
   const { startDate, endDate, startTime, endTime } = payload;
 
+  console.log('schedule create service', payload);
   const intervalTime = 30;
 
   const schedules = [];
@@ -178,8 +179,8 @@ const getAllFromDB = async (
           options.sortBy && options.sortOrder
             ? { [options.sortBy]: options.sortOrder }
             : {
-              createdAt: 'desc',
-            },
+                createdAt: 'desc',
+              },
       });
 
       const total = await prisma.schedule.count({

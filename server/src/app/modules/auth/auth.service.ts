@@ -41,12 +41,16 @@ const loginUser = async (
   }
 
   // ২. ইউজার ডাটাবেসে আছে কি না
-  const userData = await prisma.user.findUniqueOrThrow({
+  const userData = await prisma.user.findUnique({
     where: {
       email: payload.email,
       status: UserStatus.ACTIVE,
     },
   });
+
+  if (!userData) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid email or password!');
+  }
 
   // ৩. পাসওয়ার্ড চেক
   const isCorrectPassword: boolean = await bcrypt.compare(
@@ -66,7 +70,7 @@ const loginUser = async (
 
   // যদি পাসওয়ার্ড ভুল হয়, তবে এখানেই থ্রো করে দিবে
   if (!isCorrectPassword) {
-    throw new ApiError(httpStatus.UNAUTHORIZED, 'Password incorrect!');
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid email or password!');
   }
 
   // ৫. লগিন সাকসেসফুল হলে আগের সব ফেইলড অ্যাটেম্পট মুছে ফেলা (যাতে সে ক্লিন চিট পায়)

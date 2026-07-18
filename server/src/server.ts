@@ -6,6 +6,7 @@ import seedSuperAdmin from './helpers/seed';
 import logger from './lib/logger';
 import { initializeSocket } from './socket/socket.server';
 import * as Sentry from '@sentry/node';
+import { AppointmentCron } from './app/modules/appointment/appointment.cron';
 
 async function bootstrap() {
   // This variable will hold our server instance
@@ -19,6 +20,9 @@ async function bootstrap() {
     server = app.listen(config.port, () => {
       logger.serverStart(config.port as number | string);
     });
+
+    // ক্রন জব চালু করা হলো 🚀
+    AppointmentCron.checkAndSendAppointmentReminders();
 
     // Initialize Socket.io
     const io = initializeSocket(server);
