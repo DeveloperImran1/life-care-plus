@@ -17,6 +17,7 @@ import { redisHelper } from '../../../helpers/redisHelper';
 import { appointmentCacheKeys } from './appointment.constant';
 import { doctorScheduleCacheKeys } from '../doctorSchedule/doctorSchedule.constants';
 import { NotificationService } from '../notification/notification.service';
+import { sendPushNotification } from '../../../helpers/pushNotificationHelper';
 
 const APPOINTMENT_CACHE_TTL = 30 * 60; // 30 minutes
 
@@ -96,7 +97,10 @@ const createAppointment = async (user: IAuthUser, payload: any) => {
         appointmentId: appointmentData.id,
         paymentId: paymentData.id,
       },
-      success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/settings/payment/success`,
+      // success_url: `http://localhost:5000/api/v1/payment/mock-success?appointmentId=${appointmentData.id}&paymentId=${paymentData.id}`,
+      success_url: `${
+        process.env.BACKEND_URL || 'http://localhost:5000/api/v1'
+      }/payment/mock-success?appointmentId=${appointmentData.id}&paymentId=${paymentData.id}`,
       cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/patient/dashboard/my-appointments`,
     });
 
@@ -124,7 +128,7 @@ const createAppointment = async (user: IAuthUser, payload: any) => {
     actionUrl: '/admin/dashboard/appointments-management',
   });
 
-  return { paymentUrl: result.paymentUrl };
+  return { paymentUrl: result.paymentUrl, appointmentId: result.appointmentData.id };
 };
 
 const getMyAppointment = async (user: IAuthUser, filters: any, options: IPaginationOptions) => {
@@ -241,6 +245,11 @@ const updateAppointmentStatus = async (
     },
     include: {
       doctor: true,
+      patient: {
+        include: {
+          user: true,
+        },
+      },
     },
   });
 
@@ -290,6 +299,18 @@ const updateAppointmentStatus = async (
     message: `An appointment status changed to ${status}`,
     priority: 'MEDIUM',
     actionUrl: '/admin/dashboard/appointments-management',
+  });
+
+  // 🔔 Web Push Notification to Patient
+  // (ব্রাউজারে নোটিফিকেশন পাঠানোর জন্য)
+  await sendPushNotification(appointmentData.patient.user.id, {
+    title:
+      status === AppointmentStatus.CANCELED ? 'Appointment Canceled' : 'Appointment Confirmed! 🎉',
+    body:
+      status === AppointmentStatus.CANCELED
+        ? `Your appointment with Dr. ${appointmentData.doctor.name} has been canceled.`
+        : `Your appointment with Dr. ${appointmentData.doctor.name} is now confirmed.`,
+    url: '/patient/dashboard/my-appointments',
   });
 
   return result;
@@ -577,7 +598,9 @@ const initiatePaymentForAppointment = async (appointmentId: string, user: IAuthU
       appointmentId: appointment.id,
       paymentId: appointment.payment!.id,
     },
-    success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/settings/payment/success`,
+    success_url: `${
+      process.env.BACKEND_URL || 'http://localhost:5000/api/v1'
+    }/payment/mock-success?appointmentId=${appointment.id}&paymentId=${appointment.payment!.id}`,
     cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/patient/dashboard/my-appointments`,
   });
 

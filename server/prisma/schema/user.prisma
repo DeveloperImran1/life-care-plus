@@ -14,7 +14,8 @@ model User {
   notifications      Notification[]
   tokenBlacklist     TokenBlacklist[]
   activeSessions     ActiveSession[]
-
+  pushSubscriptions  PushSubscription[]
+  
   // INDEXING
   @@index([email, status])      // লগিন করার সময় ডাটাবেস দ্রুত ইমেইল খুঁজে পাবে
   @@index([role, status])       // শুধু পেশেন্ট বা ডাক্তারদের ফিল্টার করার জন্য
@@ -159,4 +160,19 @@ model ActiveSession {
   @@index([userId])
   @@index([refreshToken])
   @@map("active_sessions")
+}
+
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique // ব্রাউজারের ইউনিক পুশ URL
+  p256dh    String   // এনক্রিপশনের জন্য পাবলিক কি
+  auth      String   // অথেনটিকেশন সিক্রেট
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("push_subscriptions")
 }

@@ -7,26 +7,28 @@ import { IAuthUser } from '../../interfaces/common';
 import { NotificationService } from './notification.service';
 import prisma from '../../../shared/prisma';
 
-const getMyNotifications = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
-  const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
-  const user = req.user;
+const getMyNotifications = catchAsync(
+  async (req: Request & { user?: IAuthUser }, res: Response) => {
+    const options = pick(req.query, ['limit', 'page', 'sortBy', 'sortOrder']);
+    const user = req.user;
 
-  // Look up user ID from email
-  const userData = await prisma.user.findUniqueOrThrow({
-    where: { email: user?.email },
-    select: { id: true },
-  });
+    // Look up user ID from email
+    const userData = await prisma.user.findUniqueOrThrow({
+      where: { email: user?.email },
+      select: { id: true },
+    });
 
-  const result = await NotificationService.getUserNotifications(userData.id, options);
+    const result = await NotificationService.getUserNotifications(userData.id, options);
 
-  sendResponse(res, {
-    statusCode: httpStatus.OK,
-    success: true,
-    message: 'Notifications retrieved successfully',
-    data: result.data,
-    meta: result.meta,
-  });
-});
+    sendResponse(res, {
+      statusCode: httpStatus.OK,
+      success: true,
+      message: 'Notifications retrieved successfully',
+      data: result.data,
+      meta: result.meta,
+    });
+  },
+);
 
 const markAsRead = catchAsync(async (req: Request & { user?: IAuthUser }, res: Response) => {
   const { id } = req.params;

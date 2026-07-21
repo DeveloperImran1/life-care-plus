@@ -20,7 +20,7 @@ interface DoctorProfileContentProps {
 }
 
 const DoctorProfileContent = ({ doctor }: DoctorProfileContentProps) => {
-  const initials = doctor.name
+  const initials = doctor?.name
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -43,7 +43,7 @@ const DoctorProfileContent = ({ doctor }: DoctorProfileContentProps) => {
                         ? doctor.profilePhoto
                         : undefined
                     }
-                    alt={doctor.name}
+                    alt={doctor?.name}
                   />
                 ) : (
                   <AvatarFallback className="text-3xl">
@@ -56,7 +56,7 @@ const DoctorProfileContent = ({ doctor }: DoctorProfileContentProps) => {
             {/* Doctor Info */}
             <div className="flex-1 space-y-4">
               <div>
-                <h1 className="text-3xl font-bold">{doctor.name}</h1>
+                <h1 className="text-3xl font-bold">{doctor?.name}</h1>
                 <p className="text-muted-foreground mt-1">
                   {doctor.designation}
                 </p>

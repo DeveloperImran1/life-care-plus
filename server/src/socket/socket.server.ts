@@ -23,7 +23,7 @@ declare module 'socket.io' {
 export function initializeSocket(httpServer: HttpServer) {
   const io = new SocketServer(httpServer, {
     cors: {
-      origin: ['http://localhost:3000', 'http://localhost:3001', process.env.FRONTEND_URL || 'http://localhost:3000'],
+      origin: ['http://localhost:3000', 'http://localhost:3001', process.env.FRONTEND_URL],
       credentials: true,
     },
     pingTimeout: 60000,

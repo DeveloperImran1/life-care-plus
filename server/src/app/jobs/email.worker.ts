@@ -26,9 +26,8 @@ export const emailWorker = new Worker(
   {
     connection: getRedisConnection() as any,
     concurrency: 5, // Process up to 5 emails in parallel
-  }
+  },
 );
-
 
 emailWorker.on('completed', (job) => {
   logger.info(`🎉 Email Job ${job.id} has completed successfully.`);

@@ -7,6 +7,7 @@ import pick from '../../../shared/pick';
 import { userFilterableFields } from '../user/user.constant';
 
 import { IAuthUser } from '../../interfaces/common';
+import prisma from '../../../shared/prisma';
 
 const createAdmin = catchAsync(async (req: Request, res: Response) => {
   const result = await userService.createAdmin(req);
@@ -91,6 +92,25 @@ const updateMyProfie = catchAsync(async (req: Request & { user?: IAuthUser }, re
   });
 });
 
+const savePushSubscription = catchAsync(async (req: Request, res: Response) => {
+  // auth মিডলওয়্যার থেকে লগিন করা ইউজারের ডেটা (ইমেইল/রোল) পাব
+  // কিন্তু আমাদের ডাটাবেসে সেভ করার জন্য userId (UUID) লাগবে।
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { email: req.user!.email },
+  });
+
+  const subscription = req.body;
+
+  const result = await userService.savePushSubscription(user.id, subscription);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Push subscription saved successfully!',
+    data: result,
+  });
+});
+
 export const userController = {
   createAdmin,
   createDoctor,
@@ -99,4 +119,5 @@ export const userController = {
   changeProfileStatus,
   getMyProfile,
   updateMyProfie,
+  savePushSubscription,
 };

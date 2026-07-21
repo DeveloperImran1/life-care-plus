@@ -11,6 +11,7 @@ import { Camera, Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { PhoneInputField } from "@/components/ui/phone-input";
+import { subscribeToPushNotifications } from "@/lib/utils/push-notification";
 
 interface MyProfileProps {
   userInfo: UserInfo;
@@ -89,58 +90,68 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
         </p>
       </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Profile Card */}
-          <Card className="lg:col-span-1">
-            <CardHeader>
-              <CardTitle>Profile Picture</CardTitle>
-            </CardHeader>
-            <CardContent className="flex flex-col items-center space-y-4">
-              <div className="relative">
-                <Avatar className="h-32 w-32">
-                  {previewImage || profilePhoto ? (
-                    <AvatarImage
-                      src={previewImage || (profilePhoto as string)}
-                      alt={userInfo.name}
-                    />
-                  ) : (
-                    <AvatarFallback className="text-3xl">
-                      {getInitials(userInfo.name)}
-                    </AvatarFallback>
-                  )}
-                </Avatar>
-                <label
-                  htmlFor="file"
-                  className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer hover:bg-primary/90 transition-colors"
-                >
-                  <Camera className="h-4 w-4" />
-                  <Input
-                    type="file"
-                    id="file"
-                    name="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={handleImageChange}
-                    disabled={isPending}
+      <div className="grid gap-6 lg:grid-cols-3">
+        {/* Profile Card */}
+        <Card className="lg:col-span-1">
+          <CardHeader>
+            <CardTitle>Profile Picture</CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center space-y-4">
+            <div className="relative">
+              <Avatar className="h-32 w-32">
+                {previewImage || profilePhoto ? (
+                  <AvatarImage
+                    src={previewImage || (profilePhoto as string)}
+                    alt={userInfo.name}
                   />
-                </label>
-              </div>
+                ) : (
+                  <AvatarFallback className="text-3xl">
+                    {getInitials(userInfo.name)}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+              <label
+                htmlFor="file"
+                className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer hover:bg-primary/90 transition-colors"
+              >
+                <Camera className="h-4 w-4" />
+                <Input
+                  type="file"
+                  id="file"
+                  name="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleImageChange}
+                  disabled={isPending}
+                />
+              </label>
+            </div>
 
-              <div className="text-center">
-                <p className="font-semibold text-lg">{userInfo.name}</p>
-                <p className="text-sm text-muted-foreground">
-                  {userInfo.email}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1 capitalize">
-                  {userInfo.role.replace("_", " ")}
-                </p>
-              </div>
-            </CardContent>
-          </Card>
+            <div className="text-center">
+              <p className="font-semibold text-lg">{userInfo.name}</p>
+              <p className="text-sm text-muted-foreground">{userInfo.email}</p>
+              <p className="text-xs text-muted-foreground mt-1 capitalize">
+                {userInfo.role.replace("_", " ")}
+              </p>
+            </div>
 
-          {/* Profile Information Card */}
-          <Card className="lg:col-span-2">
+            {/*  আপনার কম্পোনেন্টের রিটার্নের ভেতরে যেকোনো জায়গায়: */}
+            <Button
+              onClick={async () => {
+                const res = await subscribeToPushNotifications();
+                if (res.success) {
+                  alert("Successfully subscribed to notifications!");
+                }
+              }}
+            >
+              Enable Push Notifications
+            </Button>
+          </CardContent>
+        </Card>
+
+        {/* Profile Information Card */}
+        <form onSubmit={handleSubmit} className="lg:col-span-2">
+          <Card>
             <CardHeader>
               <CardTitle>Personal Information</CardTitle>
             </CardHeader>
@@ -321,8 +332,8 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
               </div>
             </CardContent>
           </Card>
-        </div>
-      </form>
+        </form>
+      </div>
     </div>
   );
 };

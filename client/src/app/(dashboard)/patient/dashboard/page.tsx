@@ -25,7 +25,7 @@ async function PatientDashboardContent() {
       <div className="grid gap-4 md:grid-cols-3">
         <StatsCard
           title="Total Appointments"
-          value={data.appointmentCount.toLocaleString()}
+          value={data?.appointmentCount?.toLocaleString()}
           iconName="CalendarDays"
           description="All time appointments"
           iconClassName="bg-primary/10"
