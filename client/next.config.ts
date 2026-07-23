@@ -31,7 +31,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
-        hostname: "res.cloudinary.com",
+        hostname: "**", // যেকোনো https লিংকের জন্য
+      },
+      {
+        protocol: "http",
+        hostname: "**", // যেকোনো http লিংকের জন্য (যদি লাগে)
       },
     ],
   },

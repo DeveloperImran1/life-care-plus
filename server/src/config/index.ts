@@ -40,6 +40,7 @@ export default {
 
   expressSessionSecret: process.env.EXPRESS_SESSION_SECRET,
   frontendUrl: process.env.FRONTEND_URL,
+  redisUrl: process.env.REDIS_URL,
   sentryDsn: process.env.SENTRY_DSN,
 
   twilio: {

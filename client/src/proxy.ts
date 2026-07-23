@@ -189,6 +189,7 @@ export async function proxy(request: NextRequest) {
 
   // Rule 5 : User is trying to access common protected route
   if (routerOwner === "COMMON") {
+    console.log("PROXY: Allowing access to COMMON route", pathname);
     return NextResponse.next();
   }
 
