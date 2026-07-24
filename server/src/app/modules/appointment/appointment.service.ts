@@ -18,6 +18,7 @@ import { appointmentCacheKeys } from './appointment.constant';
 import { doctorScheduleCacheKeys } from '../doctorSchedule/doctorSchedule.constants';
 import { NotificationService } from '../notification/notification.service';
 import { sendPushNotification } from '../../../helpers/pushNotificationHelper';
+import { createVideoRoom } from '../../../helpers/dailyco';
 
 const APPOINTMENT_CACHE_TTL = 30 * 60; // 30 minutes
 
@@ -266,6 +267,21 @@ const updateAppointmentStatus = async (
       status,
     },
   });
+
+  // --- Daily.co Video Room Creation Logic ---
+  // যদি অ্যাপয়েন্টমেন্টটি 'SCHEDULED' বা 'COMPLETED' বা কোনো পজিটিভ স্ট্যাটাসে যায়
+  // তাহলে আমরা ভিডিও রুম তৈরি করার চেষ্টা করব
+  if (status === 'SCHEDULED' || status === 'INPROGRESS' || status === 'COMPLETED') {
+    try {
+      // ফাংশন কল করে ডাটাবেসের ওই UUID টা দিয়ে দিচ্ছি
+      await createVideoRoom(appointmentData.videoCallingId);
+      console.log(`✅ Daily.co video room created successfully for Appointment: ${appointmentId}`);
+    } catch (error) {
+      // যদি আগে থেকেই ওই নামে রুম তৈরি করা থাকে বা অন্য কোনো এরর আসে, সেটা হ্যান্ডেল করবে
+      console.log(`⚠️ Note: Room might already exist or error occurred:`, error);
+    }
+  }
+  // ------------------------------------------
 
   await redisHelper.deleteCacheByPattern(appointmentCacheKeys.allLists());
   await redisHelper.deleteCacheByPattern(doctorScheduleCacheKeys.allLists());

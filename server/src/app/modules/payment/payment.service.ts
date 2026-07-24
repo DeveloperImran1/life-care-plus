@@ -10,6 +10,7 @@ import { IPaginationOptions } from '../../interfaces/pagination';
 import { appointmentCacheKeys } from '../appointment/appointment.constant';
 import { doctorScheduleCacheKeys } from '../doctorSchedule/doctorSchedule.constants';
 import { NotificationService } from '../notification/notification.service';
+import { createVideoRoom } from '../../../helpers/dailyco';
 
 const handleStripeWebhookEvent = async (event: Stripe.Event) => {
   // Check if event has already been processed (idempotency)
@@ -73,6 +74,20 @@ const handleStripeWebhookEvent = async (event: Stripe.Event) => {
       });
 
       console.log(`✅ Payment ${session.payment_status} for appointment ${appointmentId}`);
+
+      // --- Create Video Room after successful payment ---
+      if (session.payment_status === 'paid' && appointment) {
+        try {
+          // পেমেন্ট সাকসেস হলে ডাটাবেসে থাকা আইডি দিয়ে রুম তৈরি করবে
+          await createVideoRoom(appointment.videoCallingId);
+          console.log(
+            `✅ Daily.co video room created automatically for Paid Appointment: ${appointmentId}`,
+          );
+        } catch (error) {
+          console.log(`⚠️ Room already exists or error occurred:`, error);
+        }
+      }
+      // ---------------------------------------------------
 
       // Invalidate Redis cache
       await redisHelper.deleteCacheByPattern(appointmentCacheKeys.allLists());

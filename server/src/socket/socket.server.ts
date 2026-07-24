@@ -157,14 +157,14 @@ export function initializeSocket(httpServer: HttpServer) {
           // গ. সাইডবারের আনরিড ব্যাজ আপডেট করার জন্য রিসিভারকে নোটিফাই করবো
           const conv = await prisma.conversation.findUnique({
             where: { id: data.conversationId },
-            select: { participantIds: true }
+            select: { participantIds: true },
           });
           if (conv) {
-            const receiverId = conv.participantIds.find(id => id !== user.userId);
+            const receiverId = conv.participantIds.find((id) => id !== user.userId);
             if (receiverId) {
               io.to(`user:${receiverId}`).emit('new_message_notification', {
                 conversationId: data.conversationId,
-                message: savedMessage
+                message: savedMessage,
               });
             }
           }
@@ -180,7 +180,7 @@ export function initializeSocket(httpServer: HttpServer) {
       try {
         await prisma.message.update({
           where: { id: data.messageId },
-          data: { isDeleted: true, text: "", fileUrl: null }, // টেক্সট ও ফাইল মুছে দিলাম প্রাইভেসি রক্ষার্থে
+          data: { isDeleted: true, text: '', fileUrl: null }, // টেক্সট ও ফাইল মুছে দিলাম প্রাইভেসি রক্ষার্থে
         });
 
         // অন্য ইউজারকে জানিয়ে দেয়া যে মেসেজ ডিলিট হয়েছে
@@ -192,45 +192,48 @@ export function initializeSocket(httpServer: HttpServer) {
     });
 
     // ৮. মেসেজ রিঅ্যাকশন (Emoji Reaction - Multi-user JSON)
-    socket.on('react_to_message', async (data: { messageId: string; conversationId: string; reaction: string }) => {
-      try {
-        // প্রথমে মেসেজটা খুঁজে বের করবো তার বর্তমান রিঅ্যাকশন ডাটা নেওয়ার জন্য
-        const message = await prisma.message.findUnique({
-          where: { id: data.messageId },
-          select: { reaction: true }
-        });
+    socket.on(
+      'react_to_message',
+      async (data: { messageId: string; conversationId: string; reaction: string }) => {
+        try {
+          // প্রথমে মেসেজটা খুঁজে বের করবো তার বর্তমান রিঅ্যাকশন ডাটা নেওয়ার জন্য
+          const message = await prisma.message.findUnique({
+            where: { id: data.messageId },
+            select: { reaction: true },
+          });
 
-        if (!message) return;
+          if (!message) return;
 
-        // রিঅ্যাকশন ডাটাটাকে একটা অবজেক্ট হিসেবে ধরবো
-        let currentReactions: Record<string, string> = {};
-        if (message.reaction && typeof message.reaction === 'object') {
-          currentReactions = message.reaction as Record<string, string>;
+          // রিঅ্যাকশন ডাটাটাকে একটা অবজেক্ট হিসেবে ধরবো
+          let currentReactions: Record<string, string> = {};
+          if (message.reaction && typeof message.reaction === 'object') {
+            currentReactions = message.reaction as Record<string, string>;
+          }
+
+          // যদি ইউজার নতুন রিঅ্যাকশন দেয় তাহলে অ্যাড/আপডেট করবো, আর খালি পাঠালে রিমুভ করবো
+          if (data.reaction) {
+            currentReactions[user.userId] = data.reaction;
+          } else {
+            delete currentReactions[user.userId];
+          }
+
+          // ডাটাবেসে আপডেট করা হলো
+          const updatedMessage = await prisma.message.update({
+            where: { id: data.messageId },
+            data: { reaction: currentReactions },
+          });
+
+          // রুমে সবাইকে জানিয়ে দেয়া যে রিঅ্যাকশন আপডেট হয়েছে (পুরো JSON অবজেক্ট পাঠানো হলো)
+          const roomName = `chat:${data.conversationId}`;
+          io.to(roomName).emit('message_reaction_updated', {
+            messageId: data.messageId,
+            reaction: currentReactions,
+          });
+        } catch (error) {
+          logger.error('Error adding reaction:', error);
         }
-
-        // যদি ইউজার নতুন রিঅ্যাকশন দেয় তাহলে অ্যাড/আপডেট করবো, আর খালি পাঠালে রিমুভ করবো
-        if (data.reaction) {
-          currentReactions[user.userId] = data.reaction;
-        } else {
-          delete currentReactions[user.userId];
-        }
-
-        // ডাটাবেসে আপডেট করা হলো
-        const updatedMessage = await prisma.message.update({
-          where: { id: data.messageId },
-          data: { reaction: currentReactions },
-        });
-
-        // রুমে সবাইকে জানিয়ে দেয়া যে রিঅ্যাকশন আপডেট হয়েছে (পুরো JSON অবজেক্ট পাঠানো হলো)
-        const roomName = `chat:${data.conversationId}`;
-        io.to(roomName).emit('message_reaction_updated', {
-          messageId: data.messageId,
-          reaction: currentReactions,
-        });
-      } catch (error) {
-        logger.error('Error adding reaction:', error);
-      }
-    });
+      },
+    );
 
     // ৩. টাইপিং ইন্ডিকেটর ("Doctor is typing...")
     socket.on('typing', (data: { conversationId: string }) => {
@@ -255,12 +258,12 @@ export function initializeSocket(httpServer: HttpServer) {
       try {
         const roomName = `user:${data.userId}`;
         const sockets = await io.in(roomName).fetchSockets();
-        
+
         let lastSeen: Date | null = null;
         if (sockets.length === 0) {
           const u = await prisma.user.findUnique({
             where: { id: data.userId },
-            select: { lastSeen: true }
+            select: { lastSeen: true },
           });
           lastSeen = u?.lastSeen || null;
         }
@@ -290,14 +293,50 @@ export function initializeSocket(httpServer: HttpServer) {
 
         const roomName = `chat:${data.conversationId}`;
         // অন্য ইউজারকে জানানো যে তার মেসেজগুলো সিন হয়ে গেছে
-        io.to(roomName).emit('messages_seen', { 
+        io.to(roomName).emit('messages_seen', {
           conversationId: data.conversationId,
-          seenByUserId: user.userId
+          seenByUserId: user.userId,
         });
       } catch (error) {
         logger.error('Error marking messages as seen', error);
       }
     });
+
+    // --- Video Call Notification Logic ---
+    socket.on('doctor_joined_call', async (data: { videoCallingId: string }) => {
+      console.log("🔥 [SOCKET] Received doctor_joined_call for videoCallingId:", data.videoCallingId);
+      try {
+        // ডাটাবেস থেকে অ্যাপয়েন্টমেন্ট এবং রোগীর ইমেইল খুঁজে বের করছি
+        const appointment = await prisma.appointment.findFirst({
+          where: { videoCallingId: data.videoCallingId },
+          select: { patient: { select: { email: true } } },
+        });
+
+        if (appointment && appointment.patient?.email) {
+          // ইউজারের রিয়েল আইডি (User.id) বের করছি ইমেইল দিয়ে
+          const user = await prisma.user.findUnique({
+            where: { email: appointment.patient.email },
+            select: { id: true }
+          });
+
+          if (user) {
+            const roomName = `user:${user.id}`;
+            console.log(`✅ [SOCKET] Patient User found! Emitting to room: ${roomName}`);
+            io.to(roomName).emit('doctor_calling', {
+              videoCallingId: data.videoCallingId,
+              message: 'Doctor has joined the video call. Please join now!',
+            });
+          } else {
+            console.log(`❌ [SOCKET] User record not found for patient email: ${appointment.patient.email}`);
+          }
+        } else {
+          console.log(`❌ [SOCKET] No appointment/patient found for videoCallingId: ${data.videoCallingId}`);
+        }
+      } catch (error) {
+        logger.error('Error finding appointment for call notification:', error);
+      }
+    });
+    // ------------------------------------
 
     // Handle disconnection
     socket.on('disconnect', async (reason) => {
@@ -307,9 +346,9 @@ export function initializeSocket(httpServer: HttpServer) {
         // ডাটাবেসে lastSeen আপডেট করা
         await prisma.user.update({
           where: { id: user.userId },
-          data: { lastSeen: new Date() }
+          data: { lastSeen: new Date() },
         });
-      } catch(err) {
+      } catch (err) {
         logger.error('Error updating lastSeen', err);
       }
 
@@ -322,10 +361,10 @@ export function initializeSocket(httpServer: HttpServer) {
       });
 
       // ব্রডকাস্ট: ইউজার অফলাইনে চলে গেছে (সাথে lastSeen টাইমটাও পাঠিয়ে দিচ্ছি)
-      io.emit('user_status_changed', { 
-        userId: user.userId, 
+      io.emit('user_status_changed', {
+        userId: user.userId,
         isOnline: false,
-        lastSeen: new Date().toISOString()
+        lastSeen: new Date().toISOString(),
       });
     });
 

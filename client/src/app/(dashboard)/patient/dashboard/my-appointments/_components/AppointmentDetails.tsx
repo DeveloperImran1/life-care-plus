@@ -14,10 +14,12 @@ import {
   CreditCard,
   Loader2,
   MapPin,
+  MessageSquare,
   Phone,
   Star,
   Stethoscope,
   User,
+  Video,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -32,6 +34,8 @@ import {
 import { toast } from "sonner";
 import AppointmentCountdown from "./AppointmentCountdown";
 import ReviewDialog from "./ReviewDialog";
+import Link from "next/link";
+import { createConversation } from "@/app/(dashboard)/_services/chat.service";
 
 interface AppointmentDetailProps {
   appointment: IAppointment;
@@ -51,6 +55,21 @@ const AppointmentDetails = ({ appointment }: AppointmentDetailProps) => {
     !appointment.review &&
     appointment.paymentStatus === PaymentStatus.PAID;
   const canCancel = isScheduled && !isCanceled;
+
+  const [isChatLoading, setIsChatLoading] = useState(false);
+
+  const handleStartChat = async () => {
+    const doctorEmail = appointment?.doctor?.email; // এখন সরাসরি ইমেইল নিচ্ছি
+    if (!doctorEmail) return;
+
+    setIsChatLoading(true);
+    const res = await createConversation(doctorEmail);
+    setIsChatLoading(false);
+
+    if (res?.success && res?.data?.id) {
+      router.push(`/chat?conversationId=${res.data.id}`);
+    }
+  };
 
   const handlePayNow = async () => {
     setIsProcessingPayment(true);
@@ -265,13 +284,45 @@ const AppointmentDetails = ({ appointment }: AppointmentDetailProps) => {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div>
-              <p className="text-2xl font-semibold">
-                {appointment.doctor?.name || "N/A"}
-              </p>
-              <p className="text-muted-foreground">
-                {appointment.doctor?.designation || "Doctor"}
-              </p>
+            <div className="flex justify-between">
+              <div>
+                <p className="text-2xl font-semibold">
+                  {appointment.doctor?.name || "N/A"}
+                </p>
+                <p className="text-muted-foreground">
+                  {appointment.doctor?.designation || "Doctor"}
+                </p>
+              </div>
+
+              <Button
+                variant="outline"
+                className="flex items-center gap-2"
+                onClick={handleStartChat}
+                disabled={isChatLoading}
+              >
+                {isChatLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <MessageSquare className="h-4 w-4" />
+                )}
+                Message Doctor
+              </Button>
+
+              {/* ভিডিও কল বাটন (কন্ডিশনাল) */}
+              {appointment.paymentStatus === "PAID" &&
+                (appointment.status === "SCHEDULED" ||
+                  appointment.status === "INPROGRESS") && (
+                  <Button className="bg-emerald-600 hover:bg-emerald-700 shadow-md">
+                    <Link
+                      href={`/consultation/${appointment.videoCallingId}`}
+                      className="flex items-center gap-2 w-full"
+                      target="_blank"
+                    >
+                      <Video className="h-5 w-5" />
+                      <span className="text-md font-semibold  ">Join Call</span>
+                    </Link>
+                  </Button>
+                )}
             </div>
 
             <Separator />
