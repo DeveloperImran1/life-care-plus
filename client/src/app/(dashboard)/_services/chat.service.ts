@@ -20,10 +20,10 @@ export async function getMyChats() {
 }
 
 // ২. নির্দিষ্ট চ্যাটের মেসেজ আনা
-export async function getChatMessages(conversationId: string) {
+export async function getChatMessages(conversationId: string, page: number = 1) {
   try {
     const response = await serverFetch.get(
-      `/chats/${conversationId}/messages`,
+      `/chats/${conversationId}/messages?page=${page}&limit=20`,
       {
         headers: {
           "Content-Type": "application/json",

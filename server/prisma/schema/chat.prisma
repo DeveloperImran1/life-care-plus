@@ -23,6 +23,7 @@ model Message {
   
   isSeen         Boolean      @default(false)
   isDeleted      Boolean      @default(false) // মেসেজ ডিলিট করার ফিচার
+  reaction       Json?        // ইমোজি রিঅ্যাকশন (যেমন {"userId": "👍"})
   
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt

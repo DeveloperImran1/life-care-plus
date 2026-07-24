@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { Paperclip, Send, X } from "lucide-react";
+import { useState, useRef } from "react";
+import { Paperclip, Send, X, Mic, Square } from "lucide-react";
 import { uploadChatFile } from "../../_services/chat.service";
 import { useSocket } from "@/contexts/SocketContext";
 
@@ -13,6 +13,9 @@ export default function MessageInput({
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]);
 
   // ⌨️ টাইপিং ইন্ডিকেটর পাঠানোর লজিক
   const handleTyping = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -23,6 +26,45 @@ export default function MessageInput({
       } else {
         socket.emit("stop_typing", { conversationId }); // ইনপুট মুছে দিলে
       }
+    }
+  };
+
+  // 🎤 ভয়েস রেকর্ড শুরু করা
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
+      audioChunksRef.current = [];
+
+      mediaRecorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
+        }
+      };
+
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/webm" });
+        const audioFile = new File([audioBlob], "voice-message.webm", { type: "audio/webm" });
+        setFile(audioFile);
+        
+        // স্ট্রীম বন্ধ করা যাতে ব্রাউজারের উপরে লাল ডট না জ্বলে থাকে
+        stream.getTracks().forEach((track) => track.stop());
+      };
+
+      mediaRecorder.start();
+      setIsRecording(true);
+    } catch (err) {
+      console.error("Error accessing microphone:", err);
+      alert("Microphone access is required for voice messages.");
+    }
+  };
+
+  // ⏹️ ভয়েস রেকর্ড থামানো
+  const stopRecording = () => {
+    if (mediaRecorderRef.current && isRecording) {
+      mediaRecorderRef.current.stop();
+      setIsRecording(false);
     }
   };
 
@@ -105,9 +147,23 @@ export default function MessageInput({
               setPreviewUrl(null);
             }
           }}
-          accept="image/*,.pdf"
+          accept="image/*,.pdf,audio/*"
         />
       </label>
+
+      {/* 🎤 ভয়েস রেকর্ড বাটন */}
+      <button
+        type="button"
+        onClick={isRecording ? stopRecording : startRecording}
+        className={`p-2 rounded-full transition-colors ${
+          isRecording 
+            ? "text-red-500 bg-red-50 hover:bg-red-100 animate-pulse" 
+            : "text-gray-500 hover:text-primary hover:bg-slate-100"
+        }`}
+        title={isRecording ? "Stop Recording" : "Record Voice Message"}
+      >
+        {isRecording ? <Square className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+      </button>
 
       {/* ⌨️ টেক্সট ইনপুট */}
       <div className="flex-1 relative">
@@ -116,9 +172,13 @@ export default function MessageInput({
           value={text}
           onChange={handleTyping}
           placeholder={
-            isUploading ? "Uploading file... ⏳" : "Type a message..."
+            isUploading 
+              ? "Uploading file... ⏳" 
+              : isRecording 
+                ? "Recording voice message... 🎙️" 
+                : "Type a message..."
           }
-          disabled={isUploading}
+          disabled={isUploading || isRecording}
           className="w-full bg-slate-100 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-primary"
         />
 
@@ -131,6 +191,8 @@ export default function MessageInput({
                 alt="Preview"
                 className="h-12 w-12 object-cover rounded"
               />
+            ) : file.type.startsWith("audio/") ? (
+              <span className="text-xs text-primary px-2">🎵 Voice Note</span>
             ) : (
               <span className="text-xs text-primary px-2">📎 {file.name}</span>
             )}

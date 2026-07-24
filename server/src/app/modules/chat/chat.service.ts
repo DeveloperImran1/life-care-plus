@@ -7,6 +7,16 @@ const getMyConversations = async (userId: string) => {
     where: { participantIds: { has: userId } },
     include: {
       messages: { orderBy: { createdAt: 'desc' }, take: 1 },
+      _count: {
+        select: {
+          messages: {
+            where: {
+              isSeen: false,
+              senderId: { not: userId },
+            },
+          },
+        },
+      },
     },
     orderBy: { updatedAt: 'desc' },
   });
@@ -36,7 +46,11 @@ const getMyConversations = async (userId: string) => {
         }
       }
 
-      return { ...conv, otherUser };
+      return { 
+        ...conv, 
+        otherUser,
+        unreadCount: conv._count?.messages || 0
+      };
     }),
   );
 
@@ -44,13 +58,30 @@ const getMyConversations = async (userId: string) => {
 };
 
 // ২. নির্দিষ্ট কোনো চ্যাটের সব মেসেজ আনা (চ্যাট ওপেন করলে)
-const getMessages = async (conversationId: string) => {
+const getMessages = async (conversationId: string, page: number = 1, limit: number = 20) => {
+  const skip = (page - 1) * limit;
+
   const messages = await prisma.message.findMany({
     where: { conversationId },
-    orderBy: { createdAt: 'asc' }, // পুরনো মেসেজ উপরে, নতুন মেসেজ নিচে
+    orderBy: { createdAt: 'desc' }, // নতুন মেসেজ আগে আনবো, পরে ফ্রন্টএন্ডে রিভার্স করবো
+    skip,
+    take: limit,
   });
 
-  return messages;
+  const total = await prisma.message.count({ where: { conversationId } });
+
+  // ফ্রন্টএন্ডে দেখানোর সুবিধার্থে মেসেজগুলো উল্টে দিচ্ছি (পুরনো মেসেজ উপরে)
+  const reversedMessages = messages.reverse();
+
+  return {
+    meta: {
+      page,
+      limit,
+      total,
+      totalPages: Math.ceil(total / limit),
+    },
+    data: reversedMessages,
+  };
 };
 
 // ৩. ফাইল (ছবি/পিডিএফ) আপলোড করে Cloudinary-র লিংক রিটার্ন করা

@@ -11,6 +11,7 @@ model User {
   admin              Admin?
   doctor             Doctor?
   patient            Patient?
+  lastSeen           DateTime?
   notifications      Notification[]
   tokenBlacklist     TokenBlacklist[]
   activeSessions     ActiveSession[]

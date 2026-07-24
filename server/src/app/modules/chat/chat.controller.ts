@@ -20,13 +20,17 @@ const getMyConversations = catchAsync(async (req: Request & { user?: any }, res:
 
 const getMessages = catchAsync(async (req: Request, res: Response) => {
   const { conversationId } = req.params;
-  const result = await ChatService.getMessages(conversationId);
+  const page = parseInt(req.query.page as string) || 1;
+  const limit = parseInt(req.query.limit as string) || 20;
+
+  const result = await ChatService.getMessages(conversationId, page, limit);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,
     message: 'Messages retrieved successfully',
-    data: result,
+    meta: result.meta,
+    data: result.data,
   });
 });
 
