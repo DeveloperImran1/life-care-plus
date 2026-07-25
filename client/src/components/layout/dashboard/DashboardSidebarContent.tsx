@@ -6,7 +6,7 @@ import { getIconComponent } from "@/lib/helpers/icon-mapper";
 import { cn } from "@/lib/utils";
 import { NavSection } from "@/app/(dashboard)/admin/_types/dashboard.type";
 import { UserInfo } from "@/app/(auth)/_types/user.type";
-import { ScrollArea } from "@radix-ui/react-scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import logo from "@/assets/logos/navlog.png";
@@ -25,16 +25,16 @@ const DashboardSidebarContent = ({
 }: DashboardSidebarContentProps) => {
   const pathname = usePathname();
   return (
-    <div className="hidden md:flex h-full w-64 flex-col border-r bg-card">
+    <div className="hidden md:flex h-full w-64 flex-col border-r bg-card overflow-hidden">
       {/* Logo/Brand */}
-      <div className="flex h-16 items-center border-b px-6">
+      <div className="flex h-16 items-center border-b px-6 shrink-0">
         <Link href={dashboardHome} className="flex items-center space-x-2">
           <Image src={logo} alt="Logo" width={200} height={100} />
         </Link>
       </div>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-3 py-4">
+      <div className="flex-1 overflow-y-auto min-h-0 px-3 py-4">
         <nav className="space-y-6">
           {navItems.map((section, sectionIdx) => (
             <div key={sectionIdx}>
@@ -79,10 +79,10 @@ const DashboardSidebarContent = ({
             </div>
           ))}
         </nav>
-      </ScrollArea>
+      </div>
 
       {/* User Info at Bottom */}
-      <div className="border-t p-4">
+      <div className="border-t p-4 shrink-0">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-sm font-semibold text-primary">

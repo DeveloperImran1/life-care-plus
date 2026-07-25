@@ -1,77 +1,13 @@
-import { Star } from "lucide-react";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import cardioDoc from "../../../assets/images/doctor-cardiologist.jpg";
-import neurolDoc from "../../../assets/images/doctor-neurologist.jpg";
-import orthoDoc from "../../../assets/images/doctor-orthopedic.jpg";
+import Link from "next/link";
+import { getDoctors } from "@/app/(dashboard)/admin/dashboard/doctors-management/_services";
+import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
+import TopRatedDoctorCard from "./TopRatedDoctorCard";
 
-const doctors = [
-  {
-    name: "Dr. Cameron Williamson",
-    specialty: "Cardiologist",
-    rating: 4.9,
-    reviews: 23,
-    image: cardioDoc,
-  },
-  {
-    name: "Dr. Leslie Alexander",
-    specialty: "Neurologist",
-    rating: 4.8,
-    reviews: 45,
-    image: neurolDoc,
-  },
-  {
-    name: "Dr. Robert Fox",
-    specialty: "Orthopedic",
-    rating: 4.9,
-    reviews: 32,
-    image: orthoDoc,
-  },
-];
+const TopRatedDoctors = async () => {
+  const res = await getDoctors("limit=3");
+  const doctors: IDoctor[] = res?.data || [];
 
-const DoctorCard = ({ doctor }: { doctor: (typeof doctors)[0] }) => {
-  return (
-    <Card className="text-center overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      <CardHeader className="bg-accent/50 items-center p-6">
-        <Image
-          src={doctor.image}
-          alt={doctor.name}
-          width={96}
-          height={96}
-          unoptimized
-          priority={true}
-          className="rounded-full border-4 border-white shadow-md"
-        />
-      </CardHeader>
-      <CardContent className="p-6">
-        <CardTitle className="text-lg">{doctor.name}</CardTitle>
-        <p className="text-primary font-medium mt-1">{doctor.specialty}</p>
-        <div className="flex items-center justify-center my-3 text-sm">
-          <Star className="text-yellow-400 fill-current" size={16} />
-          <span className="ml-2 text-foreground font-semibold">
-            {doctor.rating}
-          </span>
-          <span className="ml-2 text-muted-foreground">
-            ({doctor.reviews} reviews)
-          </span>
-        </div>
-      </CardContent>
-      <CardFooter className="grid grid-cols-2 gap-2 p-4 pt-0">
-        <Button variant="outline">View Profile</Button>
-        <Button>Book Now</Button>
-      </CardFooter>
-    </Card>
-  );
-};
-
-const TopRatedDoctors = () => {
   return (
     <section className="bg-accent/40 py-24">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -87,12 +23,14 @@ const TopRatedDoctors = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-12">
           {doctors.map((doctor) => (
-            <DoctorCard key={doctor.name} doctor={doctor} />
+            <TopRatedDoctorCard key={doctor.id} doctor={doctor} />
           ))}
         </div>
 
         <div className="text-center mt-12">
-          <Button size="lg">View All Doctors</Button>
+          <Button size="lg" asChild>
+            <Link href="/doctors">View All Doctors</Link>
+          </Button>
         </div>
       </div>
     </section>

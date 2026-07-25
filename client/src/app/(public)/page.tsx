@@ -45,11 +45,9 @@ export default function Home() {
         <HeroSection />
         <OurFeatures />
         <StepsSolution />
-
-        {/* Nicher 4 ta component modify korte hobe */}
         <Specialities />
         <TopRatedDoctors />
-        <Steps />
+        {/* <Steps /> */} {/* StepSolution component ar aita same. */}
         <Testimonials />
       </main>
     </>
