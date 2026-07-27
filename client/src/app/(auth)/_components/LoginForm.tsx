@@ -6,18 +6,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useActionState, useEffect, useState } from "react";
 import { toast } from "sonner";
-import {
-  ArrowRight,
-  Eye,
-  EyeOff,
-  Facebook,
-  LockKeyhole,
-  Mail,
-} from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LockKeyhole, Mail } from "lucide-react";
+import SocialLoginButton from "./SocialLoginButton";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("admin@gmail.com");
+  const [password, setPassword] = useState("admin1234");
 
   useEffect(() => {
     if (state && !state.success && state.message) {
@@ -45,6 +41,8 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
             id="email"
             name="email"
             type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="Enter your email"
             className="h-12 rounded-lg border-input bg-background pl-11"
           />
@@ -69,6 +67,8 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
             id="password"
             name="password"
             type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter your password"
             className="h-12 rounded-lg border-input bg-background px-11"
           />
@@ -119,27 +119,58 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
         <ArrowRight className="ml-2 h-4 w-4" />
       </Button>
 
-      {/* Divider */}
-      <div className="flex items-center gap-4 py-2">
-        <div className="h-px flex-1 bg-border" />
+      {/* Quick Login for Recruiters */}
+      <div className="my-4 rounded-lg border border-dashed border-primary/50 p-4 bg-primary/5">
+        <p className="mb-3 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+          Quick Login For Testing
+        </p>
+        <div className="flex justify-center gap-3">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="hover:bg-primary hover:text-white"
+            onClick={() => {
+              // এখানে আপনার ডাটাবেজে থাকা অ্যাডমিনের ইমেইল ও পাসওয়ার্ড দিন
+              setEmail("admin@gmail.com");
+              setPassword("admin1234");
+            }}
+          >
+            Admin
+          </Button>
 
-        <span className="text-sm text-muted-foreground">Or continue with</span>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="hover:bg-primary hover:text-white"
+            onClick={() => {
+              // এখানে আপনার ডাটাবেজে থাকা ডাক্তারের ইমেইল ও পাসওয়ার্ড দিন
+              setEmail("doctor@gmail.com");
+              setPassword("doctor1234");
+            }}
+          >
+            Doctor
+          </Button>
 
-        <div className="h-px flex-1 bg-border" />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            className="hover:bg-primary hover:text-white"
+            onClick={() => {
+              // এখানে আপনার ডাটাবেজে থাকা রোগীর ইমেইল ও পাসওয়ার্ড দিন
+              setEmail("patient@gmail.com");
+              setPassword("patient1234");
+            }}
+          >
+            Patient
+          </Button>
+        </div>
       </div>
 
-      {/* Social Login */}
-      <div className="grid grid-cols-2 gap-4">
-        <Button type="button" variant="outline" className="h-11 rounded-lg">
-          <span className="mr-2 text-lg font-bold text-primary">G</span>
-          Google
-        </Button>
-
-        <Button type="button" variant="outline" className="h-11 rounded-lg">
-          <Facebook className="mr-2 h-4 w-4 text-primary" />
-          Facebook
-        </Button>
-      </div>
+      {/* Social login section */}
+      <SocialLoginButton redirect={redirect}></SocialLoginButton>
 
       {/* Signup */}
       <p className="pt-4 text-center text-sm text-muted-foreground">

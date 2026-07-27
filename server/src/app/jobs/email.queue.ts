@@ -24,6 +24,6 @@ export const addEmailJob = async (data: IEmailJobData): Promise<void> => {
       delay: 5000, // Start with a 5-second delay, doubling each retry (5s, 10s, 20s)
     },
     removeOnComplete: true, // Auto-delete job metadata on success to save Redis space
-    removeOnFail: false,    // Keep failed jobs for logging/debugging purposes
+    removeOnFail: false, // Keep failed jobs for logging/debugging purposes
   });
 };

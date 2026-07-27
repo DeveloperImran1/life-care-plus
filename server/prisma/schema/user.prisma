@@ -1,17 +1,26 @@
 model User {
-  id                 String     @id @default(uuid())
-  email              String     @unique
-  password           String
+  id                 String         @id @default(uuid())
+  email              String         @unique
+  password           String?
   role               UserRole
-  needPasswordChange Boolean    @default(true)
-  status             UserStatus @default(ACTIVE)
-  createdAt          DateTime   @default(now())
-  updatedAt          DateTime   @updatedAt
+  needPasswordChange Boolean        @default(true)
+  status             UserStatus     @default(ACTIVE)
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
+  authAccounts       AuthAccount[]
   admin              Admin?
   doctor             Doctor?
   patient            Patient?
+  lastSeen           DateTime?
   notifications      Notification[]
-
+  tokenBlacklist     TokenBlacklist[]
+  activeSessions     ActiveSession[]
+  pushSubscriptions  PushSubscription[]
+  
+  // INDEXING
+  @@index([email, status])      // লগিন করার সময় ডাটাবেস দ্রুত ইমেইল খুঁজে পাবে
+  @@index([role, status])       // শুধু পেশেন্ট বা ডাক্তারদের ফিল্টার করার জন্য
+  @@index([createdAt])          // নতুন ইউজারদের আগে দেখানোর (sort) জন্য
   @@map("users")
 }
 
@@ -55,6 +64,20 @@ model Doctor {
   prescription        Prescription[]
   review              Review[]
 
+
+  // Indexing
+  @@index([name])                       // নাম দিয়ে দ্রুত সার্চ করার জন্য
+
+  // ✅ COMPOSITE INDEXES (একাধিক ফিল্ড একসাথে খুঁজলে এটা কাজ করবে)
+  @@index([isDeleted, averageRating, appointmentFee]) 
+  @@index([gender, isDeleted])          
+
+  // ✅ FULL TEXT SEARCH INDEX (যেকোনো শব্দের অংশ দিয়ে সার্চ করার জন্য)
+  // [নোট: type: Gin শুধু PostgreSQL সাপোর্ট করে, তাই এটি অনেক ফাস্ট!]
+  @@index([name, qualification, designation])
+
+
+
   @@map("doctors")
 }
 
@@ -77,4 +100,80 @@ model Patient {
   review            Review[]
 
   @@map("patients")
+}
+
+model AuthAccount {
+  id         String       @id @default(uuid())
+  userId     String
+  provider   AuthProvider
+  providerId String
+  user       User         @relation(fields: [userId], references: [id])
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+
+  @@unique([provider, providerId]) // একই প্রোভাইডার ও আইডির ডাবল এন্ট্রি যেন না হয়
+  @@map("auth_accounts")
+}
+
+
+// ==========================================
+// 🛡️ SECURITY MODELS (Account Lockout & Sessions)
+// ==========================================
+
+model LoginAttempt {
+  id         String   @id @default(uuid())
+  email      String
+  ipAddress  String
+  userAgent  String
+  success    Boolean
+  attemptAt  DateTime @default(now())
+
+  @@index([email, attemptAt])
+  @@map("login_attempts")
+}
+
+model TokenBlacklist {
+  id        String   @id @default(uuid())
+  token     String   @unique
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  reason    String?  // 'logout', 'password_changed', 'admin_revoked'
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("token_blacklist")
+}
+
+model ActiveSession {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  refreshToken String   @unique
+  deviceInfo   String
+  ipAddress    String
+  lastActivity DateTime @default(now())
+  expiresAt    DateTime
+  createdAt    DateTime @default(now())
+
+  @@index([userId])
+  @@index([refreshToken])
+  @@map("active_sessions")
+}
+
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  endpoint  String   @unique // ব্রাউজারের ইউনিক পুশ URL
+  p256dh    String   // এনক্রিপশনের জন্য পাবলিক কি
+  auth      String   // অথেনটিকেশন সিক্রেট
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("push_subscriptions")
 }

@@ -7,21 +7,81 @@ import { jwtHelpers } from '../../../helpers/jwtHelpers';
 import prisma from '../../../shared/prisma';
 import ApiError from '../../errors/ApiError';
 import { addEmailJob } from '../../jobs/email.queue';
-import { NotificationService, } from '../notification/notification.service';
+import { NotificationService } from '../notification/notification.service';
 
-const loginUser = async (payload: { email: string; password: string }) => {
-  const userData = await prisma.user.findUniqueOrThrow({
+const MAX_FAILED_ATTEMPTS = 5; // ৫ বার ভুল পাসওয়ার্ড দিলে লক হবে
+const LOCKOUT_DURATION_MINUTES = 30; // ৩০ মিনিটের জন্য লক থাকবে
+
+const loginUser = async (
+  payload: { email: string; password: string },
+  ipAddress: string = 'unknown',
+  userAgent: string = 'unknown',
+) => {
+  // ১. চেক করবো অ্যাকাউন্ট লক করা আছে কি না
+  const recentAttempts = await prisma.loginAttempt.findMany({
+    where: {
+      email: payload.email,
+      attemptAt: {
+        gte: new Date(Date.now() - LOCKOUT_DURATION_MINUTES * 60 * 1000), // গত ৩০ মিনিটের ডাটা
+      },
+    },
+    orderBy: { attemptAt: 'desc' },
+  });
+
+  const failedAttempts = recentAttempts.filter((a) => !a.success);
+
+  if (failedAttempts.length >= MAX_FAILED_ATTEMPTS) {
+    const lockoutEndsAt = new Date(
+      failedAttempts[0].attemptAt.getTime() + LOCKOUT_DURATION_MINUTES * 60 * 1000,
+    );
+    throw new ApiError(
+      httpStatus.FORBIDDEN,
+      `Too many failed attempts. Try again after ${lockoutEndsAt.toLocaleString()}`,
+    );
+  }
+
+  // ২. ইউজার ডাটাবেসে আছে কি না
+  const userData = await prisma.user.findUnique({
     where: {
       email: payload.email,
       status: UserStatus.ACTIVE,
     },
   });
 
-  const isCorrectPassword: boolean = await bcrypt.compare(payload.password, userData.password);
-
-  if (!isCorrectPassword) {
-    throw new Error('Password incorrect!');
+  if (!userData) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid email or password!');
   }
+
+  // ৩. পাসওয়ার্ড চেক
+  const isCorrectPassword: boolean = await bcrypt.compare(
+    payload.password,
+    userData.password || '',
+  );
+
+  // ৪. লগিন অ্যাটেম্পট ডাটাবেসে সেভ করা (Security Audit)
+  await prisma.loginAttempt.create({
+    data: {
+      email: payload.email,
+      ipAddress,
+      userAgent,
+      success: isCorrectPassword,
+    },
+  });
+
+  // যদি পাসওয়ার্ড ভুল হয়, তবে এখানেই থ্রো করে দিবে
+  if (!isCorrectPassword) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Invalid email or password!');
+  }
+
+  // ৫. লগিন সাকসেসফুল হলে আগের সব ফেইলড অ্যাটেম্পট মুছে ফেলা (যাতে সে ক্লিন চিট পায়)
+  await prisma.loginAttempt.deleteMany({
+    where: {
+      email: payload.email,
+      success: false,
+    },
+  });
+
+  // ৬. আগের টোকেন জেনারেট করার কোড (এগুলো আগের মতোই থাকবে)
   const accessToken = jwtHelpers.generateToken(
     {
       email: userData.email,
@@ -53,6 +113,13 @@ const refreshToken = async (token: string) => {
     decodedData = jwtHelpers.verifyToken(token, config.jwt.refresh_token_secret as Secret);
   } catch (err) {
     throw new ApiError(httpStatus.FORBIDDEN, 'Invalid or expired reset token!');
+  }
+
+  const isBlacklisted = await prisma.tokenBlacklist.findUnique({
+    where: { token },
+  });
+  if (isBlacklisted) {
+    throw new ApiError(httpStatus.UNAUTHORIZED, 'Token has been revoked! Please login again.');
   }
 
   const userData = await prisma.user.findUniqueOrThrow({
@@ -222,7 +289,6 @@ const forgotPassword = async (payload: { email: string }) => {
         </html>
         `,
   });
-
 };
 
 const resetPassword = async (
@@ -276,7 +342,15 @@ const resetPassword = async (
   // hash password
   const password = await bcrypt.hash(payload.password, Number(config.salt_round));
 
-  // update into database
+  // ১. প্রথমে চেক করুন ইউজারের Credentials আছে কি না
+  const dbUser = await prisma.user.findUnique({
+    where: { email: userEmail },
+    include: { authAccounts: true },
+  });
+
+  const hasCredentials = dbUser?.authAccounts?.some((auth) => auth.provider === 'CREDENTIALS');
+
+  // ৩. ডাটাবেজে আপডেট করুন
   await prisma.user.update({
     where: {
       email: userEmail,
@@ -284,6 +358,18 @@ const resetPassword = async (
     data: {
       password,
       needPasswordChange: false,
+
+      // জাদুকরী লজিক: যদি Credentials না থাকে, শুধু তখনই Create হবে!
+      ...(hasCredentials
+        ? {}
+        : {
+            authAccounts: {
+              create: {
+                provider: 'CREDENTIALS',
+                providerId: userEmail, // অথবা ইউজারের আইডি
+              },
+            },
+          }),
     },
   });
 };
@@ -305,6 +391,13 @@ const getMe = async (user: any) => {
       status: true,
       createdAt: true,
       updatedAt: true,
+      authAccounts: {
+        select: {
+          id: true,
+          provider: true,
+          providerId: true,
+        },
+      },
       admin: {
         select: {
           id: true,
@@ -363,6 +456,30 @@ const getMe = async (user: any) => {
   return userData;
 };
 
+const logout = async (token: string) => {
+  const decodedData = jwtHelpers.verifyToken(
+    token,
+    config.jwt.refresh_token_secret as Secret,
+  ) as any;
+
+  // টোকেনে থাকা ইমেইল দিয়ে ইউজারের আসল আইডি বের করছি
+  const user = await prisma.user.findUniqueOrThrow({
+    where: { email: decodedData.email },
+  });
+
+  // টোকেনটি Blacklist এ ফেলে দেওয়া
+  await prisma.tokenBlacklist.create({
+    data: {
+      token,
+      userId: user.id,
+      reason: 'logout',
+      expiresAt: new Date(decodedData.exp * 1000), // টোকেনের মেয়াদ যেদিন শেষ হবে
+    },
+  });
+
+  return { message: 'Logged out successfully' };
+};
+
 export const AuthServices = {
   loginUser,
   refreshToken,
@@ -370,4 +487,5 @@ export const AuthServices = {
   forgotPassword,
   resetPassword,
   getMe,
+  logout,
 };

@@ -2,6 +2,7 @@
 
 import RegisterForm from "@/app/(auth)/_components/RegisterForm";
 import { UserPlus } from "lucide-react";
+import Link from "next/link";
 
 const RegisterPage = () => {
   return (
@@ -22,9 +23,15 @@ const RegisterPage = () => {
         <RegisterForm />
       </div>
 
-      <p className="mt-10 text-xs text-muted-foreground">
-        © 2026 LifeCare+. All Rights Reserved.
-      </p>
+      <div className="mt-10 text-xs text-muted-foreground">
+        <p className="">
+          &copy; {new Date().getFullYear()}{" "}
+          <Link className="font-semibold" href="/">
+            LifeCare+.
+          </Link>{" "}
+          All Rights Reserved.
+        </p>
+      </div>
     </div>
   );
 };

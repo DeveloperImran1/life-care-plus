@@ -21,9 +21,9 @@ export const addRoleNotificationJob = async (data: IRoleNotificationJobData): Pr
     attempts: 3, // Retry up to 3 times on failure
     backoff: {
       type: 'exponential',
-      delay: 5000, 
+      delay: 5000,
     },
     removeOnComplete: true, // Auto-delete job metadata on success to save Redis space
-    removeOnFail: false,    // Keep failed jobs for debugging
+    removeOnFail: false, // Keep failed jobs for debugging
   });
 };

@@ -26,9 +26,9 @@ const DashboardMobileSidebar = ({
 }: DashboardMobileSidebarContentProps) => {
   const pathname = usePathname();
   return (
-    <div className=" flex h-full flex-col">
+    <div className="flex h-full flex-col overflow-hidden">
       {/* Logo */}
-      <div className="flex h-16 items-center border-b">
+      <div className="flex h-16 items-center border-b shrink-0 px-4">
         <Link href={dashboardHome}>
           <Image src={log} alt="Logo" width={64} height={64} className="" />
         </Link>
@@ -36,7 +36,7 @@ const DashboardMobileSidebar = ({
       <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
 
       {/* Navigation */}
-      <ScrollArea className="flex-1 px-3 py-4">
+      <div className="flex-1 overflow-y-auto min-h-0 px-3 py-4">
         <nav className="space-y-6">
           {navItems.map((section, sectionIdx) => (
             <div key={sectionIdx}>
@@ -78,10 +78,10 @@ const DashboardMobileSidebar = ({
             </div>
           ))}
         </nav>
-      </ScrollArea>
+      </div>
 
       {/* User Info at Bottom */}
-      <div className="border-t p-4">
+      <div className="border-t p-4 shrink-0">
         <div className="flex items-center gap-3">
           <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
             <span className="text-sm font-semibold text-primary">

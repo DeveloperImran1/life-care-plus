@@ -1,4 +1,9 @@
-import { AppointmentPieChart } from "@/components/charts/AppointmentPieChart";
+// Normal import system
+// import { AppointmentPieChart } from "@/components/charts/AppointmentPieChart";
+
+// Next Jer maddhome dynamic Import system
+import { DynamicAppointmentPieChart } from "@/components/charts/DynamicCharts";
+
 import { DashboardSkeleton } from "@/components/feedback/DashboardSkeleton";
 import { StatsCard } from "@/components/cards/StatCard";
 import { getDashboardMetaData } from "@/app/(dashboard)/admin/_services/dashboard.service";
@@ -20,7 +25,7 @@ async function PatientDashboardContent() {
       <div className="grid gap-4 md:grid-cols-3">
         <StatsCard
           title="Total Appointments"
-          value={data.appointmentCount.toLocaleString()}
+          value={data?.appointmentCount?.toLocaleString()}
           iconName="CalendarDays"
           description="All time appointments"
           iconClassName="bg-primary/10"
@@ -43,7 +48,7 @@ async function PatientDashboardContent() {
 
       {/* Appointment Status Chart */}
       <div className="grid gap-4">
-        <AppointmentPieChart
+        <DynamicAppointmentPieChart
           data={data.formattedAppointmentStatusDistribution}
           title="Appointment Status Distribution"
           description="Overview of your appointment statuses"

@@ -1,7 +1,14 @@
+"use client";
 import { IDoctor } from "@/app/(dashboard)/admin/dashboard/doctors-management/_types";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { MessageSquare, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { createConversation } from "@/app/(dashboard)/_services/chat.service";
 
 import {
   Briefcase,
@@ -20,7 +27,23 @@ interface DoctorProfileContentProps {
 }
 
 const DoctorProfileContent = ({ doctor }: DoctorProfileContentProps) => {
-  const initials = doctor.name
+  const router = useRouter();
+  const [isChatLoading, setIsChatLoading] = useState(false);
+
+  const handleStartChat = async () => {
+    const doctorEmail = doctor?.email; // এখন সরাসরি ইমেইল নিচ্ছি
+    if (!doctorEmail) return;
+
+    setIsChatLoading(true);
+    const res = await createConversation(doctorEmail);
+    setIsChatLoading(false);
+
+    if (res?.success && res?.data?.id) {
+      router.push(`/chat?conversationId=${res.data.id}`);
+    }
+  };
+
+  const initials = doctor?.name
     .split(" ")
     .map((n) => n[0])
     .join("")
@@ -43,7 +66,7 @@ const DoctorProfileContent = ({ doctor }: DoctorProfileContentProps) => {
                         ? doctor.profilePhoto
                         : undefined
                     }
-                    alt={doctor.name}
+                    alt={doctor?.name}
                   />
                 ) : (
                   <AvatarFallback className="text-3xl">
@@ -56,7 +79,7 @@ const DoctorProfileContent = ({ doctor }: DoctorProfileContentProps) => {
             {/* Doctor Info */}
             <div className="flex-1 space-y-4">
               <div>
-                <h1 className="text-3xl font-bold">{doctor.name}</h1>
+                <h1 className="text-3xl font-bold">{doctor?.name}</h1>
                 <p className="text-muted-foreground mt-1">
                   {doctor.designation}
                 </p>
@@ -93,6 +116,22 @@ const DoctorProfileContent = ({ doctor }: DoctorProfileContentProps) => {
                     per visit
                   </span>
                 </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <Button
+                  variant="outline"
+                  className="flex items-center gap-2"
+                  onClick={handleStartChat}
+                  disabled={isChatLoading}
+                >
+                  {isChatLoading ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : (
+                    <MessageSquare className="h-4 w-4" />
+                  )}
+                  Message Doctor
+                </Button>
               </div>
 
               {/* {!isModal && (

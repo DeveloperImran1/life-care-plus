@@ -50,6 +50,10 @@ const AppointmentConfirmation = ({
 
       if (result.success && result.data?.paymentUrl) {
         toast.success("Redirecting to payment...");
+        // Store appointmentId for payment success page polling
+        if (result.data?.appointmentId) {
+          sessionStorage.setItem("paymentAppointmentId", result.data.appointmentId);
+        }
         // Redirect to Stripe checkout
         window.location.replace(result.data.paymentUrl);
       } else if (result.success) {

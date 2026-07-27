@@ -64,4 +64,10 @@ router.patch(
   },
 );
 
+router.post(
+  '/push-subscription',
+  auth(UserRole.SUPER_ADMIN, UserRole.ADMIN, UserRole.DOCTOR, UserRole.PATIENT),
+  userController.savePushSubscription,
+);
+
 export const userRoutes = router;

@@ -12,9 +12,14 @@ const createAdmin = z.object({
     email: z.string({
       error: 'Email is required!',
     }),
-    contactNumber: z.string({
-      error: 'Contact Number is required!',
-    }),
+    contactNumber: z
+      .string({
+        error: 'Contact Number is required!',
+      })
+      .regex(
+        /^\+[1-9]\d{1,14}$/,
+        "Phone number must start with '+' and country code (e.g. +88017...)",
+      ),
   }),
 });
 
@@ -29,9 +34,14 @@ const createDoctor = z.object({
     email: z.string({
       error: 'Email is required!',
     }),
-    contactNumber: z.string({
-      error: 'Contact Number is required!',
-    }),
+    contactNumber: z
+      .string({
+        error: 'Contact Number is required!',
+      })
+      .regex(
+        /^\+[1-9]\d{1,14}$/,
+        "Phone number must start with '+' and country code (e.g. +88017...)",
+      ),
     address: z.string().optional(),
     registrationNumber: z.string({
       error: 'Reg number is required',
@@ -65,7 +75,11 @@ const createDoctor = z.object({
 });
 
 const createPatient = z.object({
-  password: z.string(),
+  password: z
+    .string({
+      error: 'Password is required',
+    })
+    .optional(),
   patient: z.object({
     email: z.email(),
     name: z.string({
@@ -75,6 +89,10 @@ const createPatient = z.object({
       .string({
         error: 'Contact number is required!',
       })
+      .regex(
+        /^\+[1-9]\d{1,14}$/,
+        "Phone number must start with '+' and country code (e.g. +88017...)",
+      )
       .optional(),
     address: z
       .string({

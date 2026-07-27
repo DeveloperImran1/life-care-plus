@@ -1,6 +1,7 @@
 // LoginPage.tsx
 import LoginForm from "@/app/(auth)/_components/LoginForm";
 import { LockKeyhole } from "lucide-react";
+import Link from "next/link";
 
 const LoginPage = async ({
   searchParams,
@@ -26,9 +27,15 @@ const LoginPage = async ({
         <LoginForm redirect={params.redirect} />
       </div>
 
-      <p className="mt-10 text-xs text-muted-foreground">
-        © 2026 LifeCare+. All Rights Reserved.
-      </p>
+      <div className="mt-10 text-xs text-muted-foreground">
+        <p className="">
+          &copy; {new Date().getFullYear()}{" "}
+          <Link className="font-semibold" href="/">
+            LifeCare+.
+          </Link>{" "}
+          All Rights Reserved.
+        </p>
+      </div>
     </div>
   );
 };

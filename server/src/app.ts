@@ -10,8 +10,30 @@ import router from './app/routes';
 import { PaymentController } from './app/modules/payment/payment.controller';
 import { AppointmentService } from './app/modules/appointment/appointment.service';
 import { redis } from './lib/redis';
+import expressSession from 'express-session';
+import passport from 'passport';
+import envVars from './config';
+import './config/passport';
+import * as Sentry from '@sentry/node';
 
 const app: Application = express();
+
+// Initialize Sentry
+Sentry.init({
+  dsn: envVars.sentryDsn,
+  tracesSampleRate: 1.0,
+});
+
+app.use(
+  expressSession({
+    secret: envVars.expressSessionSecret as string,
+    resave: false,
+    saveUninitialized: false,
+  }),
+);
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(cookieParser());
 
 app.post(
@@ -22,7 +44,7 @@ app.post(
 
 app.use(
   cors({
-    origin: ['http://localhost:3000', 'http://localhost:3001'],
+    origin: ['http://localhost:3000', 'http://localhost:3001', '*'],
     credentials: true,
   }),
 );
@@ -71,6 +93,9 @@ app.get('/test-redis', async (req, res) => {
 });
 
 app.use('/api/v1', router);
+
+// Sentry Error Handler (অবশ্যই গ্লোবাল এরর হ্যান্ডলারের আগে বসাতে হবে)
+Sentry.setupExpressErrorHandler(app);
 
 app.use(globalErrorHandler);
 

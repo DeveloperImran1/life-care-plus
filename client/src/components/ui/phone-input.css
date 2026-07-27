@@ -1,0 +1,24 @@
+/* Override default styles to match Shadcn UI */
+.PhoneInputRoot {
+  display: flex;
+  align-items: center;
+}
+
+.PhoneInputCountry {
+  margin-right: 0.5rem;
+}
+
+.PhoneInputInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: inherit;
+  color: inherit;
+}
+
+.PhoneInputInput:focus {
+  outline: none;
+  border: none;
+}

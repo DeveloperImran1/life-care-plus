@@ -22,11 +22,14 @@ import {
   Star,
   Stethoscope,
   User,
+  Video,
 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { toast } from "sonner";
 import AppointmentCountdown from "./AppointmentCountdown";
+import { toast } from "sonner";
+import { useSocket } from "@/contexts/SocketContext";
+import { useEffect } from "react";
 
 interface AppointmentsListProps {
   appointments: IAppointment[];
@@ -36,6 +39,32 @@ const AppointmentsList = ({ appointments }: AppointmentsListProps) => {
   const [processingPaymentId, setProcessingPaymentId] = useState<string | null>(
     null,
   );
+
+  const { socket } = useSocket();
+
+  // যখনই ডাক্তার কল করবে, রোগীর কাছে পপ-আপ আসবে
+  useEffect(() => {
+    if (!socket) return;
+
+    socket.on(
+      "doctor_calling",
+      (data: { videoCallingId: string; message: string }) => {
+        toast.success(data.message, {
+          duration: 10000, // ১০ সেকেন্ড থাকবে
+          action: {
+            label: "Join Call",
+            onClick: () => {
+              window.open(`/consultation/${data.videoCallingId}`, "_blank");
+            },
+          },
+        });
+      },
+    );
+
+    return () => {
+      socket.off("doctor_calling");
+    };
+  }, [socket]);
 
   const handlePayNow = async (appointmentId: string) => {
     setProcessingPaymentId(appointmentId);
@@ -271,21 +300,25 @@ const AppointmentsList = ({ appointments }: AppointmentsListProps) => {
           </CardContent>
 
           <CardFooter className="border-t pt-4">
-            <div className="flex gap-2 w-full">
-              <Button variant="outline" size="sm" className="flex-1" asChild>
+            <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+              <Button
+                variant="outline"
+                className="w-full sm:w-auto flex-1 shadow-sm"
+                asChild
+              >
                 <Link
                   href={`/patient/dashboard/my-appointments/${appointment.id}`}
                 >
                   View Details
                 </Link>
               </Button>
+
               {appointment.paymentStatus === PaymentStatus.UNPAID &&
                 appointment.status !== AppointmentStatus.CANCELED && (
                   <Button
                     onClick={() => handlePayNow(appointment.id)}
                     disabled={processingPaymentId === appointment.id}
-                    size="sm"
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-700"
+                    className="w-full sm:w-auto flex-1 bg-primary hover:bg-primary/90 shadow-sm"
                   >
                     {processingPaymentId === appointment.id ? (
                       <>
@@ -298,6 +331,25 @@ const AppointmentsList = ({ appointments }: AppointmentsListProps) => {
                         Pay Now
                       </>
                     )}
+                  </Button>
+                )}
+
+              {/* ভিডিও কল বাটন (কন্ডিশনাল) */}
+              {appointment.paymentStatus === "PAID" &&
+                (appointment.status === "SCHEDULED" ||
+                  appointment.status === "INPROGRESS") && (
+                  <Button
+                    className="bg-emerald-600 hover:bg-emerald-700 shadow-md w-full sm:w-auto flex-1"
+                    asChild
+                  >
+                    <Link
+                      href={`/consultation/${appointment.videoCallingId}`}
+                      className="flex items-center justify-center gap-2"
+                      target="_blank"
+                    >
+                      <Video className="h-4 w-4" />
+                      <span className="font-semibold">Join Video Call</span>
+                    </Link>
                   </Button>
                 )}
             </div>

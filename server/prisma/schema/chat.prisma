@@ -1,0 +1,32 @@
+model Conversation {
+  id             String    @id @default(uuid())
+  participantIds String[]  // [doctorId, patientId]
+  
+  messages       Message[] // রিলেশন: একটা কনভারসেশনে অনেক মেসেজ থাকতে পারে
+  
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  
+  @@map("conversations")
+}
+
+model Message {
+  id             String       @id @default(uuid())
+  
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+  
+  senderId       String       // যে মেসেজ পাঠিয়েছে তার User ID
+  
+  text           String?      // মেসেজ কন্টেন্ট (ফাইল দিলে এটা ফাঁকা থাকতে পারে)
+  fileUrl        String?      // যদি ছবি বা পিডিএফ দেয়
+  
+  isSeen         Boolean      @default(false)
+  isDeleted      Boolean      @default(false) // মেসেজ ডিলিট করার ফিচার
+  reaction       Json?        // ইমোজি রিঅ্যাকশন (যেমন {"userId": "👍"})
+  
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  
+  @@map("messages")
+}

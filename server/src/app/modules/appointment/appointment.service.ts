@@ -1,4 +1,10 @@
-import { AppointmentStatus, NotificationType, PaymentStatus, Prisma, UserRole } from '@prisma/client';
+import {
+  AppointmentStatus,
+  NotificationType,
+  PaymentStatus,
+  Prisma,
+  UserRole,
+} from '@prisma/client';
 import httpStatus from 'http-status';
 import { v4 as uuidv4 } from 'uuid';
 import { paginationHelper } from '../../../helpers/paginationHelper';
@@ -11,6 +17,8 @@ import { redisHelper } from '../../../helpers/redisHelper';
 import { appointmentCacheKeys } from './appointment.constant';
 import { doctorScheduleCacheKeys } from '../doctorSchedule/doctorSchedule.constants';
 import { NotificationService } from '../notification/notification.service';
+import { sendPushNotification } from '../../../helpers/pushNotificationHelper';
+import { createVideoRoom } from '../../../helpers/dailyco';
 
 const APPOINTMENT_CACHE_TTL = 30 * 60; // 30 minutes
 
@@ -90,7 +98,10 @@ const createAppointment = async (user: IAuthUser, payload: any) => {
         appointmentId: appointmentData.id,
         paymentId: paymentData.id,
       },
-      success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/settings/payment/success`,
+      // success_url: `http://localhost:5000/api/v1/payment/mock-success?appointmentId=${appointmentData.id}&paymentId=${paymentData.id}`,
+      success_url: `${
+        process.env.BACKEND_URL || 'http://localhost:5000/api/v1'
+      }/payment/mock-success?appointmentId=${appointmentData.id}&paymentId=${paymentData.id}`,
       cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/patient/dashboard/my-appointments`,
     });
 
@@ -118,7 +129,7 @@ const createAppointment = async (user: IAuthUser, payload: any) => {
     actionUrl: '/admin/dashboard/appointments-management',
   });
 
-  return { paymentUrl: result.paymentUrl };
+  return { paymentUrl: result.paymentUrl, appointmentId: result.appointmentData.id };
 };
 
 const getMyAppointment = async (user: IAuthUser, filters: any, options: IPaginationOptions) => {
@@ -170,37 +181,37 @@ const getMyAppointment = async (user: IAuthUser, filters: any, options: IPaginat
         include:
           user?.role === UserRole.DOCTOR
             ? {
-              patient: true,
-              schedule: true,
-              prescription: true,
-              review: true,
-              payment: true,
-              doctor: {
-                include: {
-                  doctorSpecialties: {
-                    include: {
-                      specialities: true,
+                patient: true,
+                schedule: true,
+                prescription: true,
+                review: true,
+                payment: true,
+                doctor: {
+                  include: {
+                    doctorSpecialties: {
+                      include: {
+                        specialities: true,
+                      },
                     },
                   },
                 },
-              },
-            }
+              }
             : {
-              doctor: {
-                include: {
-                  doctorSpecialties: {
-                    include: {
-                      specialities: true,
+                doctor: {
+                  include: {
+                    doctorSpecialties: {
+                      include: {
+                        specialities: true,
+                      },
                     },
                   },
                 },
+                schedule: true,
+                prescription: true,
+                review: true,
+                payment: true,
+                patient: true,
               },
-              schedule: true,
-              prescription: true,
-              review: true,
-              payment: true,
-              patient: true,
-            },
       });
 
       const total = await prisma.appointment.count({
@@ -235,6 +246,11 @@ const updateAppointmentStatus = async (
     },
     include: {
       doctor: true,
+      patient: {
+        include: {
+          user: true,
+        },
+      },
     },
   });
 
@@ -251,6 +267,21 @@ const updateAppointmentStatus = async (
       status,
     },
   });
+
+  // --- Daily.co Video Room Creation Logic ---
+  // যদি অ্যাপয়েন্টমেন্টটি 'SCHEDULED' বা 'COMPLETED' বা কোনো পজিটিভ স্ট্যাটাসে যায়
+  // তাহলে আমরা ভিডিও রুম তৈরি করার চেষ্টা করব
+  if (status === 'SCHEDULED' || status === 'INPROGRESS' || status === 'COMPLETED') {
+    try {
+      // ফাংশন কল করে ডাটাবেসের ওই UUID টা দিয়ে দিচ্ছি
+      await createVideoRoom(appointmentData.videoCallingId);
+      console.log(`✅ Daily.co video room created successfully for Appointment: ${appointmentId}`);
+    } catch (error) {
+      // যদি আগে থেকেই ওই নামে রুম তৈরি করা থাকে বা অন্য কোনো এরর আসে, সেটা হ্যান্ডেল করবে
+      console.log(`⚠️ Note: Room might already exist or error occurred:`, error);
+    }
+  }
+  // ------------------------------------------
 
   await redisHelper.deleteCacheByPattern(appointmentCacheKeys.allLists());
   await redisHelper.deleteCacheByPattern(doctorScheduleCacheKeys.allLists());
@@ -284,6 +315,18 @@ const updateAppointmentStatus = async (
     message: `An appointment status changed to ${status}`,
     priority: 'MEDIUM',
     actionUrl: '/admin/dashboard/appointments-management',
+  });
+
+  // 🔔 Web Push Notification to Patient
+  // (ব্রাউজারে নোটিফিকেশন পাঠানোর জন্য)
+  await sendPushNotification(appointmentData.patient.user.id, {
+    title:
+      status === AppointmentStatus.CANCELED ? 'Appointment Canceled' : 'Appointment Confirmed! 🎉',
+    body:
+      status === AppointmentStatus.CANCELED
+        ? `Your appointment with Dr. ${appointmentData.doctor.name} has been canceled.`
+        : `Your appointment with Dr. ${appointmentData.doctor.name} is now confirmed.`,
+    url: '/patient/dashboard/my-appointments',
   });
 
   return result;
@@ -336,8 +379,8 @@ const getAllFromDB = async (filters: any, options: IPaginationOptions) => {
           options.sortBy && options.sortOrder
             ? { [options.sortBy]: options.sortOrder }
             : {
-              createdAt: 'desc',
-            },
+                createdAt: 'desc',
+              },
         include: {
           doctor: {
             include: {
@@ -410,14 +453,16 @@ const cancelUnpaidAppointments = async () => {
       },
     });
 
-    // Free up doctor schedules
-    for (const unPaidAppointment of unPaidAppointments) {
-      await tnx.doctorSchedules.update({
+    // Free up doctor schedules (Fixed N+1 Issue)
+    const scheduleConditions = unPaidAppointments.map((appointment) => ({
+      doctorId: appointment.doctorId,
+      scheduleId: appointment.scheduleId,
+    }));
+
+    if (scheduleConditions.length > 0) {
+      await tnx.doctorSchedules.updateMany({
         where: {
-          doctorId_scheduleId: {
-            doctorId: unPaidAppointment.doctorId,
-            scheduleId: unPaidAppointment.scheduleId,
-          },
+          OR: scheduleConditions,
         },
         data: {
           isBooked: false,
@@ -569,7 +614,9 @@ const initiatePaymentForAppointment = async (appointmentId: string, user: IAuthU
       appointmentId: appointment.id,
       paymentId: appointment.payment!.id,
     },
-    success_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/settings/payment/success`,
+    success_url: `${
+      process.env.BACKEND_URL || 'http://localhost:5000/api/v1'
+    }/payment/mock-success?appointmentId=${appointment.id}&paymentId=${appointment.payment!.id}`,
     cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/patient/dashboard/my-appointments`,
   });
 

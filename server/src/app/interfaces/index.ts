@@ -7,6 +7,10 @@ declare global {
     interface Request {
       user: JwtPayload & TJwtPayload;
     }
+    interface User {
+      email: string;
+      role: import('@prisma/client').UserRole;
+    }
     interface ProcessEnv {
       JWT_ACCESS_SECRET: string;
       JWT_REFRESH_SECRET: string;

@@ -1,5 +1,13 @@
-import { AppointmentBarChart } from "@/components/charts/AppointmentBarChart";
-import { AppointmentPieChart } from "@/components/charts/AppointmentPieChart";
+// Normal import system
+// import { AppointmentBarChart } from "@/components/charts/AppointmentBarChart";
+// import { AppointmentPieChart } from "@/components/charts/AppointmentPieChart";
+
+// Next Jer maddhome dynamic Import system sudho client compoent a kaj kore. Tai DynamicCharts.tsx namer akta wraper client component er moddhe dynamic vabe import kore aikhane use kortesi.
+import {
+  DynamicAppointmentBarChart,
+  DynamicAppointmentPieChart,
+} from "@/components/charts/DynamicCharts";
+
 import { DashboardSkeleton } from "@/components/feedback/DashboardSkeleton";
 import { StatsCard } from "@/components/cards/StatCard";
 import { getDashboardMetaData } from "@/app/(dashboard)/admin/_services/dashboard.service";
@@ -69,8 +77,8 @@ async function AdminDashboardContent() {
 
       {/* Charts Section */}
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-        <AppointmentBarChart data={data.barChartData} />
-        <AppointmentPieChart data={data.pieCharData} />
+        <DynamicAppointmentBarChart data={data.barChartData} />
+        <DynamicAppointmentPieChart data={data.pieCharData} />
       </div>
     </div>
   );

@@ -13,6 +13,7 @@ import Image from "next/image";
 import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { createAdmin, updateAdmin } from "../_services";
+import { PhoneInputField } from "@/components/ui/phone-input";
 
 interface IAdminFormDialogProps {
   open: boolean;
@@ -113,10 +114,9 @@ const AdminFormDialog = ({
 
             <Field>
               <FieldLabel htmlFor="contactNumber">Contact Number</FieldLabel>
-              <Input
-                id="contactNumber"
+              <PhoneInputField
                 name="contactNumber"
-                placeholder="+1234567890"
+                placeholder="+88017XXXXXXXX"
                 defaultValue={
                   state?.formData?.contactNumber || admin?.contactNumber || ""
                 }

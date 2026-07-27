@@ -9,6 +9,8 @@ export default {
   stripeSecretKey: process.env.STRIPE_SECRET_KEY,
   stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
   salt_round: process.env.SALT_ROUND,
+  super_admin_email: process.env.SUPER_ADMIN_EMAIL,
+  super_admin_password: process.env.SUPER_ADMIN_PASSWORD,
   openRouterApiKey: process.env.OPENROUTER_API_KEY,
   jwt: {
     jwt_secret: process.env.JWT_SECRET,
@@ -28,4 +30,28 @@ export default {
     api_key: process.env.CLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_API_SECRET,
   },
+  googleClientId: process.env.GOOGLE_CLIENT_ID,
+  googleClientSecret: process.env.GOOGLE_CLIENT_SECRET,
+  googleCallbackUrl: process.env.GOOGLE_CALLBACK_URL,
+
+  facebookAppId: process.env.FACEBOOK_APP_ID,
+  facebookAppSecret: process.env.FACEBOOK_APP_SECRET,
+  facebookCallbackUrl: process.env.FACEBOOK_CALLBACK_URL,
+
+  expressSessionSecret: process.env.EXPRESS_SESSION_SECRET,
+  frontendUrl: process.env.FRONTEND_URL,
+  redisUrl: process.env.REDIS_URL,
+  sentryDsn: process.env.SENTRY_DSN,
+
+  twilio: {
+    accountSid: process.env.TWILIO_ACCOUNT_SID,
+    authToken: process.env.TWILIO_AUTH_TOKEN,
+    phoneNumber: process.env.TWILIO_PHONE_NUMBER,
+  },
+  vapid: {
+    publicKey: process.env.VAPID_PUBLIC_KEY,
+    privateKey: process.env.VAPID_PRIVATE_KEY,
+    subject: process.env.VAPID_SUBJECT,
+  },
+  dailyApiKey: process.env.DAILY_API_KEY,
 };

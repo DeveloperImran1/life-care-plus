@@ -21,7 +21,46 @@ export interface NotificationPayload {
 const emitNotification = async (userId: string | string[], payload: NotificationPayload) => {
   const io: SocketIOServer = (global as any).io;
 
-  const userIds = Array.isArray(userId) ? userId : [userId];
+  const rawIds = Array.isArray(userId) ? userId : [userId];
+
+  // Resolve raw IDs (which might be Doctor, Patient, or Admin IDs) to actual User IDs
+  const resolvedUserIds = new Set<string>();
+
+  // 1. Check if they are already User IDs
+  const users = await prisma.user.findMany({ where: { id: { in: rawIds } }, select: { id: true } });
+  users.forEach((u) => resolvedUserIds.add(u.id));
+
+  const remainingIds = rawIds.filter((id) => !resolvedUserIds.has(id));
+
+  if (remainingIds.length > 0) {
+    // 2. Check Doctor IDs
+    const doctors = await prisma.doctor.findMany({
+      where: { id: { in: remainingIds } },
+      include: { user: true },
+    });
+    doctors.forEach((d) => d.user && resolvedUserIds.add(d.user.id));
+
+    // 3. Check Patient IDs
+    const patients = await prisma.patient.findMany({
+      where: { id: { in: remainingIds } },
+      include: { user: true },
+    });
+    patients.forEach((p) => p.user && resolvedUserIds.add(p.user.id));
+
+    // 4. Check Admin IDs
+    const admins = await prisma.admin.findMany({
+      where: { id: { in: remainingIds } },
+      include: { user: true },
+    });
+    admins.forEach((a) => a.user && resolvedUserIds.add(a.user.id));
+  }
+
+  const userIds = Array.from(resolvedUserIds);
+
+  if (userIds.length === 0) {
+    logger.warn('No valid User IDs resolved for emitNotification');
+    return;
+  }
 
   // Save to database
   try {
@@ -57,8 +96,10 @@ const emitNotification = async (userId: string | string[], payload: Notification
  * Emit notification to all users of a specific role and save to DB
  * This now delegates the heavy lifting to BullMQ background job
  */
-const emitToRole = async (role: 'ADMIN' | 'SUPER_ADMIN' | 'DOCTOR' | 'PATIENT', payload: NotificationPayload) => {
-
+const emitToRole = async (
+  role: 'ADMIN' | 'SUPER_ADMIN' | 'DOCTOR' | 'PATIENT',
+  payload: NotificationPayload,
+) => {
   // Push the job to BullMQ
   await addRoleNotificationJob({
     role,

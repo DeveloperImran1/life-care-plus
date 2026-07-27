@@ -43,3 +43,9 @@ enum PaymentStatus {
   PAID
   UNPAID
 }
+
+enum AuthProvider {
+  CREDENTIALS
+  GOOGLE
+  FACEBOOK
+}

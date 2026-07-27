@@ -14,23 +14,37 @@ import { logoutUser } from "@/app/(auth)/_services/logout-user.service";
 import { UserInfo } from "@/app/(auth)/_types/user.type";
 import { Settings, User } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 interface UserDropdownProps {
   userInfo: UserInfo;
 }
 
 const UserDropdown = ({ userInfo }: UserDropdownProps) => {
-  const handleLogout = async () => {
-    await logoutUser();
-  };
+  const userPhoto =
+    userInfo?.patient?.profilePhoto ||
+    userInfo?.doctor?.profilePhoto ||
+    userInfo?.admin?.profilePhoto;
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon" className="rounded-full">
-          <span className="text-sm font-semibold">
-            {userInfo.name.charAt(0).toUpperCase()}
-          </span>
-        </Button>
+        <div className="h-10 w-10 cursor-pointer rounded-full bg-slate-200 flex shrink-0 items-center justify-center text-slate-500 font-bold overflow-hidden">
+          {userPhoto ? (
+            <Image
+              width={40}
+              height={40}
+              src={userPhoto as string}
+              alt="Profile"
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <Button variant="outline" size="icon" className="rounded-full">
+              <span className="text-sm font-semibold">
+                {userInfo.name.charAt(0).toUpperCase()}
+              </span>
+            </Button>
+          )}
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel>
@@ -56,10 +70,7 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="cursor-pointer text-red-600"
-        >
+        <DropdownMenuItem className="cursor-pointer text-red-600">
           <LogoutButton />
         </DropdownMenuItem>
       </DropdownMenuContent>
