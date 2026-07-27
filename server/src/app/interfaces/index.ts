@@ -5,7 +5,7 @@ import { TJwtPayload } from './jwt.payload';
 declare global {
   namespace Express {
     interface Request {
-      user: JwtPayload & TJwtPayload;
+      user?: any;
     }
     interface User {
       email: string;
