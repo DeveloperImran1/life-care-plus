@@ -169,7 +169,7 @@ export function initializeSocket(httpServer: HttpServer) {
             }
           }
         } catch (error) {
-          logger.error('Error saving chat message', error);
+          logger.error('Error saving chat message', error as Error);
           socket.emit('message_error', { message: 'Failed to send message' });
         }
       },
@@ -187,7 +187,7 @@ export function initializeSocket(httpServer: HttpServer) {
         const roomName = `chat:${data.conversationId}`;
         io.to(roomName).emit('message_deleted', data.messageId);
       } catch (error) {
-        logger.error('Error deleting message:', error);
+        logger.error('Error deleting message:', error as Error);
       }
     });
 
@@ -230,7 +230,7 @@ export function initializeSocket(httpServer: HttpServer) {
             reaction: currentReactions,
           });
         } catch (error) {
-          logger.error('Error adding reaction:', error);
+          logger.error('Error adding reaction:', error as Error);
         }
       },
     );
@@ -298,13 +298,16 @@ export function initializeSocket(httpServer: HttpServer) {
           seenByUserId: user.userId,
         });
       } catch (error) {
-        logger.error('Error marking messages as seen', error);
+        logger.error('Error marking messages as seen', error as Error);
       }
     });
 
     // --- Video Call Notification Logic ---
     socket.on('doctor_joined_call', async (data: { videoCallingId: string }) => {
-      console.log("🔥 [SOCKET] Received doctor_joined_call for videoCallingId:", data.videoCallingId);
+      console.log(
+        '🔥 [SOCKET] Received doctor_joined_call for videoCallingId:',
+        data.videoCallingId,
+      );
       try {
         // ডাটাবেস থেকে অ্যাপয়েন্টমেন্ট এবং রোগীর ইমেইল খুঁজে বের করছি
         const appointment = await prisma.appointment.findFirst({
@@ -316,7 +319,7 @@ export function initializeSocket(httpServer: HttpServer) {
           // ইউজারের রিয়েল আইডি (User.id) বের করছি ইমেইল দিয়ে
           const user = await prisma.user.findUnique({
             where: { email: appointment.patient.email },
-            select: { id: true }
+            select: { id: true },
           });
 
           if (user) {
@@ -327,13 +330,17 @@ export function initializeSocket(httpServer: HttpServer) {
               message: 'Doctor has joined the video call. Please join now!',
             });
           } else {
-            console.log(`❌ [SOCKET] User record not found for patient email: ${appointment.patient.email}`);
+            console.log(
+              `❌ [SOCKET] User record not found for patient email: ${appointment.patient.email}`,
+            );
           }
         } else {
-          console.log(`❌ [SOCKET] No appointment/patient found for videoCallingId: ${data.videoCallingId}`);
+          console.log(
+            `❌ [SOCKET] No appointment/patient found for videoCallingId: ${data.videoCallingId}`,
+          );
         }
       } catch (error) {
-        logger.error('Error finding appointment for call notification:', error);
+        logger.error('Error finding appointment for call notification:', error as Error);
       }
     });
     // ------------------------------------
@@ -349,7 +356,7 @@ export function initializeSocket(httpServer: HttpServer) {
           data: { lastSeen: new Date() },
         });
       } catch (err) {
-        logger.error('Error updating lastSeen', err);
+        logger.error('Error updating lastSeen', err as Error);
       }
 
       io.to('role:admin').emit('user:offline', {
@@ -370,7 +377,7 @@ export function initializeSocket(httpServer: HttpServer) {
 
     // Handle errors
     socket.on('error', (error) => {
-      logger.error('Socket error', error);
+      logger.error('Socket error', error as Error);
     });
   });
 
