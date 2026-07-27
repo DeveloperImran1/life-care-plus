@@ -10,6 +10,9 @@ jobs:
   test-server:
     name: Run Backend Tests
     runs-on: ubuntu-latest
+    env:
+      DATABASE_URL: "postgresql://dummy:password@localhost:5432/testdb"
+      JWT_SECRET: "test-secret-for-github-actions"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
