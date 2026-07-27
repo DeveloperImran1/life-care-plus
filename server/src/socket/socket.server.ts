@@ -6,7 +6,8 @@ import config from '../config';
 import { jwtHelpers } from '../helpers/jwtHelpers';
 import { Secret } from 'jsonwebtoken';
 import logger from '../lib/logger';
-import prisma from '../shared/prisma';
+import prismaClient from '../shared/prisma';
+const prisma = prismaClient as any;
 import { UserRole } from '@prisma/client';
 
 // Extend Socket.io Socket to include user info
@@ -160,7 +161,7 @@ export function initializeSocket(httpServer: HttpServer) {
             select: { participantIds: true },
           });
           if (conv) {
-            const receiverId = conv.participantIds.find((id) => id !== user.userId);
+            const receiverId = conv.participantIds.find((id: any) => id !== user.userId);
             if (receiverId) {
               io.to(`user:${receiverId}`).emit('new_message_notification', {
                 conversationId: data.conversationId,
