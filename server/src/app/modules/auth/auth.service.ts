@@ -162,7 +162,18 @@ const changePassword = async (user: any, payload: any) => {
     },
   });
 
-  const isCorrectPassword: boolean = await bcrypt.compare(payload.oldPassword, userData.password);
+  // পাসওয়ার্ড আছে কিনা তা আগে চেক করে নিচ্ছি এবং স্ট্রিংয়ে কনভার্ট করে দিচ্ছি
+  if (!userData.password) {
+    throw new ApiError(
+      httpStatus.BAD_REQUEST,
+      'Password not set for this user. Please login via social providers.',
+    );
+  }
+
+  const isCorrectPassword: boolean = await bcrypt.compare(
+    String(payload.oldPassword),
+    userData.password,
+  );
 
   if (!isCorrectPassword) {
     throw new ApiError(httpStatus.FORBIDDEN, 'Password incorrect!');
