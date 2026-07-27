@@ -42,3 +42,11 @@ jobs:
 
       - name: Run Client Tests
         run: cd client && npm run test
+
+  deploy-backend:
+    name: Deploy to Render
+    needs: [test-server, test-client]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Render Deployment
+        run: curl "${{ secrets.RENDER_DEPLOY_HOOK }}"
