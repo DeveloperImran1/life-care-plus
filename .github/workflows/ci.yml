@@ -19,6 +19,15 @@ jobs:
       VAPID_PUBLIC_KEY: "BHyvtbxc9BtoUF6er5Wo70AWCiC7F8F5HxrfrEcIu5SAspPUz4KYdTNyu1GepLJ8nGa-bUHi4Bfm_8EMUvSRjJ0"
       VAPID_PRIVATE_KEY: "SyRbalVthuYUkeFpzTXLTSf997jt40ND_mJD2AfQNiE"
       VAPID_SUBJECT: "mailto:test@example.com"
+      GOOGLE_CLIENT_ID: "dummy_google_id"
+      GOOGLE_CLIENT_SECRET: "dummy_google_secret"
+      GOOGLE_CALLBACK_URL: "http://localhost:5000/api/v1/auth/google/callback"
+      FACEBOOK_APP_ID: "dummy_facebook_id"
+      FACEBOOK_APP_SECRET: "dummy_facebook_secret"
+      FACEBOOK_CALLBACK_URL: "http://localhost:5000/api/v1/auth/facebook/callback"
+      EXPRESS_SESSION_SECRET: "dummy_session_secret"
+      TWILIO_ACCOUNT_SID: "dummy_twilio_sid"
+      TWILIO_AUTH_TOKEN: "dummy_twilio_token"
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
