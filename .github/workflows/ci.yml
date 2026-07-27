@@ -13,6 +13,9 @@ jobs:
     env:
       DATABASE_URL: "postgresql://dummy:password@localhost:5432/testdb"
       JWT_SECRET: "test-secret-for-github-actions"
+      REFRESH_TOKEN_SECRET: "dummy_refresh_secret"
+      EXPIRES_IN: "7d"
+      REFRESH_TOKEN_EXPIRES_IN: "1y"
       NODE_ENV: "test"
       REDIS_URL: "redis://localhost:6379"
       STRIPE_SECRET_KEY: "sk_test_dummy"
