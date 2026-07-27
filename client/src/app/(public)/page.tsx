@@ -3,6 +3,8 @@ import HeroSection from "./_components/HeroSection";
 import OurFeatures from "./_components/OurFeatures";
 import StepsSolution from "./_components/StepsSolution";
 
+export const dynamic = 'force-dynamic';
+
 // Dynamic import
 import dynamic from "next/dynamic";
 
