@@ -26,7 +26,9 @@ export const notificationWorker = new Worker(
           timestamp: new Date().toISOString(),
         });
       } else {
-        logger.warn('Socket.io not initialized in background worker, skipping real-time emit for role.');
+        logger.warn(
+          'Socket.io not initialized in background worker, skipping real-time emit for role.',
+        );
       }
 
       // Save to all users of that role in DB
@@ -49,7 +51,9 @@ export const notificationWorker = new Worker(
             actionUrl: payload.actionUrl,
           })),
         });
-        logger.info(`✅ Successfully created notifications for ${users.length} users with role ${role}`);
+        logger.info(
+          `✅ Successfully created notifications for ${users.length} users with role ${role}`,
+        );
       } else {
         logger.info(`ℹ️ No users found for role ${role}, no notifications created.`);
       }
@@ -61,7 +65,7 @@ export const notificationWorker = new Worker(
   {
     connection: getRedisConnection() as any,
     concurrency: 2, // Process up to 2 bulk notifications in parallel to prevent DB locking
-  }
+  },
 );
 
 notificationWorker.on('completed', (job) => {

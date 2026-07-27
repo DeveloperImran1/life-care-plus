@@ -1,11 +1,33 @@
-import Specialities from "@/app/(public)/_components/Specialties";
-import Steps from "@/app/(public)/_components/Steps";
-import Testimonials from "@/app/(public)/_components/Testimonials";
-import TopRatedDoctors from "@/app/(public)/_components/TopRatedDoctors";
 import Head from "next/head";
 import HeroSection from "./_components/HeroSection";
 import OurFeatures from "./_components/OurFeatures";
 import StepsSolution from "./_components/StepsSolution";
+
+// Dynamic import
+import dynamic from "next/dynamic";
+
+const Specialities = dynamic(
+  () => import("@/app/(public)/_components/Specialties"),
+  {
+    loading: () => (
+      <div className="h-40 w-full animate-pulse bg-muted rounded-xl mt-8"></div>
+    ),
+  },
+);
+
+const TopRatedDoctors = dynamic(
+  () => import("@/app/(public)/_components/TopRatedDoctors"),
+  {
+    loading: () => (
+      <div className="h-64 w-full animate-pulse bg-muted rounded-xl mt-8"></div>
+    ),
+  },
+);
+
+const Steps = dynamic(() => import("@/app/(public)/_components/Steps"));
+const Testimonials = dynamic(
+  () => import("@/app/(public)/_components/Testimonials"),
+);
 
 export default function Home() {
   return (
@@ -23,10 +45,10 @@ export default function Home() {
         <HeroSection />
         <OurFeatures />
         <StepsSolution />
-        {/* <Specialities /> */}
-        {/* <TopRatedDoctors /> */}
-        {/* <Steps /> */}
-        {/* <Testimonials /> */}
+        <Specialities />
+        <TopRatedDoctors />
+        {/* <Steps /> */} {/* StepSolution component ar aita same. */}
+        <Testimonials />
       </main>
     </>
   );

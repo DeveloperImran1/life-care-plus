@@ -22,6 +22,12 @@ export const getCommonNavItems = (role: UserRole): NavSection[] => {
                     roles: ["PATIENT", "DOCTOR", "ADMIN"],
                 },
                 {
+                    title: "Messages",
+                    href: "/chat",
+                    icon: "MessageSquare",
+                    roles: ["PATIENT", "DOCTOR", "ADMIN"],
+                },
+                {
                     title: "My Profile",
                     href: `/settings/profile`,
                     icon: "User",

@@ -3,23 +3,73 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { revalidate } from "@/lib/helpers/revalidate";
+import { getPaymentStatus } from "@/app/(dashboard)/settings/payment/_services";
 import { CheckCircle2 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+
+const POLL_INTERVAL = 2000;
+const MAX_POLL_ATTEMPTS = 15;
 
 const PaymentSuccessContent = () => {
-  const router = useRouter();
   const [countdown, setCountdown] = useState(5);
+  const [pollStatus, setPollStatus] = useState<"polling" | "paid" | "timeout">("polling");
+  const redirectedRef = useRef(false);
 
-  useEffect(() => {
-    // Get return URL from session storage only on client
-    revalidate("my-appointments");
+  const redirectToAppointments = useCallback(async () => {
+    if (redirectedRef.current) return;
+    redirectedRef.current = true;
+
     const storedUrl =
       sessionStorage.getItem("paymentReturnUrl") ||
       "/patient/dashboard/my-appointments";
     sessionStorage.removeItem("paymentReturnUrl");
+    sessionStorage.removeItem("paymentAppointmentId");
 
-    // Start countdown
+    // Invalidate cache before navigating
+    await revalidate("my-appointments");
+    await revalidate("appointments-list");
+
+    window.location.href = storedUrl;
+  }, []);
+
+  useEffect(() => {
+    const appointmentId = sessionStorage.getItem("paymentAppointmentId");
+
+    let pollCount = 0;
+    let isMounted = true;
+
+    const pollPaymentStatus = async () => {
+      if (!appointmentId || pollCount >= MAX_POLL_ATTEMPTS) {
+        if (isMounted) setPollStatus("timeout");
+        return;
+      }
+
+      try {
+        const result = await getPaymentStatus(appointmentId);
+        if (isMounted && result.success && result.data?.paymentStatus === "PAID") {
+          setPollStatus("paid");
+          sessionStorage.removeItem("paymentAppointmentId");
+          return;
+        }
+      } catch {
+        // Silently retry
+      }
+
+      pollCount++;
+      if (isMounted && pollCount < MAX_POLL_ATTEMPTS) {
+        setTimeout(pollPaymentStatus, POLL_INTERVAL);
+      } else if (isMounted) {
+        setPollStatus("timeout");
+      }
+    };
+
+    if (appointmentId) {
+      setTimeout(pollPaymentStatus, 1000);
+    } else {
+      setPollStatus("timeout");
+    }
+
+    // Start countdown for redirect
     const timer = setInterval(() => {
       setCountdown((prev) => {
         if (prev <= 1) {
@@ -30,23 +80,20 @@ const PaymentSuccessContent = () => {
       });
     }, 1000);
 
-    // Redirect after countdown
     const redirectTimer = setTimeout(() => {
-      router.push(storedUrl);
+      isMounted = false;
+      redirectToAppointments();
     }, 5000);
 
     return () => {
+      isMounted = false;
       clearInterval(timer);
       clearTimeout(redirectTimer);
     };
-  }, [router]);
+  }, [redirectToAppointments]);
 
   const handleManualRedirect = () => {
-    const storedUrl =
-      sessionStorage.getItem("paymentReturnUrl") ||
-      "/patient/dashboard/my-appointments";
-    sessionStorage.removeItem("paymentReturnUrl");
-    router.push(storedUrl);
+    redirectToAppointments();
   };
 
   return (
@@ -80,6 +127,21 @@ const PaymentSuccessContent = () => {
                 A confirmation email has been sent to your registered email
                 address with appointment details.
               </p>
+              {pollStatus === "polling" && (
+                <p className="text-xs text-green-600 mt-2 animate-pulse">
+                  Confirming payment with server...
+                </p>
+              )}
+              {pollStatus === "paid" && (
+                <p className="text-xs text-green-700 mt-2 font-medium">
+                  ✓ Payment confirmed
+                </p>
+              )}
+              {pollStatus === "timeout" && (
+                <p className="text-xs text-amber-600 mt-2">
+                  Payment status will update shortly
+                </p>
+              )}
             </div>
 
             {/* Countdown */}

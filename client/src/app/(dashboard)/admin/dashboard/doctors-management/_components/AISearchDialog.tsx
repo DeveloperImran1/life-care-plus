@@ -176,7 +176,7 @@ export default function AISearchDialog({
         <div className="space-y-4 mt-4">
           <div>
             <Textarea
-              placeholder="Describe your symptoms in detail (e.g., severe headache for 3 days, high fever with chills, persistent cough with chest pain, etc.)..."
+              placeholder=""
               value={symptoms}
               onChange={(e) => setSymptoms(e.target.value)}
               onKeyDown={(e) => {

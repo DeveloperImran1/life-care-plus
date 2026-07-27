@@ -12,6 +12,7 @@ import { updatePatient } from "@/app/(dashboard)/admin/dashboard/patients-manage
 import { IPatient } from "@/types/patient.type";
 import { useActionState, useEffect, useRef } from "react";
 import { toast } from "sonner";
+import { PhoneInputField } from "@/components/ui/phone-input";
 
 interface IPatientFormDialogProps {
   open: boolean;
@@ -95,10 +96,9 @@ const PatientFormDialog = ({
 
             <Field>
               <FieldLabel htmlFor="contactNumber">Contact Number</FieldLabel>
-              <Input
-                id="contactNumber"
+              <PhoneInputField
                 name="contactNumber"
-                placeholder="+1234567890"
+                placeholder="+88017XXXXXXXX"
                 defaultValue={
                   state?.formData?.contactNumber || patient?.contactNumber || ""
                 }

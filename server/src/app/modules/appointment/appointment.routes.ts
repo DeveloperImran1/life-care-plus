@@ -50,10 +50,4 @@ router.patch(
   AppointmentController.changeAppointmentStatus,
 );
 
-router.post(
-  '/pay-later',
-  auth(UserRole.PATIENT),
-  AppointmentController.createAppointmentWithPayLater,
-);
-
 export const AppointmentRoutes = router;

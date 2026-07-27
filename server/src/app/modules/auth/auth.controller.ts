@@ -20,7 +20,11 @@ const loginUser = catchAsync(async (req: Request, res: Response) => {
   // convert refreshTokenExpiresIn to milliseconds
   const refreshTokenMaxAge: number = getTokenMaxAge(refreshTokenExpiresIn);
 
-  const result = await AuthServices.loginUser(req.body);
+  const result = await AuthServices.loginUser(
+    req.body,
+    req.ip || 'unknown',
+    req.headers['user-agent'] || 'unknown',
+  );
   const { refreshToken, accessToken } = result;
 
   cookieSet(res, 'accessToken', accessToken, accessTokenMaxAge);
@@ -211,6 +215,25 @@ const socialLoginCallback = catchAsync(async (req: Request, res: Response) => {
   res.redirect(`${config.frontendUrl}/${redirectTo}?token=${accessToken}`);
 });
 
+const logout = catchAsync(async (req: Request, res: Response) => {
+  const { refreshToken } = req.cookies;
+
+  if (refreshToken) {
+    await AuthServices.logout(refreshToken);
+  }
+
+  // ব্রাউজার থেকে কুকি ডিলিট করে দেওয়া
+  res.clearCookie('accessToken');
+  res.clearCookie('refreshToken');
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Logged out successfully!',
+    data: null,
+  });
+});
+
 export const AuthController = {
   loginUser,
   refreshToken,
@@ -219,4 +242,5 @@ export const AuthController = {
   resetPassword,
   getMe,
   socialLoginCallback,
+  logout,
 };

@@ -9,6 +9,7 @@ import { redisHelper } from '../../../helpers/redisHelper';
 import { reviewCacheKeys } from './review.contant';
 import { doctorCacheKeys } from '../doctor/doctor.constants';
 import { NotificationService } from '../notification/notification.service';
+import { sanitizeInput } from '../../../helpers/sanitizeInput';
 
 const REVIEW_CACHE_TTL = 45 * 60; // 45 minutes
 
@@ -43,7 +44,8 @@ const insertIntoDB = async (user: IAuthUser, payload: any) => {
         doctorId: appointmentData.doctorId,
         patientId: appointmentData.patientId,
         rating: payload.rating,
-        comment: payload.comment,
+        // হ্যাকার স্ক্রিপ্ট দিলে তা মুছে নরমাল টেক্সট বানিয়ে দিবে!
+        comment: sanitizeInput(payload.comment),
       },
     });
 
@@ -127,8 +129,8 @@ const getAllFromDB = async (filters: any, options: IPaginationOptions) => {
           options.sortBy && options.sortOrder
             ? { [options.sortBy]: options.sortOrder }
             : {
-              createdAt: 'desc',
-            },
+                createdAt: 'desc',
+              },
         include: {
           doctor: true,
           patient: true,

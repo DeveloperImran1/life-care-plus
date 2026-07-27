@@ -17,6 +17,9 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { toast } from "sonner";
 import AppointmentCountdown from "@/app/(dashboard)/patient/dashboard/my-appointments/_components/AppointmentCountdown";
+import { createConversation } from "@/app/(dashboard)/_services/chat.service";
+import { useRouter } from "next/navigation";
+import { MessageSquare, Video } from "lucide-react";
 
 interface DoctorAppointmentDetailDialogProps {
   appointment: IAppointment | null;
@@ -30,8 +33,10 @@ export default function DoctorAppointmentDetailDialog({
   onClose,
 }: DoctorAppointmentDetailDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isCreatingChat, setIsCreatingChat] = useState(false);
   const [instructions, setInstructions] = useState("");
   const [followUpDate, setFollowUpDate] = useState("");
+  const router = useRouter();
 
   if (!appointment) return null;
 
@@ -99,6 +104,27 @@ export default function DoctorAppointmentDetailDialog({
     onClose();
   };
 
+  const handleMessagePatient = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!appointment?.patient?.email) {
+      toast.error("Patient email not found.");
+      return;
+    }
+    setIsCreatingChat(true);
+    try {
+      const res = await createConversation(appointment.patient.email);
+      if (res.success && res.data) {
+        router.push(`/chat?conversationId=${res.data.id}`);
+      } else {
+        toast.error("Failed to start chat.");
+      }
+    } catch (err) {
+      toast.error("An error occurred while starting chat.");
+    } finally {
+      setIsCreatingChat(false);
+    }
+  };
+
   return (
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="min-w-3xl max-h-[90vh] overflow-y-auto">
@@ -109,7 +135,37 @@ export default function DoctorAppointmentDetailDialog({
         <div className="space-y-6">
           {/* Patient Information */}
           <div className="border rounded-lg p-4 bg-muted/50">
-            <h3 className="font-semibold text-lg mb-3">Patient Information</h3>
+            <div className="flex justify-between items-center mb-3">
+              <h3 className="font-semibold text-lg">Patient Information</h3>
+
+              <div className="flex gap-5">
+                {paymentStatus === "PAID" &&
+                (status === "SCHEDULED" || status === "INPROGRESS") ? (
+                  <Button
+                    className="bg-emerald-600 hover:bg-emerald-700"
+                    onClick={() => {
+                      window.open(
+                        `/consultation/${appointment.videoCallingId}`,
+                        "_blank",
+                      );
+                    }}
+                  >
+                    <Video className="w-4 h-4 mr-2" />
+                    Join Video Call
+                  </Button>
+                ) : (
+                  <div />
+                )}
+                <Button
+                  onClick={handleMessagePatient}
+                  disabled={isCreatingChat}
+                  className="bg-emerald-600 hover:bg-emerald-700"
+                >
+                  <MessageSquare className="w-4 h-4 mr-2" />
+                  {isCreatingChat ? "Opening..." : "Message Patient"}
+                </Button>
+              </div>
+            </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <p className="text-muted-foreground">Name</p>
@@ -321,7 +377,7 @@ export default function DoctorAppointmentDetailDialog({
           </div>
         </div>
 
-        <div className="flex justify-end pt-4 border-t">
+        <div className="flex justify-end items-end pt-4 border-t gap-2">
           <Button variant="outline" onClick={handleClose}>
             Close
           </Button>

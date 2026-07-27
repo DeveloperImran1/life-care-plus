@@ -85,7 +85,7 @@ export default function AIDoctorSuggestion() {
       <CardContent className="space-y-4">
         <div>
           <Textarea
-            placeholder="Describe your symptoms in detail (e.g., severe headache for 3 days, high fever with chills, persistent cough with chest pain, etc.)..."
+            placeholder=""
             value={symptoms}
             onChange={(e) => setSymptoms(e.target.value)}
             rows={4}

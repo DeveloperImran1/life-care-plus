@@ -434,6 +434,29 @@ const updateMyProfie = async (user: IAuthUser, req: Request) => {
   return { ...profileInfo };
 };
 
+// সাবস্ক্রিপশন সেভ করার সার্ভিস
+const savePushSubscription = async (userId: string, subscription: any) => {
+  // upsert ব্যবহার করছি, যাতে একই ডিভাইস থেকে বারবার রিকোয়েস্ট আসলেও ডাটা ডুপ্লিকেট না হয়
+  const result = await prisma.pushSubscription.upsert({
+    where: {
+      endpoint: subscription.endpoint,
+    },
+    update: {
+      userId,
+      p256dh: subscription.keys.p256dh,
+      auth: subscription.keys.auth,
+    },
+    create: {
+      userId,
+      endpoint: subscription.endpoint,
+      p256dh: subscription.keys.p256dh,
+      auth: subscription.keys.auth,
+    },
+  });
+
+  return result;
+};
+
 export const userService = {
   createAdmin,
   createDoctor,
@@ -442,4 +465,5 @@ export const userService = {
   changeProfileStatus,
   getMyProfile,
   updateMyProfie,
+  savePushSubscription,
 };

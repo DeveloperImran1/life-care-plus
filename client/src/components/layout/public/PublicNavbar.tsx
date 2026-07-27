@@ -8,6 +8,7 @@ import logo from "@/assets/logos/navlog.png";
 import NavbarAuthButtons from "./NavbarAuthButtons";
 import Image from "next/image";
 import NotificationDropdown from "../dashboard/NotificationDropdown";
+import AISearchDialog from "@/app/(dashboard)/admin/dashboard/doctors-management/_components/AISearchDialog";
 
 const PublicNavbar = async () => {
   const navItems = [
@@ -45,9 +46,8 @@ const PublicNavbar = async () => {
         </nav>
 
         <div className="hidden md:flex items-center space-x-2">
-
           {userInfo && <NotificationDropdown />}
-          {/* <AISearchDialog /> */}
+          <AISearchDialog />
           <NavbarAuthButtons
             initialHasToken={!!accessToken}
             initialUserInfo={userInfo}

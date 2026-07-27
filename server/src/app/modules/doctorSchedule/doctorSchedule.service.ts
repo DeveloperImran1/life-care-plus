@@ -8,6 +8,7 @@ import httpStatus from 'http-status';
 import { IDoctorScheduleFilterRequest } from '../doctorSchedule/doctorSchedule.interface';
 import { redisHelper } from '../../../helpers/redisHelper';
 import { doctorScheduleCacheKeys } from './doctorSchedule.constants';
+import { doctorCacheKeys } from '../doctor/doctor.constants';
 
 const DOCTOR_SCHEDULE_CACHE_TTL = 30 * 60; // 30 minutes
 
@@ -33,6 +34,8 @@ const insertIntoDB = async (
   });
 
   await redisHelper.deleteCacheByPattern(doctorScheduleCacheKeys.allLists());
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.details(doctorData.id));
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.allDoctorLists());
 
   return result;
 };
@@ -144,6 +147,8 @@ const deleteFromDB = async (user: IAuthUser, scheduleId: string) => {
   });
 
   await redisHelper.deleteCacheByPattern(doctorScheduleCacheKeys.allLists());
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.details(doctorData.id));
+  await redisHelper.deleteCacheByPattern(doctorCacheKeys.allDoctorLists());
 
   return result;
 };

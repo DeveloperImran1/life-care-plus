@@ -44,6 +44,7 @@ passport.use(
                 },
               },
             },
+            include: { authAccounts: true },
           });
         }
 
@@ -115,6 +116,7 @@ passport.use(
                 },
               },
             },
+            include: { authAccounts: true },
           });
         }
         // লজিক ৩: ইউজার থাকলে চেক করবো তার AuthAccount এ ফেসবুক অ্যাড করা আছে কিনা
