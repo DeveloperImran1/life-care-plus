@@ -230,6 +230,13 @@ export async function getNewAccessToken() {
             sameSite: accessTokenObject['SameSite'] || cookieBase.sameSite,
         });
 
+        await setCookie("isLoggedIn", "true", {
+            ...cookieBase,
+            httpOnly: false,
+            maxAge: parseInt(accessTokenObject['Max-Age']) || 1000 * 60 * 60,
+            path: "/",
+        });
+
         await deleteCookie("refreshToken");
         await setCookie("refreshToken", refreshTokenObject.refreshToken, {
             ...cookieBase,
