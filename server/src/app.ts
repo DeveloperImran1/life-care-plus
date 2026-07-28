@@ -18,6 +18,8 @@ import * as Sentry from '@sentry/node';
 
 const app: Application = express();
 
+app.set('trust proxy', 1);
+
 // Initialize Sentry
 Sentry.init({
   dsn: envVars.sentryDsn,
