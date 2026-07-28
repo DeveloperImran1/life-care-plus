@@ -7,6 +7,7 @@ import {
   isValidRedirectForRole,
   UserRole,
 } from "@/lib/auth/auth-utils";
+import { getCookieOptions } from "@/lib/auth/cookie-config";
 import { serverFetch } from "@/services/http";
 import { zodValidator } from "@/lib/utils/zod-validator";
 import { loginValidationZodSchema } from "@/app/(auth)/_validations/auth.validation";
@@ -72,21 +73,20 @@ export const loginUser = async (
       throw new Error("Tokens not found in cookies");
     }
 
+    const cookieBase = getCookieOptions();
     await setCookie("accessToken", accessTokenObject.accessToken, {
-      secure: true,
-      httpOnly: true,
+      ...cookieBase,
       maxAge: parseInt(accessTokenObject["Max-Age"]) || 1000 * 60 * 60,
       path: accessTokenObject.Path || "/",
-      sameSite: accessTokenObject["SameSite"] || "none",
+      sameSite: accessTokenObject["SameSite"] || cookieBase.sameSite,
     });
 
     await setCookie("refreshToken", refreshTokenObject.refreshToken, {
-      secure: true,
-      httpOnly: true,
+      ...cookieBase,
       maxAge:
         parseInt(refreshTokenObject["Max-Age"]) || 1000 * 60 * 60 * 24 * 90,
       path: refreshTokenObject.Path || "/",
-      sameSite: refreshTokenObject["SameSite"] || "none",
+      sameSite: refreshTokenObject["SameSite"] || cookieBase.sameSite,
     });
     const verifiedToken: JwtPayload | string = jwt.verify(
       accessTokenObject.accessToken,
