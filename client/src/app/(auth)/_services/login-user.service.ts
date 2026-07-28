@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-require-imports */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
@@ -12,6 +13,7 @@ import { loginValidationZodSchema } from "@/app/(auth)/_validations/auth.validat
 import { parse } from "cookie";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 import { setCookie } from "./token-handlers.service";
 
 export const loginUser = async (
@@ -104,10 +106,9 @@ export const loginUser = async (
     if (redirectTo && result.data.needPasswordChange) {
       const requestedPath =
         redirectTo.toString() || getDefaultDashboardRoute(userRole);
-      
-      const { revalidatePath } = require("next/cache");
-      revalidatePath('/', 'layout');
-      
+
+      revalidatePath("/", "layout");
+
       if (isValidRedirectForRole(requestedPath, userRole)) {
         redirect(`/reset-password?redirect=${requestedPath}`);
       } else {
@@ -117,13 +118,11 @@ export const loginUser = async (
     }
 
     if (result.data.needPasswordChange) {
-      const { revalidatePath } = require("next/cache");
-      revalidatePath('/', 'layout');
+      revalidatePath("/", "layout");
       redirect("/reset-password");
     }
 
-    const { revalidatePath } = require("next/cache");
-    revalidatePath('/', 'layout');
+    revalidatePath("/", "layout");
 
     if (redirectTo) {
       const requestedPath = redirectTo.toString();

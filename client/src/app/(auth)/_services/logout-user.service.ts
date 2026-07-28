@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { deleteCookie, getCookie } from "./token-handlers.service";
 
+import { revalidatePath } from "next/cache";
+
 export const logoutUser = async () => {
   // ১. কুকি থেকে রিফ্রেশ টোকেনটি নিচ্ছি
   const refreshToken = await getCookie("refreshToken");
@@ -27,7 +29,6 @@ export const logoutUser = async () => {
   await deleteCookie("refreshToken");
 
   // ৪. লগিন পেজে পাঠিয়ে দিচ্ছি
-  const { revalidatePath } = require("next/cache");
   revalidatePath('/', 'layout');
   redirect("/login?loggedOut=true");
 };
