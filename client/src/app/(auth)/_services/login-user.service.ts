@@ -81,6 +81,14 @@ export const loginUser = async (
       sameSite: accessTokenObject["SameSite"] || cookieBase.sameSite,
     });
 
+    // Client-side readable cookie to detect auth state
+    await setCookie("isLoggedIn", "true", {
+      ...cookieBase,
+      httpOnly: false,
+      maxAge: parseInt(accessTokenObject["Max-Age"]) || 1000 * 60 * 60,
+      path: "/",
+    });
+
     await setCookie("refreshToken", refreshTokenObject.refreshToken, {
       ...cookieBase,
       maxAge:

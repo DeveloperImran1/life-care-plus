@@ -35,6 +35,13 @@ export const exchangeSocialCode = async (code: string) => {
       maxAge: 7 * 24 * 60 * 60,
     });
 
+    await setCookie("isLoggedIn", "true", {
+      ...cookieBase,
+      httpOnly: false,
+      maxAge: 7 * 24 * 60 * 60,
+      path: "/",
+    });
+
     if (refreshToken) {
       await setCookie("refreshToken", refreshToken, {
         ...cookieBase,
