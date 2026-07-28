@@ -65,7 +65,24 @@ router.get('/facebook', (req, res, next) => {
 // ২. ফেসবুক লগিন সাকসেসফুল হলে ডাটা এখানে আসবে
 router.get(
   '/facebook/callback',
-  passport.authenticate('facebook', { failureRedirect: `${config.frontendUrl}/login?error=true` }),
+  (req, res, next) => {
+    passport.authenticate('facebook', (err: any, user: any, info: any) => {
+      if (err) {
+        // যদি pre-fetch বা ডাবল রিকোয়েস্টের কারণে "code has been used" এরর আসে, তবে ইগনোর করে লগিন পেজে পাঠিয়ে দিবো
+        if (err.message && err.message.includes('code has been used')) {
+           return res.redirect(`${config.frontendUrl}/login?error=code_used`);
+        }
+        return res.redirect(`${config.frontendUrl}/login?error=true`);
+      }
+      if (!user) {
+        return res.redirect(`${config.frontendUrl}/login?error=true`);
+      }
+      req.logIn(user, (loginErr) => {
+        if (loginErr) return next(loginErr);
+        next();
+      });
+    })(req, res, next);
+  },
   AuthController.socialLoginCallback, // গুগলের যেই কন্ট্রোলার ব্যবহার করেছি, এখানেও হুবহু সেটাই কাজ করবে!
 );
 

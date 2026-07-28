@@ -17,34 +17,35 @@ const SocialLoginHandler = () => {
 
     if (token && !isProcessed.current) {
       isProcessed.current = true;
-      // ১. টোকেন সেভ করুন (আপনার প্রোজেক্টের ফাংশন অনুযায়ী)
-      // Call the server action to set the cookie
+      // URL থেকে সাথে সাথে token সরিয়ে দেওয়া যাতে রেন্ডারে লুপ না হয়
+      window.history.replaceState(null, "", pathname);
+
+      // ১. টোকেন সেভ করুন
       import("../_services/token-handlers.service").then(({ setCookie }) => {
         setCookie("accessToken", token, { 
           secure: true, 
           sameSite: "lax", 
-          maxAge: 7 * 24 * 60 * 60 // 7 days (or match your backend's maxAge)
+          maxAge: 7 * 24 * 60 * 60 
         }).then(() => {
           if (refreshToken) {
             setCookie("refreshToken", refreshToken, { 
               secure: true, 
               sameSite: "lax", 
-              maxAge: 90 * 24 * 60 * 60 // 90 days
+              maxAge: 90 * 24 * 60 * 60 
             });
           }
-          // ২. সাকসেস টোস্ট দেখানো
           toast.success("Successfully logged in!");
-
-          // ৩. URL থেকে টোকেনটা মুছে দিয়ে ফ্রেশ URL তৈরি করা
-          router.replace(pathname);
+          // কুকি সেট হওয়ার পর ড্যাশবোর্ডে বা হোমপেজে রিডাইরেক্ট করে দেওয়া
+          router.replace("/");
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
         });
       });
     } else if (error && !isProcessed.current) {
       isProcessed.current = true;
-      // ১. এরর টোস্ট দেখানো
+      window.history.replaceState(null, "", pathname);
       toast.error("Login failed! Please try again.");
-
-      // ২. URL থেকে এরর প্যারামিটার মুছে ফ্রেশ URL তৈরি করা
       router.replace(pathname);
     }
   }, [searchParams, router, pathname]);
