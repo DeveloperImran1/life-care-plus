@@ -212,7 +212,15 @@ const socialLoginCallback = catchAsync(async (req: Request, res: Response) => {
   }
 
   // URL এর সাথে Access Token ও Refresh Token পাঠিয়ে দিতে পারেন, যাতে ফ্রন্ট-এন্ড সেটা কুকিতে সেভ করতে পারে
-  res.redirect(`${config.frontendUrl}/${redirectTo}?token=${accessToken}&refreshToken=${refreshToken}`);
+  const redirectUrl = `${config.frontendUrl}/${redirectTo}?token=${accessToken}&refreshToken=${refreshToken}`;
+  
+  const code = req.query.code as string;
+  if (code) {
+    const { redis } = await import('../../../lib/redis');
+    await redis.set(`fb_code_${code}`, redirectUrl, 'EX', 60); // 60 seconds cache
+  }
+
+  res.redirect(redirectUrl);
 });
 
 const logout = catchAsync(async (req: Request, res: Response) => {

@@ -65,10 +65,21 @@ router.get('/facebook', (req, res, next) => {
 // ২. ফেসবুক লগিন সাকসেসফুল হলে ডাটা এখানে আসবে
 router.get(
   '/facebook/callback',
-  (req, res, next) => {
+  async (req, res, next) => {
+    const code = req.query.code as string;
+    
+    // ১. চেক করবো এই কোড দিয়ে অলরেডি লগিন হয়েছে কিনা (Redis Cache)
+    if (code) {
+      const { redis } = await import('../../../lib/redis');
+      const cachedUrl = await redis.get(`fb_code_${code}`);
+      if (cachedUrl) {
+        // যদি অলরেডি প্রসেস হয়ে থাকে, তবে আগের তৈরি করা URL-এই রিডাইরেক্ট করে দিবো!
+        return res.redirect(cachedUrl);
+      }
+    }
+
     passport.authenticate('facebook', (err: any, user: any, info: any) => {
       if (err) {
-        // যদি pre-fetch বা ডাবল রিকোয়েস্টের কারণে "code has been used" এরর আসে, তবে ইগনোর করে লগিন পেজে পাঠিয়ে দিবো
         if (err.message && err.message.includes('code has been used')) {
            return res.redirect(`${config.frontendUrl}/login?error=code_used`);
         }
@@ -83,8 +94,9 @@ router.get(
       });
     })(req, res, next);
   },
-  AuthController.socialLoginCallback, // গুগলের যেই কন্ট্রোলার ব্যবহার করেছি, এখানেও হুবহু সেটাই কাজ করবে!
+  AuthController.socialLoginCallback, 
 );
+
 
 router.post('/logout', AuthController.logout);
 
