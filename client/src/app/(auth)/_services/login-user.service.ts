@@ -104,6 +104,10 @@ export const loginUser = async (
     if (redirectTo && result.data.needPasswordChange) {
       const requestedPath =
         redirectTo.toString() || getDefaultDashboardRoute(userRole);
+      
+      const { revalidatePath } = require("next/cache");
+      revalidatePath('/', 'layout');
+      
       if (isValidRedirectForRole(requestedPath, userRole)) {
         redirect(`/reset-password?redirect=${requestedPath}`);
       } else {
@@ -113,8 +117,13 @@ export const loginUser = async (
     }
 
     if (result.data.needPasswordChange) {
+      const { revalidatePath } = require("next/cache");
+      revalidatePath('/', 'layout');
       redirect("/reset-password");
     }
+
+    const { revalidatePath } = require("next/cache");
+    revalidatePath('/', 'layout');
 
     if (redirectTo) {
       const requestedPath = redirectTo.toString();

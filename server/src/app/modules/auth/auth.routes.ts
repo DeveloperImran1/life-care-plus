@@ -67,7 +67,7 @@ router.get(
   '/facebook/callback',
   async (req, res, next) => {
     const code = req.query.code as string;
-    
+
     // ১. চেক করবো এই কোড দিয়ে অলরেডি লগিন হয়েছে কিনা (Redis Cache)
     if (code) {
       const { redis } = await import('../../../lib/redis');
@@ -81,7 +81,7 @@ router.get(
     passport.authenticate('facebook', (err: any, user: any, info: any) => {
       if (err) {
         if (err.message && err.message.includes('code has been used')) {
-           return res.redirect(`${config.frontendUrl}/login?error=code_used`);
+          return res.redirect(`${config.frontendUrl}/login?error=code_used`);
         }
         return res.redirect(`${config.frontendUrl}/login?error=true`);
       }
@@ -94,9 +94,8 @@ router.get(
       });
     })(req, res, next);
   },
-  AuthController.socialLoginCallback, 
+  AuthController.socialLoginCallback,
 );
-
 
 router.post('/logout', AuthController.logout);
 

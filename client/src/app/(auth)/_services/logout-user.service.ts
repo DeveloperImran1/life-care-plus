@@ -27,5 +27,7 @@ export const logoutUser = async () => {
   await deleteCookie("refreshToken");
 
   // ৪. লগিন পেজে পাঠিয়ে দিচ্ছি
+  const { revalidatePath } = require("next/cache");
+  revalidatePath('/', 'layout');
   redirect("/login?loggedOut=true");
 };
