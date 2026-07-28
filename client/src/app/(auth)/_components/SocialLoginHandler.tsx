@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { toast } from "sonner"; // আপনি react-hot-toast বা toastify ব্যবহার করলে সেটার ইম্পোর্ট দিবেন
 
@@ -7,6 +7,7 @@ const SocialLoginHandler = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const isProcessed = useRef(false);
 
   useEffect(() => {
     // URL থেকে token এবং error বের করে আনা
@@ -14,7 +15,8 @@ const SocialLoginHandler = () => {
     const refreshToken = searchParams.get("refreshToken");
     const error = searchParams.get("error");
 
-    if (token) {
+    if (token && !isProcessed.current) {
+      isProcessed.current = true;
       // ১. টোকেন সেভ করুন (আপনার প্রোজেক্টের ফাংশন অনুযায়ী)
       // Call the server action to set the cookie
       import("../_services/token-handlers.service").then(({ setCookie }) => {
@@ -37,7 +39,8 @@ const SocialLoginHandler = () => {
           router.replace(pathname);
         });
       });
-    } else if (error) {
+    } else if (error && !isProcessed.current) {
+      isProcessed.current = true;
       // ১. এরর টোস্ট দেখানো
       toast.error("Login failed! Please try again.");
 
