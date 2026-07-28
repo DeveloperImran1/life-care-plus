@@ -11,17 +11,32 @@ const SocialLoginHandler = () => {
   useEffect(() => {
     // URL থেকে token এবং error বের করে আনা
     const token = searchParams.get("token");
+    const refreshToken = searchParams.get("refreshToken");
     const error = searchParams.get("error");
 
     if (token) {
       // ১. টোকেন সেভ করুন (আপনার প্রোজেক্টের ফাংশন অনুযায়ী)
-      // setToLocalStorage("accessToken", token);
+      // Call the server action to set the cookie
+      import("../_services/token-handlers.service").then(({ setCookie }) => {
+        setCookie("accessToken", token, { 
+          secure: true, 
+          sameSite: "lax", 
+          maxAge: 7 * 24 * 60 * 60 // 7 days (or match your backend's maxAge)
+        }).then(() => {
+          if (refreshToken) {
+            setCookie("refreshToken", refreshToken, { 
+              secure: true, 
+              sameSite: "lax", 
+              maxAge: 90 * 24 * 60 * 60 // 90 days
+            });
+          }
+          // ২. সাকসেস টোস্ট দেখানো
+          toast.success("Successfully logged in!");
 
-      // ২. সাকসেস টোস্ট দেখানো
-      toast.success("Successfully logged in!");
-
-      // ৩. URL থেকে টোকেনটা মুছে দিয়ে ফ্রেশ URL তৈরি করা
-      router.replace(pathname);
+          // ৩. URL থেকে টোকেনটা মুছে দিয়ে ফ্রেশ URL তৈরি করা
+          router.replace(pathname);
+        });
+      });
     } else if (error) {
       // ১. এরর টোস্ট দেখানো
       toast.error("Login failed! Please try again.");

@@ -211,8 +211,8 @@ const socialLoginCallback = catchAsync(async (req: Request, res: Response) => {
     redirectTo = redirectTo.slice(1);
   }
 
-  // URL এর সাথে Access Token পাঠিয়ে দিতে পারেন, যাতে ফ্রন্ট-এন্ড সেটা লোকাল স্টোরেজ বা কুকিতে সেভ করতে পারে
-  res.redirect(`${config.frontendUrl}/${redirectTo}?token=${accessToken}`);
+  // URL এর সাথে Access Token ও Refresh Token পাঠিয়ে দিতে পারেন, যাতে ফ্রন্ট-এন্ড সেটা কুকিতে সেভ করতে পারে
+  res.redirect(`${config.frontendUrl}/${redirectTo}?token=${accessToken}&refreshToken=${refreshToken}`);
 });
 
 const logout = catchAsync(async (req: Request, res: Response) => {
