@@ -3,9 +3,9 @@
 
 <strong>Life Care Plus is a Full-Stack Telemedicine & Healthcare Management Platform</strong>
 
-<a href="https://life-care-plus-mauve.vercel.app/">🚀 <strong>View Frontend Live</strong></a> &nbsp;|&nbsp;
-<a href="https://life-care-plus.onrender.com/">⚡ <strong>View Backend Live</strong></a> &nbsp;|&nbsp;
-<a href="https://github.com/DeveloperImran1/life-care-plus">💻 <strong>Source Code</strong></a>
+<a href="https://life-care-plus-mauve.vercel.app/" target="_blank" rel="noopener noreferrer">🚀 <strong>View Frontend Live</strong></a> &nbsp;|&nbsp;
+<a href="https://life-care-plus.onrender.com/" target="_blank" rel="noopener noreferrer">⚡ <strong>View Backend Live</strong></a> &nbsp;|&nbsp;
+<a href="https://github.com/DeveloperImran1/life-care-plus" target="_blank" rel="noopener noreferrer">💻 <strong>Source Code</strong></a>
 <br><br>
 
   <p>
@@ -26,27 +26,27 @@
 
 ## 📋 Table of Contents
 
-- [Overview](#-overview)
-- [Key Features](#-key-features)
-- [Tech Stack](#-tech-stack)
-- [System Architecture & Data Flow](#-system-architecture--data-flow)
-- [Database Schema](#-database-schema)
-- [Environment Variables](#-environment-variables)
-- [Getting Started](#-getting-started)
-  - [Docker Setup (One Command)](#docker-setup-one-command)
-  - [Manual Setup](#manual-setup)
-- [Project Structure](#-project-structure)
-- [API Documentation](#-api-documentation)
-- [Authentication & Authorization](#-authentication--authorization)
-- [Real-Time Features](#-real-time-features)
-- [Payment Integration](#-payment-integration)
-- [Security & Data Privacy](#-security--data-privacy)
-- [Testing](#-testing)
-- [CI/CD Pipeline](#-cicd-pipeline)
-- [Deployment](#-deployment)
-- [Demo Credentials](#-demo-credentials)
-- [Contributing](#-contributing)
-- [Video Presentation](#-video-presentation)
+- <a href="#-overview" target="_blank">Overview</a>
+- <a href="#-key-features" target="_blank">Key Features</a>
+- <a href="#-tech-stack" target="_blank">Tech Stack</a>
+- <a href="#-system-architecture--data-flow" target="_blank">System Architecture & Data Flow</a>
+- <a href="#-database-schema" target="_blank">Database Schema</a>
+- <a href="#-environment-variables" target="_blank">Environment Variables</a>
+- <a href="#-getting-started" target="_blank">Getting Started</a>
+  - <a href="#docker-setup-one-command" target="_blank">Docker Setup (One Command)</a>
+  - <a href="#manual-setup" target="_blank">Manual Setup</a>
+- <a href="#-project-structure" target="_blank">Project Structure</a>
+- <a href="#-api-documentation" target="_blank">API Documentation</a>
+- <a href="#-authentication--authorization" target="_blank">Authentication & Authorization</a>
+- <a href="#-real-time-features" target="_blank">Real-Time Features</a>
+- <a href="#-payment-integration" target="_blank">Payment Integration</a>
+- <a href="#-security--data-privacy" target="_blank">Security & Data Privacy</a>
+- <a href="#-testing" target="_blank">Testing</a>
+- <a href="#-cicd-pipeline" target="_blank">CI/CD Pipeline</a>
+- <a href="#-deployment" target="_blank">Deployment</a>
+- <a href="#-demo-credentials" target="_blank">Demo Credentials</a>
+- <a href="#-contributing" target="_blank">Contributing</a>
+- <a href="#-video-presentation" target="_blank">Video Presentation</a>
 
 ---
 
@@ -156,120 +156,21 @@ To create a scalable, secure, and user-friendly telemedicine platform that strea
 
 ## 🏗 System Architecture & Data Flow
 
-```
-┌─────────────────────────────────────────────────────────┐
-│                    Frontend (Next.js 16)                │
-│  ┌──────────┐  ┌──────────┐  ┌──────────────────────┐  │
-│  │  Public  │  │   Auth   │  │   Dashboard (RBAC)   │  │
-│  │  Routes  │  │  Routes  │  │ ┌───┬───┬──────────┐ │  │
-│  └──────────┘  └──────────┘  │ │A  │D  │   P     │ │  │
-│                               │ │d  │o  │   a     │ │  │
-│  ┌─────────────────────┐     │ │m  │c  │   t     │ │  │
-│  │   Proxy Middleware   │────▶│ │i  │t  │   i     │ │  │
-│  │ (Auth Guard + Token  │     │ │n  │o  │   e     │ │  │
-│  │  Refresh)           │     │ └───┴───┴──────────┘ │  │
-│  └─────────────────────┘     └──────────────────────┘  │
-│           │                                             │
-│           │ HTTP (cookie-based auth)                    │
-└───────────┼─────────────────────────────────────────────┘
-            │
-            ▼
-┌─────────────────────────────────────────────────────────┐
-│              API Gateway (Nginx / Render)                │
-└─────────────────────────────────────────────────────────┘
-            │
-            ▼
-┌─────────────────────────────────────────────────────────┐
-│               Backend (Express 5 + TS)                  │
-│  ┌──────────────────────────────────────────────────┐   │
-│  │              API Routes (/api/v1)                │   │
-│  │  ┌──────┬──────┬──────┬──────┬──────┬──────┐   │   │
-│  │  │Auth  │User  │Admin │Doctor│Patient│Appt  │   │   │
-│  │  ├──────┼──────┼──────┼──────┼──────┼──────┤   │   │
-│  │  │Paymt │Sched │Revw  │Presc │Meta  │Chat  │   │   │
-│  │  ├──────┼──────┼──────┼──────┼──────┼──────┤   │   │
-│  │  │Spec  │Logs  │Notif │D/Sch │      │      │   │   │
-│  │  └──────┴──────┴──────┴──────┴──────┴──────┘   │   │
-│  │                                                 │   │
-│  │  ┌────────────────────────────────────────┐     │   │
-│  │  │        Middleware Stack                │     │   │
-│  │  │  CORS → Session → Passport → RateLimit │     │   │
-│  │  │  → AuthGuard → Validation → Controller │     │   │
-│  │  └────────────────────────────────────────┘     │   │
-│  └──────────────────────────────────────────────────┘   │
-│                    │            │                        │
-│         ┌──────────┘            └──────────┐            │
-│         ▼                                     ▼            │
-│  ┌──────────────┐                  ┌──────────────┐       │
-│  │   BullMQ     │                  │   Socket.io  │       │
-│  │  ┌────────┐  │                  │  ┌────────┐  │       │
-│  │  │ Email  │  │                  │  │  Chat  │  │       │
-│  │  │ Worker │  │                  │  │ Rooms  │  │       │
-│  │  ├────────┤  │                  │  ├────────┤  │       │
-│  │  │Notifica│  │                  │  │Notifica│  │       │
-│  │  │ Worker │  │                  │  │ tions  │  │       │
-│  │  └────────┘  │                  │  ├────────┤  │       │
-│  └──────┬───────┘                  │  │ Online │  │       │
-│         │                          │  │ Status │  │       │
-│         ▼                          │  └────────┘  │       │
-│  ┌──────────────┐                  └──────┬───────┘       │
-│  │    Redis     │                          │               │
-│  │  (Caching +  │◀────────────────────────┘               │
-│  │   Queue +    │                                         │
-│  │   Pub/Sub)   │                                         │
-│  └──────┬───────┘                                         │
-│         │                                                 │
-│         ▼                                                  │
-│  ┌──────────────┐     ┌──────────────┐     ┌──────────┐  │
-│  │  PostgreSQL  │     │  Cloudinary  │     │  Stripe  │  │
-│  │  (Prisma)    │     │  (Files)     │     │(Payment) │  │
-│  └──────────────┘     └──────────────┘     └──────────┘  │
-└──────────────────────────────────────────────────────────┘
-```
+<div align="center">
+  <a href="./doc/Architecture.png" target="_blank">
+    <img src="./doc/Architecture.png" alt="System Architecture Diagram" width="900" />
+  </a>
+  <p><em>Click to view full-size in a new tab.</em></p>
+</div>
 
 ### Data Flow
 
-```
-Browser (Next.js)
-      │
-      ▼
-┌─────────────────┐
-│  proxy.ts        │  JWT verification, token refresh, role-based redirect
-│  (Middleware)    │
-└────────┬────────┘
-         │  Authenticated request with HTTP-only cookies
-         ▼
-┌─────────────────┐
-│  Express API     │  /api/v1/* routes
-│  (app.ts)       │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Middleware Stack │  CORS → Rate Limiter → Auth Guard → Zod Validation
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Controller      │  Request handling, response formatting
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│  Service Layer   │  Business logic, orchestration
-└──┬──────────┬───┘
-   │          │
-   ▼          ▼
-┌────────┐ ┌────────┐
-│ Prisma │ │ Redis  │
-│  ORM   │ │ Cache  │
-└───┬────┘ └────────┘
-    │
-    ▼
-┌──────────┐
-│PostgreSQL│
-└──────────┘
-```
+<div align="center">
+  <a href="./doc/Data%20Flow.png" target="_blank">
+    <img src="./doc/Data%20Flow.png" alt="Data Flow Diagram" width="700" />
+  </a>
+  <p><em>Click to view full-size in a new tab.</em></p>
+</div>
 
 **Flow breakdown:**
 
@@ -405,7 +306,7 @@ docker compose up -d db redis
 
 #### 3️⃣ Configure Environment
 
-Copy and fill in the environment files as described in the [Environment Variables](#-environment-variables) section above.
+Copy and fill in the environment files as described in the <a href="#-environment-variables" target="_blank">Environment Variables</a> section above.
 
 #### 4️⃣ Database Setup
 
@@ -531,7 +432,9 @@ All API endpoints are prefixed with `/api/v1`. A fully-documented Postman collec
 server/life-care-plus-API-updated.postman_collection.json
 ```
 
-[![Postman](https://img.shields.io/badge/Postman-Collection-FF6C37?style=flat-square&logo=postman)](#)
+<a href="server/life-care-plus-API-updated.postman_collection.json" target="_blank" rel="noopener noreferrer">
+  <img src="https://img.shields.io/badge/Postman-Collection-FF6C37?style=flat-square&logo=postman" alt="Postman Collection" />
+</a>
 
 The collection includes pre-configured requests for every module with environment variables for base URL and authentication tokens.
 
@@ -604,37 +507,17 @@ Full endpoints for **Schedule**, **Doctor Schedule**, **Specialties**, **Prescri
 
 ### Flow Diagram
 
-```
-┌──────────┐     ┌──────────┐     ┌──────────┐     ┌──────────┐
-│  User    │────▶│  Proxy   │────▶│   API    │────▶│Database  │
-│(Browser) │     │Middleware│     │  Routes  │     │          │
-└──────────┘     └──────────┘     └──────────┘     └──────────┘
-     │                │               │
-     │  Login Form    │               │
-     ├────────────────▶               │
-     │                │  POST /auth/  │
-     │                │  login        │
-     │                ├───────────────▶
-     │                │               │ Verify credentials
-     │                │               ├──────────▶
-     │                │               │◀──────────
-     │                │  Set cookies  │
-     │                │◀──────────────│
-     │◀───────────────│               │
-     │                │               │
-     │  Dashboard     │               │
-     │  Request       │               │
-     ├────────────────▶               │
-     │                │  Has token?   │
-     │                │  ↓ Yes        │
-     │                │  Valid?       │
-     │                │  ↓ Yes        │
-     │                │  Route Auth   │
-     │                │  ↓ Pass       │
-     │                ├───────────────▶
-     │                │  200 OK       │
-     │◀───────────────│◀──────────────│
-```
+<div align="center">
+  <a href="doc/Auth API Flow.png" target="_blank" rel="noopener noreferrer">
+    <img src="doc/Auth API Flow.png" alt="Auth API Flow" />
+  </a>
+  <br /><br />
+  <a href="doc/Auth API Request Pipilene.png" target="_blank" rel="noopener noreferrer">
+    <img src="doc/Auth API Request Pipilene.png" alt="Auth API Request Pipeline" />
+  </a>
+</div>
+
+> Click on either diagram to view it full-size in a new tab.
 
 ### Authentication Methods
 
@@ -669,58 +552,13 @@ Access is enforced at two levels:
 
 ### Entity-Relationship Overview
 
-```
-┌─────────────┐       ┌────────────────┐       ┌──────────────┐
-│   User      │1──────│ AuthAccount    │       │  Specialties │
-│  (base)     │       │ (Google/FB)    │       │              │
-└───┬───┬───┬─┘       └────────────────┘       └──────┬───────┘
-    │   │   │                                          │
-   1│  1│  1│                                         N│
-    │   │   │                                   ┌──────┴───────┐
-┌───┴┐ ┌┴───┐ ┌┴────┐                         │Doctor        │
-│Admin│ │Doc │ │Patient│                       │Specialties   │
-│     │ │tor │ │       │                       │(join table)  │
-└─────┘ └──┬─┘ └──┬───┘                       └──────┬───────┘
-           │       │                                   │
-           │1      │1                                  │N
-           │       │                              ┌────┴────┐
-           │       │                              │ Doctor  │
-           │       │                              └────┬────┘
-           │       │                                   │1
-           │       │      ┌──────────────────┐          │
-           │       └──────│Appointment       │──────────┘
-           │              │(bridge entity)   │
-           │              └──┬────┬────┬─────┘
-           │                 │    │    │
-           │          ┌──────┘    │    └────────┐
-           │          │           │             │
-           │         1│         1│            1│
-           │    ┌─────┴──┐ ┌────┴────┐ ┌──────┴─────┐
-           │    │Payment │ │Prescrip │ │  Review    │
-           │    │(Stripe)│ │  tion   │ │            │
-           │    └────────┘ └─────────┘ └────────────┘
-           │
-           │                  ┌──────────────┐
-           └──────────────────│ Schedule     │
-                              │              │
-                              └──────┬───────┘
-                                     │
-                                     │N
-                              ┌──────┴───────┐
-                              │DoctorSchedule│
-                              │(booking info)│
-                              └──────────────┘
+> 📄 The complete ERD is available as a **PDF** (drawn with draw.io). Click below to view it in a new tab:
 
-┌──────────────┐       ┌──────────────┐
-│Conversation  │1──────│   Message    │
-│              │       │              │
-└──────────────┘       └──────────────┘
-
-┌──────────────┐       ┌──────────────┐
-│  User        │1──────│ Notification │
-│              │       │              │
-└──────────────┘       └──────────────┘
-```
+<div align="center">
+  <a href="doc/ph-health-care-erd2.drawio.pdf" target="_blank" rel="noopener noreferrer">
+    <img src="https://img.shields.io/badge/View-Full_ERD_Diagram_%28PDF%29-2D3748?style=for-the-badge" alt="View Full ERD Diagram (PDF)" />
+  </a>
+</div>
 
 ### Key Models
 
@@ -915,11 +753,11 @@ Jobs:
 
 ### Live URLs
 
-| Service                  | URL                                                                                                    |
-| ------------------------ | ------------------------------------------------------------------------------------------------------ |
-| **Frontend (Vercel)**    | [https://life-care-plus-mauve.vercel.app/](https://life-care-plus-mauve.vercel.app/)                   |
-| **Backend API (Render)** | [https://life-care-plus.onrender.com/](https://life-care-plus.onrender.com/)                           |
-| **Source Code**          | [https://github.com/DeveloperImran1/life-care-plus](https://github.com/DeveloperImran1/life-care-plus) |
+| Service                  | URL                                                                                                                                                         |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Frontend (Vercel)**    | <a href="https://life-care-plus-mauve.vercel.app/" target="_blank" rel="noopener noreferrer">https://life-care-plus-mauve.vercel.app/</a>                   |
+| **Backend API (Render)** | <a href="https://life-care-plus.onrender.com/" target="_blank" rel="noopener noreferrer">https://life-care-plus.onrender.com/</a>                           |
+| **Source Code**          | <a href="https://github.com/DeveloperImran1/life-care-plus" target="_blank" rel="noopener noreferrer">https://github.com/DeveloperImran1/life-care-plus</a> |
 
 ### Docker (Local Production Simulation)
 
@@ -1020,7 +858,7 @@ Contributions are welcome! Whether it's bug fixes, feature additions, or documen
 
 _A comprehensive walkthrough video covering architecture, features, workflow diagrams (Excalidraw), database relationships (draw.io), and live demo is available here:_
 
-**[▶ Life Care Plus — Full Project Presentation](#)**
+**<a href="#" target="_blank">▶ Life Care Plus — Full Project Presentation</a>**
 
 ---
 
@@ -1035,6 +873,6 @@ This project is for educational and portfolio purposes.
     Built with ❤️ using Next.js 16, Express 5, Prisma 7, and TypeScript
   </p>
   <p>
-    <a href="#-table-of-contents">Back to Top</a>
+    <a href="#-table-of-contents" target="_blank">Back to Top</a>
   </p>
 </div>
