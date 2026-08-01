@@ -97,6 +97,8 @@ router.get(
   AuthController.socialLoginCallback,
 );
 
+router.post('/exchange-code', AuthController.exchangeSocialCode);
+
 router.post('/logout', AuthController.logout);
 
 export const AuthRoutes = router;

@@ -26,6 +26,7 @@ export const logoutUser = async () => {
 
   // ৩. এরপর আগের মতোই ব্রাউজার থেকে লোকালি কুকি মুছে ফেলছি
   await deleteCookie("accessToken");
+  await deleteCookie("isLoggedIn");
   await deleteCookie("refreshToken");
 
   // ৪. লগিন পেজে পাঠিয়ে দিচ্ছি
