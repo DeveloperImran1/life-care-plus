@@ -858,7 +858,7 @@ Contributions are welcome! Whether it's bug fixes, feature additions, or documen
 
 _A comprehensive walkthrough video covering architecture, features, workflow diagrams (Excalidraw), database relationships (draw.io), and live demo is available here:_
 
-**<a href="#" target="_blank">▶ Life Care Plus — Full Project Presentation</a>**
+**<a href="https://www.youtube.com/watch?v=QIc5NSpy4Tw" target="_blank">▶ Life Care Plus — Full Project Presentation</a>**
 
 ---
 
